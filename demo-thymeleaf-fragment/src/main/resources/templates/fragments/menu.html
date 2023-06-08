@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--Định nghĩa Fragment menu có thể tái sử dụng ở nhiều trang-->
+<ul th:fragment="menu">
+    <li><a th:href="@{/}">Home</a></li>
+    <li><a th:href="@{/about}">About</a></li>
+    <li><a th:href="@{/fragment}">Fragment</a></li>
+</ul>
+</body>
+</html>

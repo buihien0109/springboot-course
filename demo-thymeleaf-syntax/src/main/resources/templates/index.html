@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Giá trị của một biến sử dụng ${}</h2>
+<p th:text="${user.id}">Id : </p>
+<p th:text="${user.name}">Name : </p>
+<p th:text="${user.email}">Email : </p>
+
+<h2>Sử dụng vòng lặp</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}">1</td>
+        <td th:text="${user.name}">Nguyễn Văn A</td>
+        <td th:text="${user.email}">a@gmail.com</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
