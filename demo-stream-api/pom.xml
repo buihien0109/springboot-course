@@ -9,22 +9,19 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>demo-thymeleaf-use</artifactId>
+    <artifactId>demo-stream-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo-thymeleaf-use</name>
-    <description>demo-thymeleaf-use</description>
+    <name>demo-stream-api</name>
+    <description>demo-stream-api</description>
     <properties>
         <java.version>17</java.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

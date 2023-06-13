@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>demo-thymeleaf-use</artifactId>
+    <artifactId>demo-controller-restcontroller</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo-thymeleaf-use</name>
-    <description>demo-thymeleaf-use</description>
+    <name>demo-controller-restcontroller</name>
+    <description>demo-controller-restcontroller</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -25,6 +25,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
