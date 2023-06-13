@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.exception.ForbidenException;
 import com.example.demo.exception.NotFoundException;
-import com.example.demo.exception.UnauthorizeException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -10,21 +8,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class WebController {
     @GetMapping("/")
     public String getHomePage() {
-        throw new RuntimeException("500");
-    }
-
-    @GetMapping("/about")
-    public String getHomeAbout() {
-        throw new NotFoundException("404");
+        return "index";
     }
 
     @GetMapping("/contact")
     public String getContactPage() {
-        throw new UnauthorizeException("401");
+        throw new NotFoundException("404");
     }
 
-    @GetMapping("/blog")
-    public String getblogPage() {
-        throw new ForbidenException("403");
+    @GetMapping("/about")
+    public String getAboutPage() {
+        throw new RuntimeException("500");
     }
 }
