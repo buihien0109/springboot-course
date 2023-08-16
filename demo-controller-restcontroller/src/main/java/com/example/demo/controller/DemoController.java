@@ -4,20 +4,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-/*
-* @Controller
-*
-* */
+import java.util.List;
+
 @Controller
 public class DemoController {
     @GetMapping("/hello")
     public String hello() {
-        return "hello"; // Returns the view name
+        return "hello"; // Trả về view (template)
     }
 
     @GetMapping("/api/blogs")
     @ResponseBody
-    public String getBlogs() {
-        return "Blog List"; // Returns the response body directly
+    public List<String> getBlogs() {
+        List<String> blogs = List.of("Blog 1", "Blog 2", "Blog 3");
+        return blogs; // Trả về JSON, XML, ... trong body response
     }
 }

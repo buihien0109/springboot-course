@@ -14,9 +14,9 @@ public class WebService {
     private final ReadFile fileReader;
 
     @Autowired
-    public WebService(@Qualifier("ExcelReadFile") ReadFile fileReader) {
+    public WebService(@Qualifier("JsonReadFile") ReadFile fileReader) {
         this.fileReader = fileReader;
-        this.userList = this.fileReader.readFile("classpath:static/users.xlsx");
+        this.userList = this.fileReader.readFile("classpath:static/users.json");
     }
 
     public List<User> getAllUser() {

@@ -16,7 +16,7 @@
 <p th:if="${#lists.isEmpty(users)}">Không có user</p>
 <ul th:if="${not #lists.isEmpty(users)}">
   <li th:each="user : ${users}"
-      th:text="|${user.id} - ${user.name} - ${user.email} -${user.age}|"></li>
+      th:text="|${user.id} - ${user.name} - ${user.email}|"></li>
 </ul>
 </body>
 </html>

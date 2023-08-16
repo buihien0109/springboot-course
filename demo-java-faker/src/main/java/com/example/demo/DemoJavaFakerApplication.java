@@ -22,7 +22,7 @@ public class DemoJavaFakerApplication implements CommandLineRunner {
 
         // Tạo đối tượng với Java Faker
         User user = User.builder()
-                .id(faker.number().randomDigitNotZero())
+                .id((int) faker.number().randomNumber())
                 .name(faker.name().fullName())
                 .email(faker.internet().emailAddress())
                 .avatar(faker.avatar().image())

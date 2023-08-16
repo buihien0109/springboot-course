@@ -14,9 +14,4 @@ public class WebController {
     public String getAboutPage() {
         return "about";
     }
-
-    @GetMapping("/fragment")
-    public String getFragmentPage() {
-        return "fragment";
-    }
 }

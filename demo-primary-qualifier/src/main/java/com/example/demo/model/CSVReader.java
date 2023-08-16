@@ -4,10 +4,10 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Bus implements Vehicle {
+public class CSVReader implements IReadFile {
 
     @Override
-    public void run() {
-        System.out.println("Run by Bus");
+    public void readFile(String fileName) {
+        System.out.println("Read file CSV : " + fileName);
     }
 }

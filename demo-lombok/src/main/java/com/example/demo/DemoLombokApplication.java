@@ -31,8 +31,8 @@ public class DemoLombokApplication implements CommandLineRunner {
         // Lấy ra các thuộc tính của user
         System.out.println("\n== THUỘC TÍNH USER");
         System.out.println("Id : " + user.getId());
-        System.out.println("Name : " + user.getId());
-        System.out.println("Email : " + user.getId());
+        System.out.println("Name : " + user.getName());
+        System.out.println("Email : " + user.getEmail());
 
         // Set lại các thuộc tính của user
         user.setName("Ngô Thị C");

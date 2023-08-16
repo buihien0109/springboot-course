@@ -10,7 +10,7 @@ import java.util.List;
 
 @Controller
 public class WebController {
-    public List<User> userList;
+    private List<User> userList;
 
     public WebController() {
         this.userList = new ArrayList<>();

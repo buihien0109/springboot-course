@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import com.example.demo.model.Vehicle;
+import com.example.demo.model.IReadFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
@@ -9,8 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class DemoPrimaryQualifierApplication implements CommandLineRunner {
+    @Qualifier("CSVReader")
     @Autowired
-    private Vehicle vehicle;
+    private IReadFile fileReader;
 
     public static void main(String[] args) {
         SpringApplication.run(DemoPrimaryQualifierApplication.class, args);
@@ -18,6 +19,6 @@ public class DemoPrimaryQualifierApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        vehicle.run();
+        fileReader.readFile("person");
     }
 }

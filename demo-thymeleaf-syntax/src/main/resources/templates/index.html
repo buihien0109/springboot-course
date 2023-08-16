@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
 <!--Lấy giá trị của biến-->
-<h2>Giá trị của một biến sử dụng ${}</h2>
+<h2>Lấy giá trị của một biến sử dụng ${}</h2>
 <p th:text="${user.id}">Id : </p>
 <p th:text="${user.name}">Name : </p>
 <p th:text="${user.email}">Email : </p>
 
 <!--Vòng lặp-->
-<h2>Sử dụng vòng lặp</h2>
+<h2>Vòng lặp sử dụng th:each</h2>
 <table>
     <thead>
     <tr>
@@ -57,10 +58,11 @@
 </table>
 
 <!--Câu lệnh if-->
-<p th:if="${age} < 18">Chưa đủ tuổi vị thành niên</p>
+<h2>Câu lệnh điều kiện sử dụng th:if, th:unless, th:switch</h2>
+<p th:if="${age} < 18">Chưa đủ tuổi vị thành niên (if)</p>
 
 <!--Câu lệnh unless-->
-<p th:unless="${age} >= 18">Chưa đủ tuổi vị thành niên</p>
+<p th:unless="${age} >= 18">Chưa đủ tuổi vị thành niên (unless)</p>
 
 <!--Toán tử 3 ngôi-->
 <p th:text="${age} < 18 ? 'Chưa đủ tuổi vị thành niên' : 'Đủ tuổi vị thành niên'"></p>
@@ -76,5 +78,7 @@
     <p th:case="0">Chủ nhật</p>
     <p th:case="*">Ngày không hợp lệ</p>
 </th:block>
+
+<script th:src="@{/js/main.js}"></script>
 </body>
 </html>

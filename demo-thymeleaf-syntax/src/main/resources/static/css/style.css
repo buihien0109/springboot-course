@@ -1,0 +1,19 @@
+h2 {
+    color: tomato;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, tr, th, td {
+    border: 1px solid #000;
+}
+
+th, td {
+    padding: 6px;
+}
+
+.bg-blue {
+    background-color: lightblue;
+}
