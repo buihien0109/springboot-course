@@ -5,7 +5,6 @@ import com.example.demo.request.MailRequest;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -27,7 +26,6 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final ResourceLoader resourceLoader;
     private final TemplateEngine templateEngine;
-    private final ApplicationContext applicationContext;
 
     // 1. Gửi email với text
     public void sendMailSimple(MailRequest request) {
