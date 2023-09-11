@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Email Template</title>
+    <style>
+        /* Thêm CSS tại đây để tạo giao diện email đẹp hơn */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #e8e8e8;
+            font-family: 'Roboto', sans-serif;
+            color: #222;
+        }
+        p {
+            line-height: 28px;
+        }
+        .container {
+            width: 600px;
+            margin: 20px auto auto;
+            background-color: #fff;
+            padding: 20px;
+        }
+        header h1 {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        section span {
+            font-weight: bold;
+        }
+        footer {
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Thông Báo</h1>
+    </header>
+    <section>
+        <p>Xin chào <span th:text="${name}"></span>,</p>
+        <p>Chúng tôi xin gửi thông báo quan trọng cho bạn:</p>
+        <p th:utext="${content}"></p>
+    </section>
+    <footer>
+        <p>Trân trọng,</p>
+        <p>Đội ngũ của chúng tôi</p>
+    </footer>
+</div>
+</body>
+</html>
