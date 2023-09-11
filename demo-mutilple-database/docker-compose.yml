@@ -1,0 +1,33 @@
+version: '3'
+services:
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+    ports:
+      - "3306:3306"
+    networks:
+      - db-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5432:5432"
+    networks:
+      - db-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+networks:
+  db-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  postgres-data:
