@@ -1,152 +1,226 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{})">
-
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{:: #js})}">
 <head>
-  <title>Shopping Cart</title>
+    <title>Shopping Cart</title>
 </head>
 
 <body>
 <th:block id="content">
-  <!-- Breadcrumb Section Begin -->
-  <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12 text-center">
-          <div class="breadcrumb__text">
-            <h2>Shopping Cart</h2>
-            <div class="breadcrumb__option">
-              <a href="./index.html">Home</a>
-              <span>Shopping Cart</span>
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-section set-bg" style="background-image: url(/img/breadcrumb.jpg)">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <div class="breadcrumb__option">
+                            <a href="/">Trang chủ</a>
+                            <span>Giỏ hàng</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
-  <!-- Breadcrumb Section End -->
+    </section>
+    <!-- Breadcrumb Section End -->
 
-  <!-- Shoping Cart Section Begin -->
-  <section class="shoping-cart spad">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="shoping__cart__table">
-            <table>
-              <thead>
-              <tr>
-                <th class="shoping__product">Products</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                <th></th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td class="shoping__cart__item">
-                  <img src="img/cart/cart-1.jpg" alt="">
-                  <h5>Vegetable’s Package</h5>
-                </td>
-                <td class="shoping__cart__price">
-                  $55.00
-                </td>
-                <td class="shoping__cart__quantity">
-                  <div class="quantity">
-                    <div class="pro-qty">
-                      <input type="text" value="1">
+    <!-- Shoping Cart Section Begin -->
+    <section class="shoping-cart spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__table">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th class="shoping__product">Sản phẩm</th>
+                                <th>Giá</th>
+                                <th>Số lượng</th>
+                                <th>Thành tiền</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="cartItem : ${cart.cartItems}">
+                                <td class="shoping__cart__item">
+                                    <img th:src="${cartItem.product.images.mainImage.imageUrl}" alt="">
+                                    <h5>
+                                        <a class="text-muted" th:href="@{/san-pham/{id} (id=${cartItem.product.productId})}" th:text="${cartItem.product.name}">Vegetable’s Package</a>
+                                    </h5>
+                                </td>
+                                <td class="shoping__cart__price" th:text="${cartItem.product.price}">
+                                    $55.00
+                                </td>
+                                <td class="shoping__cart__quantity">
+                                    <div class="quantity">
+                                        <div class="pro-qty">
+                                            <span class="dec qtybtn"
+                                                  th:onclick="|decrementQuantity(${cartItem.cartItemId})|">-</span>
+                                            <input type="text" th:value="${cartItem.quantity}" readonly>
+                                            <span class="inc qtybtn"
+                                                  th:onclick="|incrementQuantity(${cartItem.cartItemId})|">+</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="shoping__cart__total"
+                                    th:text="${cartItem.product.price * cartItem.quantity}">
+                                    $110.00
+                                </td>
+                                <td class="shoping__cart__item__close">
+                                    <span class="icon_close"
+                                          th:onclick="|deleteCartItem(${cartItem.cartItemId})|"></span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                  </div>
-                </td>
-                <td class="shoping__cart__total">
-                  $110.00
-                </td>
-                <td class="shoping__cart__item__close">
-                  <span class="icon_close"></span>
-                </td>
-              </tr>
-              <tr>
-                <td class="shoping__cart__item">
-                  <img src="img/cart/cart-2.jpg" alt="">
-                  <h5>Fresh Garden Vegetable</h5>
-                </td>
-                <td class="shoping__cart__price">
-                  $39.00
-                </td>
-                <td class="shoping__cart__quantity">
-                  <div class="quantity">
-                    <div class="pro-qty">
-                      <input type="text" value="1">
-                    </div>
-                  </div>
-                </td>
-                <td class="shoping__cart__total">
-                  $39.99
-                </td>
-                <td class="shoping__cart__item__close">
-                  <span class="icon_close"></span>
-                </td>
-              </tr>
-              <tr>
-                <td class="shoping__cart__item">
-                  <img src="img/cart/cart-3.jpg" alt="">
-                  <h5>Organic Bananas</h5>
-                </td>
-                <td class="shoping__cart__price">
-                  $69.00
-                </td>
-                <td class="shoping__cart__quantity">
-                  <div class="quantity">
-                    <div class="pro-qty">
-                      <input type="text" value="1">
-                    </div>
-                  </div>
-                </td>
-                <td class="shoping__cart__total">
-                  $69.99
-                </td>
-                <td class="shoping__cart__item__close">
-                  <span class="icon_close"></span>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="shoping__cart__btns">
-            <a href="#" class="primary-btn cart-btn">CONTINUE SHOPPING</a>
-            <a href="#" class="primary-btn cart-btn cart-btn-right"><span class="icon_loading"></span>
-              Upadate Cart</a>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="shoping__continue">
-            <div class="shoping__discount">
-              <h5>Discount Codes</h5>
-              <form action="#">
-                <input type="text" placeholder="Enter your coupon code">
-                <button type="submit" class="site-btn">APPLY COUPON</button>
-              </form>
+                </div>
             </div>
-          </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__btns">
+                        <a href="/" class="primary-btn cart-btn">Tiếp tục mua hàng</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="shoping__continue">
+                        <div class="shoping__discount">
+                            <h5>Mã Giảm Giá</h5>
+                            <form action="#">
+                                <input type="text" placeholder="Nhập mã giảm giá (nếu có)">
+                                <button type="submit" class="site-btn">ÁP DỤNG</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="shoping__checkout">
+                        <h5>Tổng tiền giỏ hàng</h5>
+                        <ul>
+                            <li>Thành tiền <span>$454.98</span></li>
+                            <li>Tổng tiền <span>$454.98</span></li>
+                        </ul>
+                        <a href="/thanh-toan" class="primary-btn">THANH TOÁN</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-lg-6">
-          <div class="shoping__checkout">
-            <h5>Cart Total</h5>
-            <ul>
-              <li>Subtotal <span>$454.98</span></li>
-              <li>Total <span>$454.98</span></li>
-            </ul>
-            <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- Shoping Cart Section End -->
+    </section>
+    <!-- Shoping Cart Section End -->
+</th:block>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const cart = [[${cart}]];
+        console.log(cart);
+
+        // write function to render cart from cart object
+        const tableBody = document.querySelector('.shoping__cart__table tbody');
+        const renderCart = (cartItems) => {
+            tableBody.innerHTML = '';
+            let html = '';
+            cartItems.forEach(ct => {
+                html += `
+                    <tr>
+                        <td class="shoping__cart__item">
+                            <img src="${ct.product.images.mainImage.imageUrl}" alt="">
+                            <h5>
+                                <a href="/san-pham/${ct.product.productId}">${ct.product.name}</a>
+                            </h5>
+                        </td>
+                        <td class="shoping__cart__price">${ct.product.price}</td>
+                        <td class="shoping__cart__quantity">
+                            <div class="quantity">
+                                <div class="pro-qty">
+                                    <span class="dec qtybtn" onclick="decrementQuantity(${ct.cartItemId})">-</span>
+                                    <input type="text" value="${ct.quantity}" readonly="">
+                                    <span class="inc qtybtn" onclick="incrementQuantity(${ct.cartItemId})">+</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="shoping__cart__total">${ct.product.price * ct.quantity}</td>
+                        <td class="shoping__cart__item__close">
+                            <span class="icon_close" onclick="deleteCartItem(${ct.cartItemId})"></span>
+                        </td>
+                    </tr>
+                `
+            })
+            tableBody.innerHTML = html;
+        }
+
+        // Increment quantity
+        const incrementQuantity = (cartItemId) => {
+            // call api to update cart item using axios
+            axios.put(`/api/v1/cart-items/${cartItemId}`, {
+                quantity: 1
+            })
+                .then(res => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        // update cart in UI
+                        const cartItem = cart.cartItems.find(ct => ct.cartItemId === cartItemId);
+                        cartItem.quantity++;
+                        renderCart(cart.cartItems);
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    toastr.error(err.response.data.message);
+                })
+        }
+
+        // Decrement quantity
+        const decrementQuantity = (cartItemId) => {
+            // call api to update cart item using axios
+            axios.put(`/api/v1/cart-items/${cartItemId}`, {
+                quantity: -1
+            })
+                .then(res => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        // update cart in UI
+                        const cartItem = cart.cartItems.find(ct => ct.cartItemId === cartItemId);
+                        if (cartItem.quantity > 1) {
+                            cartItem.quantity--;
+                            renderCart(cart.cartItems);
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+
+        // delete cart item
+        const shoppingCartIcon = document.querySelector('.shopping-cart-icon span');
+        const deleteCartItem = (cartItemId) => {
+            const isConfirm = confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?');
+            if (!isConfirm) {
+                return;
+            }
+
+            // call api to delete cart item using axios
+            axios.delete(`/api/v1/cart-items/${cartItemId}`)
+                .then(res => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        // update cart in UI
+                        const cartItem = cart.cartItems.find(ct => ct.cartItemId === cartItemId);
+                        const index = cart.cartItems.indexOf(cartItem);
+                        cart.cartItems.splice(index, 1);
+                        renderCart(cart.cartItems);
+
+                        // update cart icon
+                        shoppingCartIcon.innerText = cart.cartItems.length;
+
+                        toastr.success('Xóa sản phẩm khỏi giỏ hàng thành công!')
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+    </script>
 </th:block>
 </body>
 

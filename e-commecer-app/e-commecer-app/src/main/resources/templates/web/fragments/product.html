@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="product(data)">
+  <div class="col-lg-4 col-md-6 col-sm-6">
+    <div class="product__item">
+      <div class="product__item__pic set-bg"
+           th:style="|background-image: url(${data.images.mainImage.imageUrl})|">
+        <ul class="product__item__pic__hover">
+          <li><a href="#"><i class="fa fa-heart"></i></a></li>
+          <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+        </ul>
+      </div>
+      <div class="product__item__text">
+        <h6><a th:href="@{/san-pham/{id} (id=${data.productId})}"
+               th:text="${data.name}">Crab Pool Security</a></h6>
+        <h5 th:text="${data.price}">$30.00</h5>
+      </div>
+    </div>
+  </div>
+</th:block>
+
+<th:block th:fragment="listProduct(products)">
+  <th:block th:each="productItem : ${products}">
+    <th:block th:replace="~{:: product(${productItem})}"></th:block>
+  </th:block>
+</th:block>
+</body>
+</html>

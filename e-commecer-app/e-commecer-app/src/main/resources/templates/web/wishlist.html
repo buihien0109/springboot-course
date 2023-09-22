@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{:: #js})}">
+<head>
+    <title>Sản phẩm yêu thích</title>
+</head>
+
+<body>
+<th:block id="content">
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <div class="breadcrumb__option">
+                            <a href="/">Trang chủ</a>
+                            <span>Sản phẩm yêu thích</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Shoping Cart Section Begin -->
+    <section class="shoping-cart spad">
+        <div class="container">
+            <div class="row">
+                <th:block th:if="${#lists.isEmpty(wishList)}">
+                    <h4>Không có sản phẩm nào trong danh sách yêu thích</h4>
+                </th:block>
+
+                <th:block>
+                    <div class="col-lg-4 col-md-6 col-sm-6" th:each="wishListItem : ${wishList}">
+                        <div class="product__item">
+                            <div class="product__item__pic set-bg"
+                                 th:data-setbg="${wishListItem.product.images.mainImage.imageUrl}">
+                                <ul class="product__item__pic__hover">
+                                    <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="product__item__text">
+                                <h6><a th:href="@{/san-pham/{id} (id=${wishListItem.product.productId})}"
+                                       th:text="${wishListItem.product.name}">Crab
+                                    Pool Security</a></h6>
+                                <h5 th:text="'$' + ${wishListItem.product.price}">$30.00</h5>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+
+            </div>
+        </div>
+    </section>
+    <!-- Shoping Cart Section End -->
+</th:block>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const wishList = [[${wishList}]];
+        console.log(wishList);
+
+    </script>
+</th:block>
+</body>
+
+</html>

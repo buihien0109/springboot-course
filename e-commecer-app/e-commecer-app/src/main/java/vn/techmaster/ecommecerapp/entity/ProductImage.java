@@ -14,10 +14,18 @@ public class ProductImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long imageId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
     private String imageUrl;
+
+    @Enumerated(EnumType.STRING)
+    private ImageType imageType;
+
+    public static enum ImageType {
+        MAIN,
+        SUB
+    }
 }
 

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{:: #js})}">
+
+<head>
+    <title>Đăng ký</title>
+</head>
+
+<body>
+<th:block id="content">
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <div class="breadcrumb__option">
+                            <a href="/">Trang chủ</a>
+                            <span>Đăng ký</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Blog Section Begin -->
+    <section class="register-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
+                    <div class="register-container">
+                        <div id="custom-register-form">
+                            <form id="customer-register">
+                                <div class="register-form-container">
+                                    <div class="register-text">
+                                        <h2 class="mb-2">Đăng ký</h2>
+                                        <p>Vui lòng điền thông tin vào form bên dưới.</p>
+                                    </div>
+                                    <div class="register-form">
+                                        <div class="login-form-input">
+                                            <input type="text" id="username" class="input-full" placeholder="Tên người dùng"
+                                                   autocomplete="off" required>
+                                        </div>
+                                        <div class="login-form-input">
+                                            <input type="email" id="email" class="input-full" placeholder="Email"
+                                                   autocomplete="off" required>
+                                        </div>
+                                        <div class="login-form-input">
+                                            <input type="password" id="password" class="input-full"
+                                                   placeholder="Mật khẩu" autocomplete="off" required>
+                                            <span class="icon-toggle-password"><i class="fa fa-eye" aria-hidden="true"></i></span>
+                                        </div>
+                                        <div class="login-form-input">
+                                            <input type="password" id="confirm-password" class="input-full"
+                                                   placeholder="Nhập lại mật khẩu" autocomplete="off" required>
+                                            <span class="icon-toggle-password"><i class="fa fa-eye" aria-hidden="true"></i></span>
+                                        </div>
+                                        <div class="register-toggle-btn">
+                                            <div class="form-action-button">
+                                                <button type="submit" class="btn-sign-up">Đăng ký</button>
+                                                <a href="/quen-mat-khau" id="recover-password">Quên mật khẩu?</a>
+                                            </div>
+                                            <div class="account-optional-action">
+                                                <a href="/dang-nhap" id="customer_register_link">Quay lại đăng nhập</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Blog Section End -->
+</th:block>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        // hide/show password with icon in inputs using valina javascript
+        const togglePasswordBtns = document.querySelectorAll('.icon-toggle-password');
+        const passwordInputs = document.querySelectorAll('input[type="password"]');
+        togglePasswordBtns.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                if (passwordInputs[index].type === 'password') {
+                    passwordInputs[index].type = 'text';
+                    btn.innerHTML = '<i class="fa fa-eye-slash" aria-hidden="true"></i>';
+                } else {
+                    passwordInputs[index].type = 'password';
+                    btn.innerHTML = '<i class="fa fa-eye" aria-hidden="true"></i>';
+                }
+            });
+        });
+
+        // handle register form submit using axios
+        // TODO : Add Validation
+        const registerForm = document.getElementById('customer-register');
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const data = {
+                username,
+                email,
+                password,
+                confirmPassword
+            };
+            console.log(data)
+            axios.post('/api/v1/auth/register', data)
+                .then((res) => {
+                    if (res.status === 200) {
+                        toastr.success('Đăng ký thành công');
+                        setTimeout(() => {
+                            window.location.href = '/dang-nhap';
+                        }, 1500);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        });
+    </script>
+</th:block>
+</body>
+
+</html>
