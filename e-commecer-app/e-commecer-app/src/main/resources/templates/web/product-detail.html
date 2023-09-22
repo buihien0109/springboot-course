@@ -9,7 +9,7 @@
 <body>
 <th:block id="content">
     <!-- Breadcrumb Section Begin -->
-    <section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <section class="breadcrumb-section set-bg" style="background-image: url(/img/breadcrumb.jpg)">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -56,7 +56,10 @@
                             <i class="fa fa-star-half-o"></i>
                             <span>(18 reviews)</span>
                         </div>
-                        <div class="product__details__price" th:text="${product.price}">$50.00</div>
+                        <div class="product__details__price" th:classappend="${product.discounts != null} ? 'has-discount' : ''">
+                            <span th:if="${product.discounts != null}" th:classappend="${product.discounts != null} ? 'discount-price' : ''" th:text="${product.discounts.getRemainingPrice()}"></span>
+                            <span th:classappend="${product.discounts != null} ? 'original-price' : ''" th:text="${product.price}"></span>
+                        </div>
                         <p th:text="${product.description}">Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.
                             Vestibulum ac diam sit amet quam
                             vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Vestibulum ac diam sit amet
@@ -65,7 +68,7 @@
                             <div class="quantity">
                                 <div class="pro-qty">
                                     <span class="dec qtybtn">-</span>
-                                    <input type="text" value="1">
+                                    <input type="text" value="1" readonly>
                                     <span class="inc qtybtn">+</span>
                                 </div>
                             </div>
@@ -131,16 +134,18 @@
             <div class="row">
                 <div class="col-lg-3 col-md-4 col-sm-6" th:each="rProduct : ${relatedProducts}">
                     <div class="product__item">
-                        <div class="product__item__pic set-bg" th:data-setbg="${rProduct.images.mainImage.imageUrl}">
+                        <div class="product__item__pic set-bg" th:style="|background-image: url(${rProduct.images.mainImage.imageUrl})|">
                             <ul class="product__item__pic__hover">
-                                <li><a href="#"><i class="fa fa-heart"></i></a></li>
-                                <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                <li><a href="javascript:void(0)" th:onclick="|addToWishList(${rProduct.productId})|"><i class="fa fa-heart"></i></a></li>
+                                <li><a href="javascript:void(0)" th:onclick="|addToCart(${rProduct.productId})|"><i class="fa fa-shopping-cart"></i></a></li>
                             </ul>
                         </div>
                         <div class="product__item__text">
-                            <h6><a th:href="@{/san-pham/{id} (id=${rProduct.productId})}" th:text="${rProduct.name}">Crab
-                                Pool Security</a></h6>
-                            <h5 th:text="${rProduct.price}">$30.00</h5>
+                            <h6><a th:href="@{/san-pham/{id} (id=${rProduct.productId})}" th:text="${rProduct.name}">Sản phẩm 1</a></h6>
+                            <div th:classappend="${rProduct.discounts != null} ? 'product-item-price' : ''">
+                                <h5 th:if="${rProduct.discounts != null}" th:text="${rProduct.discounts.remainingPrice}" class="discount-price"></h5>
+                                <h5 th:text="${rProduct.price}" th:classappend="${rProduct.discounts != null ? 'original-price' : ''}">$100</h5>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -13,6 +13,8 @@ public interface DiscountPublic {
 
     Integer getDiscountValue();
 
+    Integer getRemainingPrice();
+
     Date getStartDate();
 
     Date getEndDate();
@@ -35,6 +37,11 @@ public interface DiscountPublic {
         @Override
         public Integer getDiscountValue() {
             return discount.getDiscountValue();
+        }
+
+        @Override
+        public Integer getRemainingPrice() {
+            return discount.getRemainingPrice();
         }
 
         @Override

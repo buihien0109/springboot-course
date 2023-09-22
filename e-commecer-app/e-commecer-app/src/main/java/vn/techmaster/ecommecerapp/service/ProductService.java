@@ -100,7 +100,9 @@ public class ProductService {
         return Map.of(
                 "name", "Sản phẩm giảm giá",
                 "products", pageData.getContent().stream().map(ProductPublic::of).toList(),
-                "totalElements", pageData.getTotalElements()
+                "totalElements", pageData.getTotalElements(),
+                "remain", pageData.getTotalElements() - (long) page * size < 0 ? 0 : pageData.getTotalElements() - (long) page * size,
+                "currentPage", pageData.getNumber() + 1
         );
     }
 
@@ -118,7 +120,9 @@ public class ProductService {
                     "name", category.getMainCategory().getName(),
                     "slug", category.getMainCategory().getSlug(),
                     "products", pageData.getContent().stream().map(ProductPublic::of).toList(),
-                    "totalElements", pageData.getTotalElements()
+                    "totalElements", pageData.getTotalElements(),
+                    "remain", pageData.getTotalElements() - (long) page * size < 0 ? 0 : pageData.getTotalElements() - (long) page * size,
+                    "currentPage", pageData.getNumber() + 1
             );
             data.add(map);
         });
@@ -132,5 +136,23 @@ public class ProductService {
         data.add(dataDiscount);
         data.addAll(dataProductCombineCategory);
         return data;
+    }
+
+    public Map<String, Object> loadMoreProduct(String categorySlug, Integer page, Integer size) {
+        // if category name is null or empty, get all product discount valid date has pagination. Owtherwise, get all product by category name has pagination
+        if (categorySlug == null || categorySlug.isEmpty()) {
+            return findAllProductHasDiscountValidDate(page, size);
+        }
+        Page<Product> pageData = productRepository.findByCategory_ParentCategory_SlugIgnoreCase(
+                categorySlug,
+                PageRequest.of(page - 1, size)
+        );
+        return Map.of(
+                "slug", categorySlug,
+                "products", pageData.getContent().stream().map(ProductPublic::of).toList(),
+                "totalElements", pageData.getTotalElements(),
+                "remain", pageData.getTotalElements() - (long) page * size < 0 ? 0 : pageData.getTotalElements() - (long) page * size,
+                "currentPage", pageData.getNumber() + 1
+        );
     }
 }

@@ -548,6 +548,7 @@ ol {
     top: 0;
     right: -12px;
 }
+
 .header__cart ul li a .user-avatar {
     width: 32px;
     height: 32px;
@@ -1678,6 +1679,23 @@ ol {
     padding-top: 15px;
 }
 
+.product__item__text .product-item-price {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.product__item__text .product-item-price .discount-price {
+    margin-right: 10px;
+}
+
+.product__item__text .product-item-price .original-price {
+    color: #252525;
+    font-weight: 400;
+    text-decoration: line-through;
+    font-size: 15px;
+}
+
 .product__item__text h6 {
     margin-bottom: 10px;
 }
@@ -1788,6 +1806,14 @@ ol {
     color: #dd2222;
     font-weight: 600;
     margin-bottom: 15px;
+}
+
+.product__details__text .product__details__price.has-discount .original-price {
+    color: #6f6f6f;
+    font-weight: 400;
+    text-decoration: line-through;
+    font-size: 24px;
+    margin-left: 10px;
 }
 
 .product__details__text p {
@@ -2012,11 +2038,28 @@ ol {
     display: inline-block;
 }
 
+.shoping__cart__table table tbody tr td.shoping__cart__item h5 a{
+    color: #1c1c1c;
+    display: inline-block;
+}
+
+.shoping__cart__table table tbody tr td.shoping__cart__item h5 a:hover{
+    text-decoration: underline;
+}
+
 .shoping__cart__table table tbody tr td.shoping__cart__price {
     font-size: 18px;
     color: #1c1c1c;
     font-weight: 700;
     width: 150px;
+}
+
+.shoping__cart__table table tbody tr td.shoping__cart__price.has-discount .original-price {
+    color: #6f6f6f;
+    font-weight: 400;
+    text-decoration: line-through;
+    font-size: 16px;
+    margin-left: 10px;
 }
 
 .shoping__cart__table table tbody tr td.shoping__cart__total {

@@ -48,8 +48,9 @@
                                         <a class="text-muted" th:href="@{/san-pham/{id} (id=${cartItem.product.productId})}" th:text="${cartItem.product.name}">Vegetable’s Package</a>
                                     </h5>
                                 </td>
-                                <td class="shoping__cart__price" th:text="${cartItem.product.price}">
-                                    $55.00
+                                <td class="shoping__cart__price" th:classappend="${cartItem.product.discounts != null} ? 'has-discount' : ''">
+                                    <span th:if="${cartItem.product.discounts != null}" th:classappend="${cartItem.product.discounts != null} ? 'discount-price' : ''" th:text="${cartItem.product.discounts.getRemainingPrice()}"></span>
+                                    <span th:classappend="${cartItem.product.discounts != null} ? 'original-price' : ''" th:text="${cartItem.product.price}"></span>
                                 </td>
                                 <td class="shoping__cart__quantity">
                                     <div class="quantity">
@@ -63,7 +64,7 @@
                                     </div>
                                 </td>
                                 <td class="shoping__cart__total"
-                                    th:text="${cartItem.product.price * cartItem.quantity}">
+                                    th:text="${cartItem.product.discounts != null ? cartItem.product.discounts.getRemainingPrice() * cartItem.quantity : cartItem.product.price * cartItem.quantity}">
                                     $110.00
                                 </td>
                                 <td class="shoping__cart__item__close">
@@ -97,8 +98,9 @@
                     <div class="shoping__checkout">
                         <h5>Tổng tiền giỏ hàng</h5>
                         <ul>
-                            <li>Thành tiền <span>$454.98</span></li>
-                            <li>Tổng tiền <span>$454.98</span></li>
+                            <li>Thành tiền <span class="temporary-amount">$454.98</span></li>
+                            <li>Mã giảm giá <span class="discount-amount">$454.98</span></li>
+                            <li>Tổng tiền <span class="total-amount">$454.98</span></li>
                         </ul>
                         <a href="/thanh-toan" class="primary-btn">THANH TOÁN</a>
                     </div>
@@ -128,7 +130,15 @@
                                 <a href="/san-pham/${ct.product.productId}">${ct.product.name}</a>
                             </h5>
                         </td>
-                        <td class="shoping__cart__price">${ct.product.price}</td>
+                        <td class="shoping__cart__price ${ct.product.discounts != null ? 'has-discount' : ''}">
+                            ${
+                            ct.product.discounts != null ?
+                                `<span class="discount-price">${ct.product.discounts.remainingPrice}</span>
+                                    <span class="original-price">${ct.product.price}</span>`
+                                :
+                                `<span class="original-price">${ct.product.price}</span>`
+                            }
+                        </td>
                         <td class="shoping__cart__quantity">
                             <div class="quantity">
                                 <div class="pro-qty">
@@ -138,7 +148,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="shoping__cart__total">${ct.product.price * ct.quantity}</td>
+                        <td class="shoping__cart__total">${ct.product.discounts != null ? ct.product.discounts.remainingPrice * ct.quantity : ct.product.price * ct.quantity}</td>
                         <td class="shoping__cart__item__close">
                             <span class="icon_close" onclick="deleteCartItem(${ct.cartItemId})"></span>
                         </td>
@@ -146,6 +156,34 @@
                 `
             })
             tableBody.innerHTML = html;
+
+            displayTotalPrice(cartItems);
+        }
+
+        // Tính thành tiền, tổng tiền
+        const displayTotalPrice = (cartItems) => {
+            const temporaryAmount = document.querySelector('.temporary-amount');
+            const discountAmount = document.querySelector('.discount-amount');
+            const totalAmount = document.querySelector('.total-amount');
+
+            let temporaryAmountValue = 0;
+            let discountAmountValue = 0;
+            let totalAmountValue = 0;
+
+            cartItems.forEach(ct => {
+                if (ct.product.discounts != null) {
+                    temporaryAmountValue += ct.product.discounts.remainingPrice * ct.quantity;
+                } else {
+                    temporaryAmountValue += ct.product.price * ct.quantity;
+                }
+            })
+
+            totalAmountValue = temporaryAmountValue - discountAmountValue;
+
+            // display to UI
+            temporaryAmount.innerText = temporaryAmountValue;
+            discountAmount.innerText = discountAmountValue;
+            totalAmount.innerText = totalAmountValue;
         }
 
         // Increment quantity
@@ -220,6 +258,9 @@
                     console.log(err);
                 })
         }
+
+        // call display total price function
+        displayTotalPrice(cart.cartItems);
     </script>
 </th:block>
 </body>

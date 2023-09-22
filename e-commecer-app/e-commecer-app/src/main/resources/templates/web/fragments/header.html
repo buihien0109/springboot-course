@@ -70,7 +70,7 @@
                                     <div class="sub-menu">
                                         <ul>
                                             <li class="menu-item" th:each="subCategory : ${category.subCategories}">
-                                                <a th:href="@{/danh-muc/{slug} (name=${subCategory.slug})}" th:text="${subCategory.name}">Thiết bị điện tử 1</a>
+                                                <a th:href="@{/danh-muc/{categorySlug}?sub={subSlug} (categorySlug=${category.mainCategory.slug}, subSlug=${subCategory.slug})}" th:text="${subCategory.name}">Thiết bị điện tử 1</a>
                                             </li>
                                         </ul>
                                     </div>

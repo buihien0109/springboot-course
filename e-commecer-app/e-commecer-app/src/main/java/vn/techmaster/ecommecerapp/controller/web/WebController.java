@@ -25,7 +25,7 @@ public class WebController {
 
     @GetMapping("/")
     public String getHome(Model model) {
-        model.addAttribute("products", productService.findAllProductCombineCategoryAndDiscount(1, 8));
+        model.addAttribute("data", productService.findAllProductCombineCategoryAndDiscount(1, 8));
         return "web/index";
     }
 

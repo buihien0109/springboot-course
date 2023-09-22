@@ -29,108 +29,116 @@
 
     <!-- Featured Section Begin -->
     <section class="featured spad">
-
+        <div class="container" th:each="dataItem : ${data}" th:if="${dataItem.totalElements > 0}" th:data-name="${dataItem.name}">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title mt-5">
+                        <h2 th:text="${dataItem.name}">Sản phẩm giảm giá</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row product-list">
+                <div class="col-lg-3 col-md-6 col-sm-6" th:each="product : ${dataItem.products}">
+                    <div class="product__item">
+                        <div class="product__item__pic set-bg" th:style="|background-image: url(${product.images.mainImage.imageUrl})|">
+                            <ul class="product__item__pic__hover">
+                                <li><a href="javascript:void(0)" th:onclick="|addToWishList(${product.productId})|"><i class="fa fa-heart"></i></a></li>
+                                <li><a href="javascript:void(0)" th:onclick="|addToCart(${product.productId})|"><i class="fa fa-shopping-cart"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="product__item__text">
+                            <h6><a th:href="@{/san-pham/{id} (id=${product.productId})}" th:text="${product.name}">Sản phẩm 1</a></h6>
+                            <div th:classappend="${product.discounts != null} ? 'product-item-price' : ''">
+                                <h5 th:if="${product.discounts != null}" th:text="${product.discounts.remainingPrice}" class="discount-price"></h5>
+                                <h5 th:text="${product.price}" th:classappend="${product.discounts != null ? 'original-price' : ''}">$100</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row load-more-row" th:if="${dataItem.remain > 0}">
+                <div class="col-lg-12 text-center">
+                    <div class="loadmore__btn">
+                        <button class="border-0 primary-btn" th:attr="onclick=|loadMoreProduct('${dataItem.slug}')|">Xem thêm <span th:text="${dataItem.remain}" class="remain-count">${totalProductsRemain}</span> sản phẩm
+                            <span th:text="${dataItem.name}">${name}</span> <span class="loadmore-icon"><i class="fa fa-angle-down" aria-hidden="true"></i></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
     <!-- Featured Section End -->
 </th:block>
 
 <th:block id="js">
     <script th:inline="javascript">
-        const COUNT_PRODUCT_EACH_RENDERED = 8;
-        const products = [[${products}]];
-        console.log(products);
         let cart = [[${cart}]];
         const wishList = [[${wishList}]];
-        const productsDiscount = [[${productsDiscount}]];
-        console.log(productsDiscount);
+        const data = [[${data}]];
+        console.log(data);
 
-        // covert products to array of object. Each of object with info keys : category parent name, category parent slug, list product
-        const productsByCategory = products.reduce((acc, product) => {
-            const id = product.category.parentCategoryId;
-            const name = product.category.parentCategoryName;
-            const slug = product.category.parentCategorySlug;
-            const rendered = COUNT_PRODUCT_EACH_RENDERED;
+        // load more product by category parent slug
+        function loadMoreProduct(categorySlug) {
+            // get info in data
+            const dataItem = data.find(d => d.slug === categorySlug);
 
-            const categoryParentInfo = acc.find(item => item.name === name);
-            if (categoryParentInfo) {
-                categoryParentInfo.products.push(product);
-            } else {
-                acc.push({
-                    id,
-                    name,
-                    slug,
-                    rendered,
-                    products: [product]
-                })
-            }
-            return acc;
-        }, []);
-        console.log(productsByCategory)
+            // call api
+            axios.get(`/api/v1/products/load-more?categorySlug=${categorySlug}&page=${dataItem.currentPage + 1}`).then(res => {
+                console.log(res);
+                if(res.status === 200) {
+                    // update data
+                    dataItem.products = [...dataItem.products, ...res.data.products];
+                    dataItem.totalElements = res.data.totalElements;
+                    dataItem.remain = res.data.remain;
+                    dataItem.currentPage = res.data.currentPage;
 
-        // render products by category parent name and slug to html
-        const render = () => {
-            const html = productsByCategory.map(categoryParent => {
-                const {name, rendered, products} = categoryParent;
-                const productsRendered = rendered > products.length
-                    ? products.slice(0, products.length)
-                    : products.slice(0, rendered);
-                const totalProductsRemain = products.length - rendered;
-                const isShowButton = totalProductsRemain > 0;
-                return `
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="section-title mt-5">
-                                    <h2>${name}</h2>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            ${productsRendered.map(product => {
-                                return `
-                                    <div class="col-lg-3 col-md-6 col-sm-6">
-                                        <div class="product__item">
-                                            <div class="product__item__pic set-bg" style="background-image: url(${product.images.mainImage.imageUrl})">
-                                                <ul class="product__item__pic__hover">
-                                                    <li><a href="javascript:void(0)" onclick="addToWishList(${product.productId})"><i class="fa fa-heart"></i></a></li>
-                                                    <li><a href="javascript:void(0)" onclick="addToCart(${product.productId})"><i class="fa fa-shopping-cart"></i></a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="product__item__text">
-                                                <h6><a href="/san-pham/${product.productId}">${product.name}</a></h6>
-                                                <h5>${product.price}</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `
-                            }).join('')}
-                        </div>
-                        ${isShowButton ? `
-                            <div class="row">
-                                <div class="col-lg-12 text-center">
-                                    <div class="loadmore__btn">
-                                        <button class="border-0 primary-btn" onclick="loadMoreProduct('${name}')">Xem thêm <span>${totalProductsRemain}</span> sản phẩm
-                                            <span>${name}</span> <span class="loadmore-icon"><i class="fa fa-angle-down" aria-hidden="true"></i></span></button>
-                                    </div>
-                                </div>
-                            </div>
-                        ` : ``}
-                    </div>
-                `
-            }).join('');
-            document.querySelector('.featured.spad').innerHTML = html;
+                    const categoryContainer = document.querySelector(`[data-name="${dataItem.name}"]`);
+                    const loadMoreRow = categoryContainer.querySelector(`.load-more-row`);
+                    const loadMoreBtn = loadMoreRow.querySelector(`.loadmore__btn button`);
+                    // if remain = 0 then remove load more button
+                    if(dataItem.remain === 0) {
+                        loadMoreRow.parentNode.removeChild(loadMoreRow);
+                    } else {
+                        // update remain product in load more button
+                        loadMoreBtn.querySelector(`.remain-count`).innerText = dataItem.remain;
+                    }
+                    renderLoadMore(categorySlug);
+                }
+            }).catch(err => {
+                console.log(err);
+            })
         }
 
-        // load more product by category parent name
-        const loadMoreProduct = (name) => {
-            // find category parent info by name
-            const categoryParentInfo = productsByCategory.find(item => item.name === name);
-
-            // increase rendered product
-            categoryParentInfo.rendered += COUNT_PRODUCT_EACH_RENDERED;
-
-            // render products by category parent name
-            render();
+        const renderLoadMore = (categorySlug) => {
+            const dataItem = data.find(d => d.slug === categorySlug);
+            let html = '';
+            dataItem.products.forEach(product => {
+                html += `
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="product__item">
+                            <div class="product__item__pic set-bg" style="background-image: url(${product.images.mainImage.imageUrl})">
+                                <ul class="product__item__pic__hover">
+                                    <li><a href="javascript:void(0)" onclick="addToWishList(${product.productId})"><i class="fa fa-heart"></i></a></li>
+                                    <li><a href="javascript:void(0)" onclick="addToCart(${product.productId})"><i class="fa fa-shopping-cart"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="product__item__text">
+                                <h6><a href="/san-pham/${product.productId}">${product.name}</a></h6>
+                                <div class="${product.discounts != null ? 'product-item-price' : ''}">
+                                    ${
+                                        product.discounts != null ?
+                                            `<h5 class="discount-price">${product.discounts.remainingPrice}</h5>
+                                            <h5 class="original-price">${product.price}</h5>`
+                                            :
+                                            `<h5>${product.price}</h5>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            })
+            const productContainer = document.querySelector(`[data-name="${dataItem.name}"] .product-list`);
+            productContainer.innerHTML = html;
         }
 
         // add product to cart
@@ -179,7 +187,6 @@
                 toastr.error(err.response.data.message)
             })
         }
-        render();
     </script>
 </th:block>
 </body>

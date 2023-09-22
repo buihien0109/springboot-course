@@ -32,6 +32,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // get all product by parent category slug has pagination
     Page<Product> findByCategory_ParentCategory_SlugIgnoreCase(String slug, Pageable pageable);
 
+    // get all product by parent category name has pagination
+    Page<Product> findByCategory_ParentCategory_NameIgnoreCase(String name, Pageable pageable);
+
     // get all product by parent category slug and category slug has pagination
     Page<Product> findByCategory_ParentCategory_SlugIgnoreCaseAndCategory_SlugIgnoreCase(String slug, String subSlug, Pageable pageable);
 }

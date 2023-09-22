@@ -23,6 +23,18 @@ public class Discount {
     private Date startDate;
     private Date endDate;
 
+    @Transient
+    private Integer remainingPrice;
+
+    public Integer getRemainingPrice() {
+        // calculate remaining price of product with discountType and discountValue
+        if (discountType == DiscountType.PERCENT) {
+            return product.getPrice() - (product.getPrice() * discountValue / 100);
+        } else {
+            return product.getPrice() - discountValue;
+        }
+    }
+
     public static enum DiscountType {
         PERCENT, AMOUNT
     }
