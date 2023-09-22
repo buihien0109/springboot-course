@@ -7,20 +7,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import vn.techmaster.ecommecerapp.model.projection.ProductPublic;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
-import vn.techmaster.ecommecerapp.service.CartService;
+import vn.techmaster.ecommecerapp.service.BlogService;
 import vn.techmaster.ecommecerapp.service.CategoryService;
 import vn.techmaster.ecommecerapp.service.ProductService;
+import vn.techmaster.ecommecerapp.service.TagService;
 
 @Controller
 public class WebController {
     private final CategoryService categoryService;
     private final ProductService productService;
-    private final CartService cartService;
+    private final BlogService blogService;
+    private final TagService tagService;
 
-    public WebController(CategoryService categoryService, ProductService productService, CartService cartService) {
+    public WebController(CategoryService categoryService, ProductService productService, BlogService blogService, TagService tagService) {
         this.categoryService = categoryService;
         this.productService = productService;
-        this.cartService = cartService;
+        this.blogService = blogService;
+        this.tagService = tagService;
     }
 
     @GetMapping("/")
@@ -67,7 +70,17 @@ public class WebController {
     }
 
     @GetMapping("/bai-viet")
-    public String getPost() {
+    public String getPost(
+            Model model,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "6") Integer size,
+            @RequestParam(required = false, defaultValue = "") String tag
+    ) {
+        model.addAttribute("currentPage", page);
+        model.addAttribute("currentTag", tag);
+        model.addAttribute("recentBlogs", blogService.getAllBlogs(3));
+        model.addAttribute("blogs", blogService.getAllBlogs(tag, page, size));
+        model.addAttribute("tags", tagService.getAllTags());
         return "web/post";
     }
 
