@@ -27,57 +27,76 @@
     <!-- Shoping Cart Section Begin -->
     <section class="shoping-cart spad">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="shoping__cart__table">
-                        <table>
-                            <thead>
-                            <tr>
-                                <th class="shoping__product">Sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Số lượng</th>
-                                <th>Thành tiền</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="cartItem : ${cart.cartItems}">
-                                <td class="shoping__cart__item">
-                                    <img th:src="${cartItem.product.images.mainImage.imageUrl}" alt="">
-                                    <h5>
-                                        <a class="text-muted" th:href="@{/san-pham/{id} (id=${cartItem.product.productId})}" th:text="${cartItem.product.name}">Vegetable’s Package</a>
-                                    </h5>
-                                </td>
-                                <td class="shoping__cart__price" th:classappend="${cartItem.product.discounts != null} ? 'has-discount' : ''">
-                                    <span th:if="${cartItem.product.discounts != null}" th:classappend="${cartItem.product.discounts != null} ? 'discount-price' : ''" th:text="${cartItem.product.discounts.getRemainingPrice()}"></span>
-                                    <span th:classappend="${cartItem.product.discounts != null} ? 'original-price' : ''" th:text="${cartItem.product.price}"></span>
-                                </td>
-                                <td class="shoping__cart__quantity">
-                                    <div class="quantity">
-                                        <div class="pro-qty">
+            <div class="row shoping-cart-products">
+                <th:block th:if="${#lists.isEmpty(cart.cartItems)}">
+                    <div class="d-flex flex-column">
+                        <h4 class="mb-3">Không có sản phẩm nào trong giỏ hàng</h4>
+
+                        <div class="shoping__cart__btns">
+                            <a href="/" class="primary-btn cart-btn" style="background: #7fad39; color: #fff;">Tiếp tục mua hàng</a>
+                        </div>
+                    </div>
+
+                </th:block>
+                <th:block th:if="not ${#lists.isEmpty(cart.cartItems)}">
+                    <div class="col-lg-12">
+                        <div class="shoping__cart__table">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th class="shoping__product">Sản phẩm</th>
+                                    <th>Giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Thành tiền</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="cartItem : ${cart.cartItems}">
+                                    <td class="shoping__cart__item">
+                                        <img th:src="${cartItem.product.images.mainImage.imageUrl}" alt="">
+                                        <h5>
+                                            <a class="text-muted"
+                                               th:href="@{/san-pham/{id} (id=${cartItem.product.productId})}"
+                                               th:text="${cartItem.product.name}">Vegetable’s Package</a>
+                                        </h5>
+                                    </td>
+                                    <td class="shoping__cart__price"
+                                        th:classappend="${cartItem.product.discounts != null} ? 'has-discount' : ''">
+                                    <span th:if="${cartItem.product.discounts != null}"
+                                          th:classappend="${cartItem.product.discounts != null} ? 'discount-price' : ''"
+                                          th:text="${cartItem.product.discounts.getRemainingPrice()}"></span>
+                                        <span th:classappend="${cartItem.product.discounts != null} ? 'original-price' : ''"
+                                              th:text="${cartItem.product.price}"></span>
+                                    </td>
+                                    <td class="shoping__cart__quantity">
+                                        <div class="quantity">
+                                            <div class="pro-qty">
                                             <span class="dec qtybtn"
                                                   th:onclick="|decrementQuantity(${cartItem.cartItemId})|">-</span>
-                                            <input type="text" th:value="${cartItem.quantity}" readonly>
-                                            <span class="inc qtybtn"
-                                                  th:onclick="|incrementQuantity(${cartItem.cartItemId})|">+</span>
+                                                <input type="text" th:value="${cartItem.quantity}" readonly>
+                                                <span class="inc qtybtn"
+                                                      th:onclick="|incrementQuantity(${cartItem.cartItemId})|">+</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td class="shoping__cart__total"
-                                    th:text="${cartItem.product.discounts != null ? cartItem.product.discounts.getRemainingPrice() * cartItem.quantity : cartItem.product.price * cartItem.quantity}">
-                                    $110.00
-                                </td>
-                                <td class="shoping__cart__item__close">
+                                    </td>
+                                    <td class="shoping__cart__total"
+                                        th:text="${cartItem.product.discounts != null ? cartItem.product.discounts.getRemainingPrice() * cartItem.quantity : cartItem.product.price * cartItem.quantity}">
+                                        $110.00
+                                    </td>
+                                    <td class="shoping__cart__item__close">
                                     <span class="icon_close"
                                           th:onclick="|deleteCartItem(${cartItem.cartItemId})|"></span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                </th:block>
+
             </div>
-            <div class="row">
+            <div class="row shoping-cart-info" th:if="not ${#lists.isEmpty(cart.cartItems)}">
                 <div class="col-lg-12">
                     <div class="shoping__cart__btns">
                         <a href="/" class="primary-btn cart-btn">Tiếp tục mua hàng</a>
@@ -113,9 +132,6 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const cart = [[${cart}]];
-        console.log(cart);
-
         // write function to render cart from cart object
         const tableBody = document.querySelector('.shoping__cart__table tbody');
         const renderCart = (cartItems) => {
@@ -132,11 +148,11 @@
                         </td>
                         <td class="shoping__cart__price ${ct.product.discounts != null ? 'has-discount' : ''}">
                             ${
-                            ct.product.discounts != null ?
-                                `<span class="discount-price">${ct.product.discounts.remainingPrice}</span>
+                                ct.product.discounts != null ?
+                                    `<span class="discount-price">${ct.product.discounts.remainingPrice}</span>
                                     <span class="original-price">${ct.product.price}</span>`
-                                :
-                                `<span class="original-price">${ct.product.price}</span>`
+                                    :
+                                    `<span class="original-price">${ct.product.price}</span>`
                             }
                         </td>
                         <td class="shoping__cart__quantity">
@@ -199,6 +215,8 @@
                         const cartItem = cart.cartItems.find(ct => ct.cartItemId === cartItemId);
                         cartItem.quantity++;
                         renderCart(cart.cartItems);
+                    } else {
+                        toastr.error('Cập nhật số lượng thất bại!')
                     }
                 })
                 .catch(err => {
@@ -222,6 +240,8 @@
                             cartItem.quantity--;
                             renderCart(cart.cartItems);
                         }
+                    } else {
+                        toastr.error('Cập nhật số lượng thất bại!')
                     }
                 })
                 .catch(err => {
@@ -230,7 +250,6 @@
         }
 
         // delete cart item
-        const shoppingCartIcon = document.querySelector('.shopping-cart-icon span');
         const deleteCartItem = (cartItemId) => {
             const isConfirm = confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?');
             if (!isConfirm) {
@@ -251,7 +270,28 @@
                         // update cart icon
                         shoppingCartIcon.innerText = cart.cartItems.length;
 
+                        // show toastr
                         toastr.success('Xóa sản phẩm khỏi giỏ hàng thành công!')
+
+                        // check if cart is empty to display message
+                        if (cart.cartItems.length === 0) {
+                            const html = `
+                                <div class="d-flex flex-column">
+                                    <h4 class="mb-3">Không có sản phẩm nào trong giỏ hàng</h4>
+                                    <div class="shoping__cart__btns">
+                                        <a href="/" class="primary-btn cart-btn" style="background: #7fad39; color: #fff;">Tiếp tục mua hàng</a>
+                                    </div>
+                                </div>
+                            `
+                            const shopingCartProducts = document.querySelector('.shoping-cart-products');
+                            shopingCartProducts.innerHTML = html;
+
+                            // hide shoping-cart-info
+                            const shopingCartInfo = document.querySelector('.shoping-cart-info');
+                            shopingCartInfo.parentElement.removeChild(shopingCartInfo);
+                        }
+                    } else {
+                        toastr.error('Xóa sản phẩm khỏi giỏ hàng thất bại!')
                     }
                 })
                 .catch(err => {
@@ -259,8 +299,10 @@
                 })
         }
 
-        // call display total price function
-        displayTotalPrice(cart.cartItems);
+        // call display total price function if cart is not empty
+        if (cart.cartItems.length > 0) {
+            displayTotalPrice(cart.cartItems);
+        }
     </script>
 </th:block>
 </body>

@@ -30,10 +30,8 @@ public class WishListService {
     }
 
     // add product to wish list with param productId
-    public void addProductToWishList(Long productId) {
+    public WishListPublic addProductToWishList(Long productId) {
         User user = SecurityUtils.getCurrentUserLogin();
-        WishList wishList = new WishList();
-        wishList.setUser(user);
 
         // check product is exist in wish list
         if (wishListRepository.existsByUser_UserIdAndProduct_ProductId(user.getUserId(), productId)) {
@@ -44,8 +42,12 @@ public class WishListService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResouceNotFoundException("Cannot find product by id " + productId));
 
+        WishList wishList = new WishList();
+        wishList.setUser(user);
         wishList.setProduct(product);
         wishListRepository.save(wishList);
+
+        return WishListPublic.of(wishList);
     }
 
     // delete product from wish list with param wishListId

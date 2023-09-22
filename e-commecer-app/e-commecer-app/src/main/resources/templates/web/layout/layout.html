@@ -43,6 +43,13 @@
 <script src="/js/main.js"></script>
 
 <!--JS tự viết-->
+<script th:inline="javascript">
+    let cart = [[${cart}]];
+    let wishList = [[${wishList}]];
+    const currentUser = [[${currentUser}]];
+    const isLogin = [[${isLogin}]];
+    console.log({cart, wishList, currentUser, isLogin});
+</script>
 <th:block th:replace="${js} ?: ~{}"></th:block>
 </body>
 </html>

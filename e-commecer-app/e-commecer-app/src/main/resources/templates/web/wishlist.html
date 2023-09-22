@@ -8,7 +8,7 @@
 <body>
 <th:block id="content">
     <!-- Breadcrumb Section Begin -->
-    <section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <section class="breadcrumb-section set-bg" style="background-image: url(/img/breadcrumb.jpg)">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -25,27 +25,37 @@
     <!-- Breadcrumb Section End -->
 
     <!-- Shoping Cart Section Begin -->
-    <section class="shoping-cart spad">
+    <section class="wishlist spad">
         <div class="container">
             <div class="row">
                 <th:block th:if="${#lists.isEmpty(wishList)}">
                     <h4>Không có sản phẩm nào trong danh sách yêu thích</h4>
                 </th:block>
 
-                <th:block>
-                    <div class="col-lg-4 col-md-6 col-sm-6" th:each="wishListItem : ${wishList}">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 th:data-setbg="${wishListItem.product.images.mainImage.imageUrl}">
-                                <ul class="product__item__pic__hover">
-                                    <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
+                <th:block th:if="not ${#lists.isEmpty(wishList)}">
+                    <div class="col-lg-6 col-md-6 col-sm-6 wishlist__item__container" th:each="wishListItem : ${wishList}"
+                         th:with="product=${wishListItem.product}" th:data-id="${wishListItem.wishlistId}">
+                        <div class="wishlist__item">
+                            <div class="wishlist__item__item__pic set-bg">
+                                <img th:src="${product.images.mainImage.imageUrl}" alt="">
                             </div>
-                            <div class="product__item__text">
-                                <h6><a th:href="@{/san-pham/{id} (id=${wishListItem.product.productId})}"
-                                       th:text="${wishListItem.product.name}">Crab
-                                    Pool Security</a></h6>
-                                <h5 th:text="'$' + ${wishListItem.product.price}">$30.00</h5>
+                            <div class="wishlist-info d-flex flex-column justify-content-center">
+                                <h6><a th:href="@{/san-pham/{id} (id=${product.productId})}" th:text="${product.name}">Sản
+                                    phẩm 1</a></h6>
+                                <div class="product-item-price d-flex align-items-center"
+                                     th:classappend="${product.discounts != null} ? 'has-discount' : ''">
+                                    <h5 th:if="${product.discounts != null}"
+                                        th:text="${product.discounts.remainingPrice}" class="discount-price"></h5>
+                                    <h5 th:text="${product.price}" class="original-price">$100</h5>
+                                </div>
+                            </div>
+                            <div class="wishlist-btn d-flex flex-column">
+                                <button class="btn-add-to-cart mb-2" th:onclick="|addToCart(${product.productId}, 1)|">
+                                    Thêm vào giỏ
+                                </button>
+                                <button class="btn-remove-wishlist"
+                                        th:onclick="|removeFromWishList(${wishListItem.wishlistId})|">Xóa
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -59,9 +69,42 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const wishList = [[${wishList}]];
-        console.log(wishList);
+        // define function to remove item from wish list in server with parameter is wish list id and using vanila javascript and axios
+        function removeFromWishList(wishListId) {
+            // confirm before remove
+            if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm khỏi danh sách yêu thích?')) {
+                return;
+            }
 
+            axios.delete(`/api/v1/wishlist/${wishListId}`)
+                .then(function (response) {
+                    console.log(response);
+                    if (response.status === 200) {
+                        // remove item from wish list in client
+                        const wishListItem = document.querySelector(`.wishlist .wishlist__item__container[data-id="${wishListId}"]`);
+                        wishListItem.parentNode.removeChild(wishListItem);
+
+                        // update total wish list item in client
+                        wishList.splice(wishList.findIndex(wishListItem => wishListItem.wishlistId === wishListId), 1);
+                        wishlistIcon.innerText = wishList.length;
+
+                        // show notification
+                        toastr.success('Xóa sản phẩm khỏi danh sách yêu thích thành công');
+
+                        // if wish list is empty then show message
+                        if (wishList.length === 0) {
+                            const wishListContainer = document.querySelector(`.wishlist .container .row`);
+                            wishListContainer.innerHTML = '<h4>Không có sản phẩm nào trong danh sách yêu thích</h4>';
+                        }
+                    } else {
+                        toastr.error('Xóa sản phẩm khỏi danh sách yêu thích thất bại');
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toastr.error(error.response.data.message);
+                });
+        }
     </script>
 </th:block>
 </body>

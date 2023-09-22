@@ -2,6 +2,7 @@ package vn.techmaster.ecommecerapp.rest.web;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.techmaster.ecommecerapp.model.projection.WishListPublic;
 import vn.techmaster.ecommecerapp.model.request.WishListRequest;
 import vn.techmaster.ecommecerapp.service.WishListService;
 
@@ -16,8 +17,8 @@ public class WishListResources {
 
     @PostMapping()
     public ResponseEntity<?> addToWishList(@RequestBody WishListRequest wishListRequest) {
-        wishListService.addProductToWishList(wishListRequest.getProductId());
-        return ResponseEntity.ok().build();
+        WishListPublic wishList = wishListService.addProductToWishList(wishListRequest.getProductId());
+        return ResponseEntity.ok(wishList);
     }
 
     @DeleteMapping("/{id}")

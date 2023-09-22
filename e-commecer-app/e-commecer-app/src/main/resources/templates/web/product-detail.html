@@ -137,7 +137,7 @@
                         <div class="product__item__pic set-bg" th:style="|background-image: url(${rProduct.images.mainImage.imageUrl})|">
                             <ul class="product__item__pic__hover">
                                 <li><a href="javascript:void(0)" th:onclick="|addToWishList(${rProduct.productId})|"><i class="fa fa-heart"></i></a></li>
-                                <li><a href="javascript:void(0)" th:onclick="|addToCart(${rProduct.productId})|"><i class="fa fa-shopping-cart"></i></a></li>
+                                <li><a href="javascript:void(0)" th:onclick="|addToCart(${rProduct.productId}, 1)|"><i class="fa fa-shopping-cart"></i></a></li>
                             </ul>
                         </div>
                         <div class="product__item__text">
@@ -157,29 +157,27 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const wishList = [[${wishList}]];
-        const cart = [[${cart}]];
         const product = [[${product}]];
-        console.log({wishList, cart, product});
+        console.log(product);
 
         /*---------------------------------
             Product Details Pic Slider
         ----------------------------------*/
         $(".product__details__pic__slider").owlCarousel({
-            loop: true,
             margin: 20,
             items: 4,
             dots: true,
             smartSpeed: 1200,
             autoHeight: false,
-            autoplay: true
+            autoplay: true,
+            center: true,
+            loop: true,
         });
 
         /*------------------
             Single Product
         --------------------*/
         $('.product__details__pic__slider img').on('click', function () {
-
             var imgurl = $(this).data('imgbigurl');
             var bigImg = $('.product__details__pic__item--large').attr('src');
             if (imgurl != bigImg) {
@@ -214,54 +212,18 @@
             Add to cart
         --------------------- */
         const btnAddToCart = document.querySelector('.btn-add-to-card');
-        const shoppingCartIcon = document.querySelector('.shopping-cart-icon span');
         // Send request to server
         btnAddToCart.addEventListener('click', () => {
-            axios.post('/api/v1/cart/add', {
-                productId: product.productId,
-                quantity: quantity
-            }).then(res => {
-                console.log(res);
-                if(res.status === 200) {
-                    // check if product in cart or not
-                    const cartItem = cart.cartItems.find(ct => ct.product.productId === product.productId);
-                    if(!cartItem) {
-                        shoppingCartIcon.innerText = cart.cartItems.length + 1;
-                    }
-                    toastr.success("Thêm vào giỏ hàng thành công");
-                } else {
-                    toastr.error("Thêm vào giỏ hàng thất bại");
-                }
-            }).catch(err => {
-                console.log(err);
-            })
+            addToCart(product.productId, quantity);
         })
 
         /*-------------------
             Add to wishlist
         --------------------- */
         const btnAddToWishlist = document.querySelector('.btn-add-to-wishlist');
-        const wishlistIcon = document.querySelector('.wishlist-icon span');
         // Send request to server
         btnAddToWishlist.addEventListener("click", () => {
-            axios.post('/api/v1/wishlist', {
-                productId: product.productId
-            }).then(res => {
-                console.log(res);
-                if(res.status === 200) {
-                    // check if product in wishlist or not
-                    const wishListItem = wishList.find(wl => wl.product.productId === product.productId);
-                    if(!wishListItem) {
-                        wishlistIcon.innerText = wishList.length + 1;
-                    }
-                    toastr.success("Thêm vào danh sách yêu thích thành công");
-                } else {
-                    toastr.error("Thêm vào danh sách yêu thích thất bại");
-                }
-            }).catch(err => {
-                console.log(err);
-                toastr.error(err.response.data.message)
-            })
+            addToWishList(product.productId);
         })
     </script>
 </th:block>

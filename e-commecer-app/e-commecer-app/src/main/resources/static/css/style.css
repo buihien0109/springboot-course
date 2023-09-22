@@ -1,35 +1,4 @@
-/******************************************************************
-  Template Name: Ogani
-  Description:  Ogani eCommerce  HTML Template
-  Author: Colorlib
-  Author URI: https://colorlib.com
-  Version: 1.0
-  Created: Colorlib
-******************************************************************/
-
-/*------------------------------------------------------------------
-[Table of contents]
-
-1.  Template default CSS
-	1.1	Variables
-	1.2	Mixins
-	1.3	Flexbox
-	1.4	Reset
-2.  Helper Css
-3.  Header Section
-4.  Hero Section
-5.  Service Section
-6.  Categories Section
-7.  Featured Section
-8.  Latest Product Section
-9.  Contact
-10.  Footer Style
--------------------------------------------------------------------*/
-
-/*----------------------------------------*/
-/* Template default CSS
-/*----------------------------------------*/
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
 
 * {
     box-sizing: border-box;
@@ -38,7 +7,7 @@
 html,
 body {
     height: 100%;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
     font-smoothing: antialiased;
 }
@@ -52,7 +21,7 @@ h6 {
     margin: 0;
     color: #111111;
     font-weight: 400;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 
 h1 {
@@ -81,7 +50,7 @@ h6 {
 
 p {
     font-size: 16px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
     color: #6f6f6f;
     font-weight: 400;
     line-height: 26px;
@@ -3107,6 +3076,80 @@ ol {
 
 .login-toggle-btn a:hover, .register-toggle-btn a:hover, .reset-toggle-btn a:hover {
     text-decoration: underline;
+}
+
+/*---------------------
+  Wishlist Page
+-----------------------*/
+section.wishlist {
+    padding-top: 65px;
+    padding-bottom: 65px;
+}
+
+.wishlist__item {
+    display: flex;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    border: 1px solid #f2f2f2;
+}
+
+.wishlist__item__item__pic img{
+    width: 150px;
+    height: 120px;
+    object-fit: cover;
+}
+
+.wishlist__item .wishlist-info {
+    flex-grow: 1;
+    padding: 10px;
+}
+
+.wishlist__item .wishlist-info h6 a {
+    font-size: 15px;
+    color: #6c757d;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.wishlist__item .wishlist-info h6 a:hover {
+    text-decoration: underline;
+}
+
+.wishlist__item .wishlist-info .product-item-price.has-discount .original-price {
+    font-size: 16px;
+    color: #6f6f6f;
+    text-decoration: line-through;
+}
+
+.wishlist__item .wishlist-info .product-item-price h5 {
+    color: #1c1c1c;
+    font-weight: 500;
+    margin-right: 10px;
+}
+
+.wishlist__item .wishlist-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+}
+
+.wishlist__item .wishlist-btn .btn-add-to-cart {
+    width: 120px;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #ffffff;
+    background: #7fad39;
+    border: none;
+}
+
+.wishlist__item .wishlist-btn .btn-remove-wishlist {
+    width: 120px;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #ffffff;
+    background: #792308;
+    border: none;
 }
 
 /*--------------------------------- Responsive Media Quaries -----------------------------*/

@@ -43,7 +43,7 @@
                         <div class="product__item__pic set-bg" th:style="|background-image: url(${product.images.mainImage.imageUrl})|">
                             <ul class="product__item__pic__hover">
                                 <li><a href="javascript:void(0)" th:onclick="|addToWishList(${product.productId})|"><i class="fa fa-heart"></i></a></li>
-                                <li><a href="javascript:void(0)" th:onclick="|addToCart(${product.productId})|"><i class="fa fa-shopping-cart"></i></a></li>
+                                <li><a href="javascript:void(0)" th:onclick="|addToCart(${product.productId}, 1)|"><i class="fa fa-shopping-cart"></i></a></li>
                             </ul>
                         </div>
                         <div class="product__item__text">
@@ -71,8 +71,6 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        let cart = [[${cart}]];
-        const wishList = [[${wishList}]];
         const data = [[${data}]];
         console.log(data);
 
@@ -118,7 +116,7 @@
                             <div class="product__item__pic set-bg" style="background-image: url(${product.images.mainImage.imageUrl})">
                                 <ul class="product__item__pic__hover">
                                     <li><a href="javascript:void(0)" onclick="addToWishList(${product.productId})"><i class="fa fa-heart"></i></a></li>
-                                    <li><a href="javascript:void(0)" onclick="addToCart(${product.productId})"><i class="fa fa-shopping-cart"></i></a></li>
+                                    <li><a href="javascript:void(0)" onclick="addToCart(${product.productId}, 1)"><i class="fa fa-shopping-cart"></i></a></li>
                                 </ul>
                             </div>
                             <div class="product__item__text">
@@ -139,53 +137,6 @@
             })
             const productContainer = document.querySelector(`[data-name="${dataItem.name}"] .product-list`);
             productContainer.innerHTML = html;
-        }
-
-        // add product to cart
-        const shoppingCartIcon = document.querySelector('.shopping-cart-icon span');
-        const addToCart = (productId) => {
-            axios.post('/api/v1/cart/add', {
-                productId: productId,
-                quantity: 1
-            }).then(res => {
-                console.log(res);
-                if(res.status === 200) {
-                    // check if product in cart or not
-                    const cartItem = cart.cartItems.find(ct => ct.product.productId === productId);
-                    if(!cartItem) {
-                        cart = res.data;
-                        shoppingCartIcon.innerText = cart.cartItems.length;
-                    }
-                    toastr.success("Thêm vào giỏ hàng thành công");
-                } else {
-                    toastr.error("Thêm vào giỏ hàng thất bại");
-                }
-            }).catch(err => {
-                console.log(err);
-            })
-        }
-
-        // add product to wish list
-        const wishlistIcon = document.querySelector('.wishlist-icon span');
-        const addToWishList = (productId) => {
-            axios.post('/api/v1/wishlist', {
-                productId
-            }).then(res => {
-                console.log(res);
-                if(res.status === 200) {
-                    // check if product in wishlist or not
-                    const wishListItem = wishList.find(wl => wl.product.productId === productId);
-                    if(!wishListItem) {
-                        wishlistIcon.innerText = wishList.length + 1;
-                    }
-                    toastr.success("Thêm vào danh sách yêu thích thành công");
-                } else {
-                    toastr.error("Thêm vào danh sách yêu thích thất bại");
-                }
-            }).catch(err => {
-                console.log(err);
-                toastr.error(err.response.data.message)
-            })
         }
     </script>
 </th:block>
