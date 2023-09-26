@@ -9,7 +9,7 @@
 <body>
 <th:block id="content">
     <!-- Breadcrumb Section Begin -->
-    <section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <section class="breadcrumb-section set-bg" style="background-image: url(/img/breadcrumb.jpg)">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -29,73 +29,93 @@
     <section class="checkout spad">
         <div class="container">
             <div class="checkout__form">
-                <h4>Thông tin đơn hàng</h4>
-                <form action="#">
-                    <div class="row">
-                        <div class="col-lg-8 col-md-6">
-                            <div class="checkout__input">
-                                <p>Họ tên người nhận<span>*</span></p>
-                                <input type="text">
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="checkout__input">
-                                        <p>Số điện thoại<span>*</span></p>
-                                        <input type="text">
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="checkout__input">
-                                        <p>Địa chỉ email</p>
-                                        <input type="text">
-                                    </div>
+                <h4>Thông tin giao hàng</h4>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="checkout__input">
+                            <input type="text" th:value="${isLogin ? currentUser.username : ''}" placeholder="Họ tên"
+                                   required id="username">
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="checkout__input">
+                                    <input type="text" th:value="${isLogin ? currentUser.phone : ''}"
+                                           placeholder="Số điện thoại" required id="phone">
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-lg-4">
-                                    <div class="checkout__input">
-                                        <p>Tỉnh/Thành phố<span>*</span></p>
-                                        <select id="province"></select>
-                                    </div>
+                            <div class="col-lg-8">
+                                <div class="checkout__input">
+                                    <input type="text" th:value="${isLogin ? currentUser.email : ''}"
+                                           placeholder="Email" required id="email">
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="checkout__input">
-                                        <p>Quận/Huyện<span>*</span></p>
-                                        <select id="district"></select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="checkout__input">
-                                        <p>Xã/Phường<span>*</span></p>
-                                        <select id="ward"></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="checkout__input">
-                                <p>Địa chỉ nhận hàng<span>*</span></p>
-                                <input type="text" class="checkout__input__add">
-                            </div>
-                            <div class="checkout__input">
-                                <p>Ghi chú đơn hàng</p>
-                                <input type="text" placeholder="Nhập ghi chú ...">
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-6">
-                            <div class="checkout__order">
-                                <h4>Thông tin đơn hàng</h4>
-                                <div class="checkout__order__products">Sản phẩm <span>Tổng</span></div>
-                                <ul>
-                                    <li>Vegetable’s Package <span>$75.99</span></li>
-                                    <li>Fresh Vegetable <span>$151.99</span></li>
-                                    <li>Organic Bananas <span>$53.99</span></li>
-                                </ul>
-                                <div class="checkout__order__subtotal">Thành tiền <span>$750.99</span></div>
-                                <div class="checkout__order__total">Tổng tiền <span>$750.99</span></div>
-                                <button type="submit" class="site-btn">XÁC NHẬN</button>
+                        <div class="checkout__input">
+                            <select id="province"></select>
+                        </div>
+                        <div class="checkout__input">
+                            <select id="district"></select>
+                        </div>
+                        <div class="checkout__input">
+                            <select id="ward"></select>
+                        </div>
+                        <div class="checkout__input">
+                            <input type="text" placeholder="Địa chỉ giao hàng" id="address">
+                        </div>
+                        <div class="checkout__input">
+                            <input type="text" placeholder="Ghi chú đơn hàng..." id="note">
+                        </div>
+                        <div class="checkout__input">
+                            <h4>Phương thức vận chuyển</h4>
+                            <div id="shipping-method">
+                                <div class="d-flex align-items-center">
+                                    <input type="radio" id="delivery" class="mr-1" value="STANDARD" checked
+                                           name="shipping-method">
+                                    <label for="delivery" class="mb-0">Giao hàng tận nơi</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkout__input">
+                            <h4>Phương thức thanh toán</h4>
+                            <div id="payment-method">
+                                <div class="d-flex align-items-center">
+                                    <input type="radio" id="payment-upon-delivery" class="mr-1" value="COD" checked
+                                           name="payment-method">
+                                    <label for="payment-upon-delivery" class="mb-0">Thanh toán khi giao hàng
+                                        (COD)</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkout__input">
+                            <h4>Mã giảm giá</h4>
+                            <div class="d-flex align-items-center">
+                                <input type="text" placeholder="Nhập mã giảm giá (nếu có)" id="coupon-input">
+                                <button class="site-btn btn-apply-coupon">ÁP DỤNG</button>
                             </div>
                         </div>
                     </div>
-                </form>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="checkout__order">
+                            <h4>Thông tin đơn hàng</h4>
+                            <div class="checkout__order__products">Sản phẩm <span>Tổng</span></div>
+                            <ul>
+                                <li th:each="cartItem : ${cart.cartItems}">
+                                    <th:block th:text="|${cartItem.product.name} x ${cartItem.quantity}|">Vegetable’s
+                                        Package
+                                    </th:block>
+                                    <span th:text="${cartItem.product.discounts != null ? cartItem.product.discounts.getRemainingPrice() * cartItem.quantity : cartItem.product.price * cartItem.quantity}">$75.99</span>
+                                </li>
+                            </ul>
+                            <div class="checkout__order__subtotal">Thành tiền <span
+                                    class="temporary-amount">$750.99</span></div>
+                            <div class="checkout__order__discount">Giảm giá <span class="discount-amount">$750.99</span>
+                            </div>
+                            <div class="checkout__order__total">Tổng tiền <span class="total-amount">$750.99</span>
+                            </div>
+                            <button class="site-btn" id="btn-submit-order">XÁC NHẬN</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -104,72 +124,251 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        // Lấy danh sách province https://provinces.open-api.vn/api/p/
+        let couponCode = null;
+        let couponDiscount = null;
+
         // Hiển thị danh sách province vào select id="province"
         const provinceSelect = document.getElementById('province');
         const districtSelect = document.getElementById('district');
         const wardSelect = document.getElementById('ward');
 
         const renderProvince = (provinces) => {
-            provinceSelect.innerHTML = '';
+            console.log(provinces)
+            provinceSelect.innerHTML = '<option hidden="hidden">-- Chọn Tỉnh/Thành phố</option>';
+            districtSelect.innerHTML = '<option hidden="hidden">-- Chọn Quận/Huyện</option>';
+            wardSelect.innerHTML = '<option hidden="hidden">-- Chọn Xã/Phường</option>';
+
             provinces.forEach(province => {
+                const {ProvinceID, ProvinceName} = province;
                 const option = document.createElement('option');
-                option.value = province.code;
-                option.innerText = province.name;
+                option.value = ProvinceID;
+                option.innerText = ProvinceName;
+                option.setAttribute('data-province-name', ProvinceName);
                 provinceSelect.appendChild(option);
             });
         }
 
         const renderDistrict = (districts) => {
-            districtSelect.innerHTML = '';
+            districtSelect.innerHTML = '<option hidden="hidden">-- Chọn Quận/Huyện</option>';
             districts.forEach(district => {
+                const {DistrictID, DistrictName} = district;
                 const option = document.createElement('option');
-                option.value = district.code;
-                option.innerText = district.name;
+                option.value = DistrictID;
+                option.innerText = DistrictName;
+                option.setAttribute('data-district-name', DistrictName);
                 districtSelect.appendChild(option);
             });
         }
 
         const renderWard = (wards) => {
-            wardSelect.innerHTML = '';
+            wardSelect.innerHTML = '<option hidden="hidden">-- Chọn Xã/Phường</option>';
             wards.forEach(ward => {
+                const {WardCode, WardName} = ward;
                 const option = document.createElement('option');
-                option.value = ward.code;
-                option.innerText = ward.name;
+                option.value = WardCode;
+                option.innerText = WardName;
+                option.setAttribute('data-ward-name', WardName);
                 wardSelect.appendChild(option);
             });
         }
 
         const getProvinces = async () => {
-            const response = await axios.get('https://provinces.open-api.vn/api/p/');
-            const provinces = response.data;
-            console.log(provinces);
-            renderProvince(provinces);
+            try {
+                const response = await axios.get('/api/v1/address/provinces');
+                if (response.status === 200) {
+                    const {data} = response.data;
+                    renderProvince(data);
+                    districtSelect.disabled = true;
+                    wardSelect.disabled = true;
+                }
+            } catch (error) {
+                console.log(error);
+                toastr.error('Không thể lấy danh sách tỉnh/thành phố');
+            }
         }
 
         provinceSelect.addEventListener('change', (event) => {
             const provinceCode = event.target.value;
+            console.log(provinceCode)
             getDistricts(provinceCode);
+            districtSelect.disabled = false;
+            wardSelect.disabled = true;
+            wardSelect.innerHTML = '<option hidden="hidden">-- Chọn Xã/Phường</option>';
         });
 
-        const getDistricts = async (provinceCode) => {
-            const response = await axios.get(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
-            const districts = response.data;
-            renderDistrict(districts.districts);
+        const getDistricts = async (provinceId) => {
+            try {
+                const response = await axios.get(`/api/v1/address/districts?province_id=${provinceId}`);
+                if (response.status === 200) {
+                    const {data} = response.data;
+                    renderDistrict(data);
+                }
+            } catch (error) {
+                console.log(error);
+                toastr.error('Không thể lấy danh sách quận/huyện');
+            }
         }
 
         districtSelect.addEventListener('change', (event) => {
-            const districtCode = event.target.value;
-            getWards(districtCode);
+            const districtId = event.target.value;
+            getWards(districtId);
+            wardSelect.disabled = false;
         });
 
-        const getWards = async (districtCode) => {
-            const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
-            const wards = await response.json();
-            renderWard(wards.wards);
+        const getWards = async (districtId) => {
+            try {
+                const response = await axios.get(`/api/v1/address/wards?district_id=${districtId}`);
+                if (response.status === 200) {
+                    const {data} = response.data;
+                    renderWard(data);
+                }
+            } catch (error) {
+                console.log(error);
+                toastr.error('Không thể lấy danh sách xã/phường');
+            }
+        }
+        getProvinces();
+
+        // get TemporaryAmount
+        const getTemporaryAmount = () => {
+            let cartItems = cart.cartItems;
+            let temporaryAmountValue = 0;
+            cartItems.forEach(ct => {
+                if (ct.product.discounts != null) {
+                    temporaryAmountValue += ct.product.discounts.remainingPrice * ct.quantity;
+                } else {
+                    temporaryAmountValue += ct.product.price * ct.quantity;
+                }
+            })
+            return temporaryAmountValue;
         }
 
-        getProvinces();
+        // get DiscountAmount
+        const getDiscountAmount = () => {
+            if (couponDiscount == null) {
+                return 0;
+            }
+            return getTemporaryAmount() * couponDiscount / 100;
+        }
+
+        // get TotalAmount = TemporaryAmount - DiscountAmount
+        const getTotalAmount = () => {
+            return getTemporaryAmount() - getDiscountAmount();
+        }
+
+        // Tính thành tiền, tổng tiền
+        const displayTotalPrice = () => {
+            const temporaryAmount = document.querySelector('.temporary-amount');
+            const discountAmount = document.querySelector('.discount-amount');
+            const totalAmount = document.querySelector('.total-amount');
+
+            // display to UI
+            temporaryAmount.innerText = getTemporaryAmount();
+            discountAmount.innerText = getDiscountAmount();
+            totalAmount.innerText = getTotalAmount();
+        }
+
+        // check coupon
+        const couponInput = document.getElementById('coupon-input');
+        const btnApplyCoupon = document.querySelector('.btn-apply-coupon');
+        btnApplyCoupon.addEventListener('click', async () => {
+            const couponCodeInput = couponInput.value;
+            if (couponCodeInput === '') {
+                toastr.error('Vui lòng nhập mã giảm giá');
+                return;
+            }
+            try {
+                const response = await axios.get(`/api/v1/coupons/check?couponCode=${couponCodeInput}`);
+                if (response.status === 200) {
+                    const {data} = response;
+                    couponCode = data.couponCode;
+                    couponDiscount = data.discount;
+
+                    displayTotalPrice()
+                    toastr.success('Áp dụng mã giảm giá thành công');
+                } else {
+                    toastr.error('Mã giảm giá không hợp lệ');
+                    couponCode = null;
+                    couponDiscount = null;
+                }
+            } catch (error) {
+                console.log(error);
+                toastr.error('Mã giảm giá không hợp lệ');
+                couponCode = null;
+                couponDiscount = null;
+            }
+        })
+
+        // handle submit order
+        const btnSubmitOrder = document.getElementById('btn-submit-order');
+        btnSubmitOrder.addEventListener("click", () => {
+            const username = document.getElementById('username').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+            const note = document.getElementById('note').value;
+            const shippingMethod = document.querySelector('#shipping-method input[type="radio"]:checked').value;
+            const paymentMethod = document.querySelector('#payment-method input[type="radio"]:checked').value;
+            const couponCode = document.getElementById('coupon-input').value;
+            const items = cart.cartItems.map(cartItem => {
+                return {
+                    productId: cartItem.product.productId,
+                    quantity: cartItem.quantity,
+                    price: cartItem.product.discounts != null ? cartItem.product.discounts.remainingPrice : cartItem.product.price
+                }
+            })
+
+            // get province selected and get province name by attribute data-province-name
+            const provinceSelect = document.getElementById('province');
+            const provinceSelected = provinceSelect.options[provinceSelect.selectedIndex];
+            const provinceName = provinceSelected.getAttribute('data-province-name');
+
+            // get district selected and get district name by attribute data-district-name
+            const districtSelect = document.getElementById('district');
+            const districtSelected = districtSelect.options[districtSelect.selectedIndex];
+            const districtName = districtSelected.getAttribute('data-district-name');
+
+            // get ward selected and get ward name by attribute data-ward-name
+            const wardSelect = document.getElementById('ward');
+            const wardSelected = wardSelect.options[wardSelect.selectedIndex];
+            const wardName = wardSelected.getAttribute('data-ward-name');
+
+            const order = {
+                username,
+                phone,
+                email,
+                province: provinceName,
+                district: districtName,
+                ward: wardName,
+                address,
+                note,
+                shippingMethod,
+                paymentMethod,
+                couponCode,
+                couponDiscount,
+                items,
+            }
+            console.log({order})
+
+            axios.post('/api/v1/orders', order)
+                .then(response => {
+                    if (response.status === 200) {
+                        toastr.success('Đặt hàng thành công');
+                        cart.cartItems = [];
+                        setTimeout(() => {
+                            window.location.href = `/chi-tiet-don-hang/${response.data}`;
+                        }, 1500)
+                    } else {
+                        toastr.error('Đặt hàng thất bại');
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    toastr.error('Đặt hàng thất bại');
+                })
+        })
+
+        displayTotalPrice();
     </script>
 </th:block>
 </body>

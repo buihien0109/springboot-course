@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{:: #js})}">
+
+<head>
+    <title>Thông tin tài khoản</title>
+</head>
+
+<body>
+<th:block id="content">
+    <!-- Blog Section Begin -->
+    <section class="account-section spad">
+        <div class="container p-4 bg-white">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="customer-sidebar">
+                        <th:block th:replace="~{user/fragments/sidebar :: customer-sidebar}"></th:block>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="customer-info">
+                        <h4 class="mb-4">Thông tin tài khoản</h4>
+                        <div class="row mb-4">
+                            <div class="col-lg-2">
+                                <div class="d-flex align-items-center h-100">
+                                    <p class="mb-0">Họ tên</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="checkout__input mb-0">
+                                    <input type="text" placeholder="Nhập họ tên đầy đủ">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-lg-2">
+                                <div class="d-flex align-items-center h-100">
+                                    <p class="mb-0">Số điện thoại</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="checkout__input mb-0">
+                                    <input type="text" placeholder="Nhập số điện thoại">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-lg-2">
+                                <div class="d-flex align-items-center h-100">
+                                    <p class="mb-0">Email</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="checkout__input mb-0">
+                                    <input type="text" placeholder="Nhập email">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="w-100 d-flex justify-content-end">
+                                    <button class="border-0 primary-btn">Cập nhật</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Blog Section End -->
+</th:block>
+
+<th:block id="js">
+    <script th:inline="javascript">
+
+    </script>
+</th:block>
+</body>
+
+</html>

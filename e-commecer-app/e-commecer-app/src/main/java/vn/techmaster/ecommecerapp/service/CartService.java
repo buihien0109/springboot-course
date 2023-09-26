@@ -35,6 +35,11 @@ public class CartService {
         return CartPublic.of(cart);
     }
 
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new ResouceNotFoundException("Cart not found"));
+    }
+
     public CartPublic addToCart(AddToCartRequest request) {
         // find product by id, if product not found, throw exception
         Product product = productRepository.findById(request.getProductId())
@@ -79,5 +84,9 @@ public class CartService {
         cartRepository.save(cart);
 
         return CartPublic.of(cart);
+    }
+
+    public void saveCart(Cart cart) {
+        cartRepository.save(cart);
     }
 }

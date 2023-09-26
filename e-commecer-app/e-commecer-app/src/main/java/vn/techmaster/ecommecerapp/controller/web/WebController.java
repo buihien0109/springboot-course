@@ -1,5 +1,7 @@
 package vn.techmaster.ecommecerapp.controller.web;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,24 +9,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import vn.techmaster.ecommecerapp.model.projection.ProductPublic;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
-import vn.techmaster.ecommecerapp.service.BlogService;
-import vn.techmaster.ecommecerapp.service.CategoryService;
-import vn.techmaster.ecommecerapp.service.ProductService;
-import vn.techmaster.ecommecerapp.service.TagService;
+import vn.techmaster.ecommecerapp.service.*;
 
 @Controller
+@Slf4j
+@RequiredArgsConstructor
 public class WebController {
     private final CategoryService categoryService;
     private final ProductService productService;
     private final BlogService blogService;
     private final TagService tagService;
-
-    public WebController(CategoryService categoryService, ProductService productService, BlogService blogService, TagService tagService) {
-        this.categoryService = categoryService;
-        this.productService = productService;
-        this.blogService = blogService;
-        this.tagService = tagService;
-    }
+    private final OrderService orderService;
 
     @GetMapping("/")
     public String getHome(Model model) {
@@ -58,7 +53,7 @@ public class WebController {
 
     @GetMapping("/gio-hang")
     public String getCart(Model model) {
-        if(!SecurityUtils.isAuthenticated()) {
+        if (!SecurityUtils.isAuthenticated()) {
             return "redirect:/dang-nhap";
         }
         return "web/shopping-cart";
@@ -76,30 +71,35 @@ public class WebController {
             @RequestParam(required = false, defaultValue = "6") Integer size,
             @RequestParam(required = false, defaultValue = "") String tag
     ) {
+        log.info("page: {}, size: {}, tag: {}", page, size, tag);
         model.addAttribute("currentPage", page);
         model.addAttribute("currentTag", tag);
         model.addAttribute("recentBlogs", blogService.getAllBlogs(3));
-        model.addAttribute("blogs", blogService.getAllBlogs(tag, page, size));
+        model.addAttribute("pageData", blogService.getAllBlogs(tag, page, size));
         model.addAttribute("tags", tagService.getAllTags());
         return "web/post";
     }
 
-    @GetMapping("/bai-viet/{id}")
-    public String getPostDetail(@PathVariable Long id) {
+    @GetMapping("/bai-viet/{id}/{slug}")
+    public String getPostDetail(@PathVariable Integer id, @PathVariable String slug, Model model) {
+        model.addAttribute("tags", tagService.getAllTags());
+        model.addAttribute("recentBlogs", blogService.getAllBlogs(3));
+        model.addAttribute("blog", blogService.getBlogByIdAndSlug(id, slug));
+        model.addAttribute("relatedBlogs", blogService.getRelatedBlogs(id, slug));
         return "web/post-detail";
     }
 
     @GetMapping("/thanh-toan")
     public String getCheckout() {
-        if(SecurityUtils.isAuthenticated()) {
-            return "redirect:/";
-        }
+//        if (SecurityUtils.isAuthenticated()) {
+//            return "redirect:/";
+//        }
         return "web/checkout";
     }
 
     @GetMapping("/dang-nhap")
     public String getLogin() {
-        if(SecurityUtils.isAuthenticated()) {
+        if (SecurityUtils.isAuthenticated()) {
             return "redirect:/";
         }
         return "web/login";
@@ -107,7 +107,7 @@ public class WebController {
 
     @GetMapping("/dang-ky")
     public String getRegister() {
-        if(SecurityUtils.isAuthenticated()) {
+        if (SecurityUtils.isAuthenticated()) {
             return "redirect:/";
         }
         return "web/register";
@@ -115,9 +115,16 @@ public class WebController {
 
     @GetMapping("/quen-mat-khau")
     public String getForgotPassword() {
-        if(SecurityUtils.isAuthenticated()) {
+        if (SecurityUtils.isAuthenticated()) {
             return "redirect:/";
         }
         return "web/forgot-password";
+    }
+
+    @GetMapping("/chi-tiet-don-hang/{orderNumber}")
+    public String getOrderDetail(@PathVariable String orderNumber, Model model) {
+        model.addAttribute("orderNumber", orderNumber);
+        model.addAttribute("order", orderService.getOrderByOrderNumber(orderNumber));
+        return "web/order-detail";
     }
 }

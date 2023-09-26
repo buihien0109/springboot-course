@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import vn.techmaster.ecommecerapp.entity.Blog;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<Blog, Integer> {
     Page<Blog> findByStatus(Boolean status, Pageable pageable);
@@ -14,4 +15,6 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
     List<Blog> findByStatus(Boolean status, Sort sort);
 
     Page<Blog> findByStatusAndTags_Slug(Boolean status, String slug, Pageable pageable);
+
+    Optional<Blog> findByIdAndSlugAndStatus(Integer id, String slug, Boolean status);
 }

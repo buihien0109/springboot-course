@@ -41,14 +41,18 @@
                             <h4>Danh mục</h4>
                             <ul>
                                 <li th:each="tag : ${tags}">
-                                    <a href="#" th:text="${tag.name}">Làm đẹp</a>
+                                    <a th:href="@{/bai-viet?tag={slug} (slug=${tag.slug})}"
+                                       th:classappend="${tag.slug == currentTag ? 'active' : ''}" th:text="${tag.name}">Làm
+                                        đẹp</a>
                                 </li>
                             </ul>
                         </div>
                         <div class="blog__sidebar__item">
                             <h4>Bài viết gần đây</h4>
-                            <div class="blog__sidebar__recent" th:each="blog : ${recentBlogs}">
-                                <a th:href="@{/bai-viet/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}" class="blog__sidebar__recent__item">
+                            <div class="blog__sidebar__recent">
+                                <a th:each="blog : ${recentBlogs}"
+                                   th:href="@{/bai-viet/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}"
+                                   class="blog__sidebar__recent__item">
                                     <div class="blog__sidebar__recent__item__pic">
                                         <img th:src="${blog.thumbnail}" alt="">
                                     </div>
@@ -63,30 +67,45 @@
                 </div>
                 <div class="col-lg-8 col-md-7">
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="col-lg-6 col-md-6 col-sm-6" th:each="blog : ${pageData.getContent()}">
                             <div class="blog__item">
                                 <div class="blog__item__pic">
-                                    <img src="img/blog/blog-2.jpg" alt="">
+                                    <img th:src="${blog.thumbnail}" alt="">
                                 </div>
                                 <div class="blog__item__text">
                                     <ul>
-                                        <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                        <li><i class="fa fa-comment-o"></i> 5</li>
+                                        <li><i class="fa fa-calendar-o"></i>
+                                            <th:block th:text="${#temporals.format(blog.publishedAt, 'dd/MM/yyyy')}">May
+                                                4,2019
+                                            </th:block>
+                                        </li>
                                     </ul>
-                                    <h5><a href="#">6 ways to prepare breakfast for 30</a></h5>
-                                    <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam
+                                    <h5><a th:href="@{/bai-viet/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}"
+                                           th:text="${blog.title}">6 ways to prepare breakfast for 30</a></h5>
+                                    <p th:text="|${#strings.substring(blog.description, 0, 50)} ...|">Sed quia non
+                                        numquam modi tempora indunt ut labore et dolore magnam aliquam
                                         quaerat </p>
-                                    <a href="#" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-12">
-                            <div class="product__pagination blog__pagination">
-                                <button><i class="fa fa-long-arrow-left"></i></button>
-                                <button>1</button>
-                                <button>2</button>
-                                <button>3</button>
-                                <button><i class="fa fa-long-arrow-right"></i></button>
+                            <div class="blog__pagination">
+                                <button class="pagination-button-previos pagination-button" th:if="${currentPage != 1}"
+                                        th:data-page="${currentPage - 1}">
+                                    <i class="fa fa-long-arrow-left"></i>
+                                </button>
+                                <th:block th:if="${pageData.getTotalPages() != 1}">
+                                    <button class="pagination-button"
+                                            th:each="page : ${#numbers.sequence(1, pageData.getTotalPages())}"
+                                            th:classappend="${currentPage == page ? 'active' : ''}" th:text="${page}"
+                                            th:data-page="${page}">1
+                                    </button>
+                                </th:block>
+                                <button class="pagination-button-next pagination-button"
+                                        th:if="${currentPage != pageData.getTotalPages()}"
+                                        th:data-page="${currentPage + 1}">
+                                    <i class="fa fa-long-arrow-right"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -99,10 +118,36 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const blogs = [[${blogs}]];
+        const pageData = [[${pageData}]];
         const tags = [[${tags}]];
         const recentBlogs = [[${recentBlogs}]];
-        console.log({blogs, tags, recentBlogs});
+        const currentPage = [[${currentPage}]];
+        console.log({pageData, tags, recentBlogs, currentPage});
+
+        document.querySelectorAll('.pagination-button').forEach(btn => {
+            btn.addEventListener('click', function () {
+                let page = btn.dataset.page;
+                console.log(page)
+
+                // if url has query params
+                if (window.location.search) {
+                    console.log(1, window.location.search)
+                    // get query params in url
+                    const urlParams = new URLSearchParams(window.location.search);
+                    // add page param to query params
+                    urlParams.set('page', page);
+
+                    // TODO: if page = 1 => remove page param from query params
+
+                    // set query params to url
+                    window.location.search = urlParams.toString();
+                } else {
+                    // if url has not query params
+                    // add query params to url
+                    window.location.search = `?page=${page}`;
+                }
+            })
+        })
     </script>
 </th:block>
 </body>

@@ -14,6 +14,8 @@ public interface UserPublic {
 
     String getEmail();
 
+    String getPhone();
+
     String getAvatar();
 
     Set<Role> getRoles();
@@ -35,6 +37,11 @@ public interface UserPublic {
         @Override
         public String getEmail() {
             return this.user.getEmail();
+        }
+
+        @Override
+        public String getPhone() {
+            return this.user.getPhone();
         }
 
         @Override

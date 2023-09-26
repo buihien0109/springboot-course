@@ -36,9 +36,32 @@
                             <th:block sec:authorize="isAuthenticated()">
                                 <li><a href="/yeu-thich" class="wishlist-icon"><i class="fa fa-heart"></i> <span th:text="${wishList.size()}">1</span></a></li>
                                 <li><a href="/gio-hang" class="shopping-cart-icon"><i class="fa fa-shopping-bag"></i> <span th:text="${cart.cartItems.size()}">3</span></a></li>
-                                <li><a href="#">
-                                    <img class="user-avatar" th:src="${#authentication.principal.getAvatar()}" alt="">
-                                </a></li>
+                                <li>
+                                    <div class="user-avatar-container">
+                                        <img class="user-avatar" th:src="${#authentication.principal.getAvatar()}" alt="">
+
+                                        <ul class="menu">
+                                            <li class="menu-item">
+                                                <a href=""><span><i class="fa fa-user" aria-hidden="true"></i></span> Tài khoản</a>
+                                            </li>
+                                            <li class="menu-item">
+                                                <a href=""><span><i class="fa fa-file-o" aria-hidden="true"></i></span> Quản lý đơn hàng</a>
+                                            </li>
+                                            <li class="menu-item">
+                                                <a href=""><span><i class="fa fa-map-marker" aria-hidden="true"></i></span> Sổ địa chỉ</a>
+                                            </li>
+                                            <li class="menu-item">
+                                                <a href=""><span><i class="fa fa-ship" aria-hidden="true"></i></span> Lịch sử giao dịch</a>
+                                            </li>
+                                            <li class="menu-item">
+                                                <a href=""><span><i class="fa fa-paper-plane" aria-hidden="true"></i></span> Sản phẩm đã mua</a>
+                                            </li>
+                                            <li class="menu-item">
+                                                <a href=""><span><i class="fa fa-sign-out" aria-hidden="true"></i></span> Đăng xuất</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
                             </th:block>
                         </ul>
                     </div>

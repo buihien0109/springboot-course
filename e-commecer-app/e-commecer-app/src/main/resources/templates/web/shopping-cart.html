@@ -97,20 +97,9 @@
 
             </div>
             <div class="row shoping-cart-info" th:if="not ${#lists.isEmpty(cart.cartItems)}">
-                <div class="col-lg-12">
+                <div class="col-lg-6">
                     <div class="shoping__cart__btns">
                         <a href="/" class="primary-btn cart-btn">Tiếp tục mua hàng</a>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="shoping__continue">
-                        <div class="shoping__discount">
-                            <h5>Mã Giảm Giá</h5>
-                            <form action="#">
-                                <input type="text" placeholder="Nhập mã giảm giá (nếu có)">
-                                <button type="submit" class="site-btn">ÁP DỤNG</button>
-                            </form>
-                        </div>
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -204,15 +193,21 @@
 
         // Increment quantity
         const incrementQuantity = (cartItemId) => {
+            const cartItem = cart.cartItems.find(ct => ct.cartItemId === cartItemId);
+
+            // check if quantity is greater than quantity in stock
+            if (cartItem.quantity >= cartItem.product.stockQuantity) {
+                toastr.error('Số lượng sản phẩm trong kho không đủ!');
+                return;
+            }
+
             // call api to update cart item using axios
             axios.put(`/api/v1/cart-items/${cartItemId}`, {
                 quantity: 1
             })
                 .then(res => {
-                    console.log(res);
                     if (res.status === 200) {
                         // update cart in UI
-                        const cartItem = cart.cartItems.find(ct => ct.cartItemId === cartItemId);
                         cartItem.quantity++;
                         renderCart(cart.cartItems);
                     } else {
@@ -227,15 +222,19 @@
 
         // Decrement quantity
         const decrementQuantity = (cartItemId) => {
+            // check if quantity is less than 1
+            const cartItem = cart.cartItems.find(ct => ct.cartItemId === cartItemId);
+            if (cartItem.quantity <= 1) {
+                return;
+            }
+
             // call api to update cart item using axios
             axios.put(`/api/v1/cart-items/${cartItemId}`, {
                 quantity: -1
             })
                 .then(res => {
-                    console.log(res);
                     if (res.status === 200) {
                         // update cart in UI
-                        const cartItem = cart.cartItems.find(ct => ct.cartItemId === cartItemId);
                         if (cartItem.quantity > 1) {
                             cartItem.quantity--;
                             renderCart(cart.cartItems);

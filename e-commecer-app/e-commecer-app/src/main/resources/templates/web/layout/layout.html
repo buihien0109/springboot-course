@@ -44,10 +44,24 @@
 
 <!--JS tự viết-->
 <script th:inline="javascript">
-    let cart = [[${cart}]];
-    let wishList = [[${wishList}]];
+    const loadDataFromLocalStorage = (key) => {
+        const storageValue = localStorage.getItem(key);
+        return storageValue ? JSON.parse(storageValue) : null;
+    }
+
+    const saveDataToLocalStorage = (key, value) => {
+        localStorage.setItem('key', JSON.stringify(value));
+    }
     const currentUser = [[${currentUser}]];
     const isLogin = [[${isLogin}]];
+    const cartLocalStorage = loadDataFromLocalStorage('cart');
+    const wishListLocalStorage = loadDataFromLocalStorage('wishList');
+    let cart = isLogin
+        ? [[${cart}]]
+        : cartLocalStorage ? cartLocalStorage : {cartItems: []};
+    let wishList = isLogin
+        ? [[${wishList}]]
+        : wishListLocalStorage ? wishListLocalStorage : [];
     console.log({cart, wishList, currentUser, isLogin});
 </script>
 <th:block th:replace="${js} ?: ~{}"></th:block>
