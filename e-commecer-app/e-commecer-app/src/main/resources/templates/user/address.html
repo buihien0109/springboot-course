@@ -21,7 +21,7 @@
                     <div class="customer-info">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4>Thông tin địa chỉ</h4>
-                            <button class="border-0 primary-btn btn-create-address" type="button" data-toggle="modal" data-target="#modal-create-address">Thêm địa chỉ mới</button>
+                            <button class="border-0 primary-btn btn-create-address">Thêm địa chỉ mới</button>
                         </div>
                         <div class="address-info">
                             <div class="d-flex justify-content-between align-items-center"
@@ -33,7 +33,7 @@
                                     <span class="address-default" th:if="${address.isDefault}">(Mặc định)</span>
                                 </p>
                                 <div class="btn-action-list">
-                                    <button class="btn-action" th:onclick="|updateAddress(${address.id})|"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                    <button class="btn-action" th:onclick="|openModalUpdate(${address.id})|"><i class="fa fa-pencil" aria-hidden="true"></i></button>
                                     <button th:if="not ${address.isDefault}" class="btn-action" th:onclick="|deleteAddress(${address.id})|"><i class="fa fa-trash" aria-hidden="true"></i>
                                     </button>
                                 </div>
@@ -47,7 +47,7 @@
     <!-- Blog Section End -->
 
     <!-- Modal create address -->
-    <div class="modal fade" id="modal-create-address" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="modal-address" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -89,6 +89,8 @@
 <th:block id="js">
     <script th:inline="javascript">
         const addressList = [[${addressList}]];
+        let isUpdate = false;
+        let idUpdate = null;
 
         const addressInfo = document.querySelector('.address-info');
         const renderAddress = () => {
@@ -111,9 +113,9 @@
                         <div class="btn-action-list">
                             ${
                                 address.isDefault
-                                    ? `<button class="btn-action" onclick="updateAddress(${address.id})"><i class="fa fa-pencil" aria-hidden="true"></i></button>`
+                                    ? `<button class="btn-action" onclick="openModalUpdate(${address.id})"><i class="fa fa-pencil" aria-hidden="true"></i></button>`
                                     : `
-                                    <button class="btn-action" onclick="updateAddress(${address.id})"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                    <button class="btn-action" onclick="openModalUpdate(${address.id})"><i class="fa fa-pencil" aria-hidden="true"></i></button>
                                     <button class="btn-action" onclick="deleteAddress(${address.id})"><i class="fa fa-trash" aria-hidden="true"></i></button>
                                     `
                             }
@@ -174,7 +176,6 @@
         const wardSelect = document.getElementById('ward');
 
         const renderProvince = (provinces) => {
-            console.log(provinces)
             provinceSelect.innerHTML = '<option hidden="hidden">-- Chọn Tỉnh/Thành phố</option>';
             districtSelect.innerHTML = '<option hidden="hidden">-- Chọn Quận/Huyện</option>';
             wardSelect.innerHTML = '<option hidden="hidden">-- Chọn Xã/Phường</option>';
@@ -230,7 +231,6 @@
 
         provinceSelect.addEventListener('change', (event) => {
             const provinceCode = event.target.value;
-            console.log(provinceCode)
             getDistricts(provinceCode);
             districtSelect.disabled = false;
             wardSelect.disabled = true;
@@ -270,6 +270,14 @@
         }
         getProvinces();
 
+        // open modal create address
+        const btnCreateAddress = document.querySelector('.btn-create-address');
+        btnCreateAddress.addEventListener('click', () => {
+            $('#modal-address').modal('show');
+            // Change title modal
+            document.querySelector('#modal-address .modal-title').innerText = 'Tạo địa chỉ';
+        })
+
         // handle create address, call api using axios with valina js with modal
         function createAddress() {
             const provinceSelected = provinceSelect.options[provinceSelect.selectedIndex];
@@ -302,7 +310,7 @@
                         }
                         addressList.push(res.data);
                         renderAddress();
-                        $('#modal-create-address').modal('hide');
+                        $('#modal-address').modal('hide');
 
                         // show toast success
                         toastr.success('Thêm địa chỉ thành công');
@@ -314,11 +322,65 @@
                 })
         }
 
-        $('#modal-create-address').on('hidden.bs.modal', function (e) {
+        $('#modal-address').on('hidden.bs.modal', function (e) {
             getProvinces();
             document.getElementById('address').value = '';
             document.getElementById('set-address-default').checked = false;
         })
+
+        // open modal update address
+        async function openModalUpdate(id) {
+            $('#modal-address').modal('show');
+            // Change title modal
+            document.querySelector('#modal-address .modal-title').innerText = 'Cập nhật địa chỉ';
+
+            // set data for modal
+            const address = addressList.find(address => address.id === id);
+            console.log(address)
+            document.getElementById('address').value = address.detail;
+            document.getElementById('set-address-default').checked = address.isDefault;
+
+            // set province if province same province in address
+            const provinceOptions = provinceSelect.options;
+            for (let i = 0; i < provinceOptions.length; i++) {
+                const provinceOption = provinceOptions[i];
+                if (provinceOption.getAttribute('data-province-name') === address.province) {
+                    provinceSelect.selectedIndex = i;
+                    break;
+                }
+            }
+
+            // get district by province id
+            console.log("provinceId", provinceSelect.value);
+            await getDistricts(provinceSelect.value);
+
+            // set district if district same district in address
+            const districtOptions = districtSelect.options;
+            for (let i = 0; i < districtOptions.length; i++) {
+                const districtOption = districtOptions[i];
+                if (districtOption.getAttribute('data-district-name') === address.district) {
+                    districtSelect.selectedIndex = i;
+                    break;
+                }
+            }
+
+            // get ward by district id
+            console.log("districtId", districtSelect.value);
+            await getWards(districtSelect.value);
+
+            // set ward if ward same ward in address
+            const wardOptions = wardSelect.options;
+            for (let i = 0; i < wardOptions.length; i++) {
+                const wardOption = wardOptions[i];
+                if (wardOption.getAttribute('data-ward-name') === address.ward) {
+                    wardSelect.selectedIndex = i;
+                    break;
+                }
+            }
+
+            isUpdate = true;
+            idUpdate = id;
+        }
     </script>
 </th:block>
 </body>
