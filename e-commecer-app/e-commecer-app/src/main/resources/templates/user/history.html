@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{:: #js})}">
+
+<head>
+    <title>Lịch sử giao dịch</title>
+</head>
+
+<body>
+<th:block id="content">
+    <!-- Blog Section Begin -->
+    <section class="history-section spad">
+        <div class="container p-4 bg-white">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="customer-sidebar">
+                        <th:block th:replace="~{user/fragments/sidebar :: customer-sidebar}"></th:block>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="w-100 order-history-container">
+                        <h4 class="mb-4">Lịch sử giao dịch</h4>
+                        <table class="w-100 order-history-table">
+                            <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Danh sách sản phẩm</th>
+                                <th>Tổng tiền đơn hàng</th>
+                                <th>Ngày đặt hàng</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:each="order : ${orders}">
+                                <td>
+                                    <a th:href="@{/khach-hang/don-hang/{id}(id=${order.orderNumber})}" th:text="${order.orderNumber}"></a>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li th:each="orderItem : ${order.orderItems}">
+                                            <a th:href="@{/san-pham/{id}(id=${orderItem.product.productId})}" th:text="${orderItem.product.name}"></a>
+                                            <span th:text="|(x ${orderItem.quantity})|"></span>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td th:text="${order.getTotalAmount()}"></td>
+                                <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy')}"></td>
+                                <th:block>
+                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).COMPLETE}" class="text-success">Hoàn thành</td>
+                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).RETURNED}" class="text-secondary">Trả hàng</td>
+                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).CANCELED}" class="text-danger">Hủy đơn</td>
+                                </th:block>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Blog Section End -->
+</th:block>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const orders = [[${orders}]];
+        console.log(orders);
+    </script>
+</th:block>
+</body>
+
+</html>

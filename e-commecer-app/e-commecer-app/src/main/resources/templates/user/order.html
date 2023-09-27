@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{:: #js})}">
+
+<head>
+    <title>Quản lý giao dịch</title>
+</head>
+
+<body>
+<th:block id="content">
+    <!-- Blog Section Begin -->
+    <section class="history-section spad">
+        <div class="container p-4 bg-white">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="customer-sidebar">
+                        <th:block th:replace="~{user/fragments/sidebar :: customer-sidebar}"></th:block>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="w-100 order-history-container">
+                        <h4 class="mb-4">Quản lý đơn hàng</h4>
+                        <table class="w-100 order-history-table">
+                            <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Danh sách sản phẩm</th>
+                                <th>Tổng tiền đơn hàng</th>
+                                <th>Ngày đặt hàng</th>
+                                <th>Trạng thái</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:each="order : ${orders}" th:data-id="${order.orderId}">
+                                <td>
+                                    <a th:href="@{/khach-hang/don-hang/{id}(id=${order.orderNumber})}"
+                                       th:text="${order.orderNumber}"></a>
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li th:each="orderItem : ${order.orderItems}">
+                                            <a th:href="@{/san-pham/{id}(id=${orderItem.product.productId})}"
+                                               th:text="${orderItem.product.name}"></a>
+                                            <span th:text="|(x ${orderItem.quantity})|"></span>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td th:text="${order.getTotalAmount()}"></td>
+                                <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy')}"></td>
+                                <th:block>
+                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT}"
+                                        class="text-secondary">Chờ xác nhận
+                                    </td>
+                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).DELIVERY}"
+                                        class="text-success">Đang vận chuyển
+                                    </td>
+                                </th:block>
+                                <td>
+                                    <button th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT}"
+                                            class="border-0 primary-btn bg-secondary"
+                                            th:onclick="|cancelOrder(${order.orderId})|">HỦY ĐƠN
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Blog Section End -->
+</th:block>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const orders = [[${orders}]];
+        console.log(orders);
+
+        // write function to covert date string to date with format dd/MM/yyyy
+        function convertDate(dateString) {
+            const date = new Date(dateString);
+            const day = `0${date.getDate()}`.slice(-2);
+            const month = `0${date.getMonth() + 1}`.slice(-2);
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // render orders from orders array
+        // function renderOrders() {
+        //     const tableBody = document.querySelector('.order-history-table tbody');
+        //     let html = '';
+        //     orders.forEach(order => {
+        //         const orderItems = order.orderItems;
+        //         const orderItemHtml = orderItems.map(orderItem => {
+        //             return `
+        //                 <li>
+        //                     <a href="/san-pham/${orderItem.product.productId}">${orderItem.product.name}</a>
+        //                     <span>(x ${orderItem.quantity})</span>
+        //                 </li>
+        //             `;
+        //         }).join('');
+        //
+        //         html += `
+        //             <tr>
+        //                 <td>
+        //                     <a href="/khach-hang/don-hang/${order.orderNumber}">${order.orderNumber}</a>
+        //                 </td>
+        //                 <td>
+        //                     <ul>
+        //                         ${orderItemHtml}
+        //                     </ul>
+        //                 </td>
+        //                 <td>${order.totalAmount}</td>
+        //                 <td>${convertDate(order.orderDate)}</td>
+        //                 <td class="${order.status === 'WAIT' ? 'text-secondary' : 'text-success'}">
+        //                     ${order.status === 'WAIT' ? 'Chờ xác nhận' : 'Đang vận chuyển'}
+        //                 </td>
+        //                 <td>
+        //                     ${
+        //                         order.status === 'WAIT'
+        //                             ? `<button class="border-0 primary-btn bg-secondary" onclick="cancelOrder(${order.orderId})">HỦY ĐƠN</button>`
+        //                             : ``
+        //                     }
+        //                 </td>
+        //             </tr>
+        //         `;
+        //     });
+        //     tableBody.innerHTML = html;
+        // }
+
+        // handle cancel order, add event listener to button, then call API to cancel order using axios
+        function cancelOrder(orderId) {
+            axios.put(`/api/v1/orders/${orderId}/cancel`)
+                .then(function (response) {
+                    console.log(response);
+                    if (response.status === 200) {
+                        // delete tr in table by data-id
+                        const tr = document.querySelector(`.order-history-table tbody tr[data-id="${orderId}"]`);
+                        tr.parentNode.removeChild(tr);
+
+                        toastr.success('Hủy đơn hàng thành công');
+                    } else {
+                        toastr.error('Hủy đơn hàng thất bại');
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    showError(error.response.data.message)
+                });
+        }
+
+    </script>
+</th:block>
+</body>
+
+</html>

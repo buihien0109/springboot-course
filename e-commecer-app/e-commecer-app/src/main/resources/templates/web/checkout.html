@@ -356,7 +356,7 @@
                         toastr.success('Đặt hàng thành công');
                         cart.cartItems = [];
                         setTimeout(() => {
-                            window.location.href = `/chi-tiet-don-hang/${response.data}`;
+                            window.location.href = `/xac-nhan-don-hang/${response.data}`;
                         }, 1500)
                     } else {
                         toastr.error('Đặt hàng thất bại');

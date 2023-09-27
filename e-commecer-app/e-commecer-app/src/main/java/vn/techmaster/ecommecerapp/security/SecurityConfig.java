@@ -2,6 +2,7 @@ package vn.techmaster.ecommecerapp.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,9 +32,15 @@ public class SecurityConfig {
             auth.anyRequest().permitAll();
         });
         http.logout(logout -> {
-            logout.deleteCookies("MYSESSION")
+            logout.deleteCookies("JSESSIONID")
                     .invalidateHttpSession(true)
-                    .permitAll();
+                    .permitAll()
+                    .clearAuthentication(true)
+                    .logoutSuccessHandler((request, response, authentication) -> {
+                        request.getSession().setAttribute("MY_SESSION", null);
+                        request.getSession().invalidate();
+                        response.setStatus(HttpStatus.OK.value());
+                    });
         });
         http.authenticationProvider(authenticationProvider);
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
@@ -43,5 +50,4 @@ public class SecurityConfig {
         });
         return http.build();
     }
-
 }

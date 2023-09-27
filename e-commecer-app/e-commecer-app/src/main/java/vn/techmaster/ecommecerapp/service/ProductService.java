@@ -1,13 +1,18 @@
 package vn.techmaster.ecommecerapp.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import vn.techmaster.ecommecerapp.entity.CartItem;
+import vn.techmaster.ecommecerapp.entity.OrderItem;
 import vn.techmaster.ecommecerapp.entity.Product;
+import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.CategorySeparatePublic;
 import vn.techmaster.ecommecerapp.model.projection.ProductPublic;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
+import vn.techmaster.ecommecerapp.security.SecurityUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,14 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@AllArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
-
-    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
-        this.productRepository = productRepository;
-        this.categoryService = categoryService;
-    }
+    private final OrderItemService orderItemService;
 
     public List<ProductPublic> findAll() {
         List<Product> products = productRepository.findAll();

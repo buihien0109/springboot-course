@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{:: #js})}">
+
+<head>
+    <title>Chi tiết đơn hàng</title>
+</head>
+
+<body>
+<th:block id="content">
+    <!-- Blog Section Begin -->
+    <section class="history-section spad">
+        <div class="container p-4 bg-white">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="customer-sidebar">
+                        <th:block th:replace="~{user/fragments/sidebar :: customer-sidebar}"></th:block>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="w-100 order-detail-container">
+                        <h4 class="mb-4">Chi tiết đơn hàng</h4>
+
+                        <div class="order-detail__title">
+                            <h4>Thông tin giao hàng</h4>
+                            <ul>
+                                <li><span class="font-weight-bold">Họ tên:</span> <span th:text="${order.username}">Bùi Hiên</span></li>
+                                <li><span class="font-weight-bold">SĐT:</span> <span th:text="${order.phone}">0344005816</span></li>
+                                <li><span class="font-weight-bold">Email:</span> <span th:text="${order.email}">hien@gmail.com</span></li>
+                                <th:block th:with="addressDetail=|${order.address} - ${order.ward} - ${order.district} - ${order.province}|">
+                                    <li><span class="font-weight-bold">Địa chỉ:</span> <span th:text="${addressDetail}">Xóm 9 Thôn Vân - Thụy Ninh - Thái Thụy - Thái Bình</span>
+                                    </li>
+                                </th:block>
+                                <li><span class="font-weight-bold">Ghi chú:</span> <span th:text="${order.note}">Đi thẳng, qua cầu rẽ trái</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="order-detail__title">
+                            <h4>Phương thức vận chuyển</h4>
+                            <ul>
+                                <li th:if="${order.shippingMethod == T(vn.techmaster.ecommecerapp.entity.OrderTable.ShippingMethod).STANDARD}">Giao hàng tận nơi</li>
+                            </ul>
+                        </div>
+
+                        <div class="order-detail__title">
+                            <h4>Phương thức thanh toán</h4>
+                            <ul>
+                                <li th:if="${order.paymentMethod == T(vn.techmaster.ecommecerapp.entity.OrderTable.PaymentMethod).COD}">Thanh toán khi giao hàng (COD)</li>
+                            </ul>
+                        </div>
+
+                        <div class="order-detail__title">
+                            <h4 class="mb-2">Chi tiết đơn hàng</h4>
+                            <table class="w-100 order-history-table">
+                                <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Sản phẩm</th>
+                                    <th>Giá tiền</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="orderItem, state : ${order.orderItems}">
+                                    <td>
+                                        <span th:text="${state.index + 1}"></span>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>
+                                                <a th:href="@{/san-pham/{id}(id=${orderItem.product.productId})}" th:text="${orderItem.product.name}"></a>
+                                                <span th:text="|(x ${orderItem.quantity})|"></span>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td th:text="${orderItem.price}"></td>
+                                    <td th:text="${orderItem.price * orderItem.quantity}"></td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2"></th>
+                                    <th colspan="2">Tổng tiền : <span class="font-weight-bold" th:text="${order.getTotalAmount()}"></span></th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Blog Section End -->
+</th:block>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const order = [[${order}]];
+        console.log(order);
+    </script>
+</th:block>
+</body>
+
+</html>

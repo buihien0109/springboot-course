@@ -25,5 +25,10 @@ public class OrderResources {
         return ResponseEntity.ok(orderService.createOrder(orderRequest));
     }
 
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<?> cancelOrder(@PathVariable Long id) {
+        orderService.cancelOrder(id);
+        return ResponseEntity.ok().body("Hủy đơn hàng thành công");
+    }
 
 }

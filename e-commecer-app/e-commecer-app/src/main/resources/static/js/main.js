@@ -64,3 +64,41 @@ const addToWishList = (productId) => {
         toastr.error(err.response.data.message)
     })
 }
+
+// show error message
+const showError = (message) => {
+    // check if error is string or object
+    if (typeof message === 'string') {
+        toastr.error(message);
+    } else {
+        // for loop in object and show all value
+        for (const key in message) {
+            toastr.error(message[key]);
+        }
+    }
+};
+
+// check menu item active
+const checkMenuItemActive = () => {
+    const url = window.location.pathname;
+    const menuItem = document.querySelector(`.customer-sidebar-menu .menu-item a[href="${url}"]`);
+    if (menuItem) {
+        menuItem.classList.add('active');
+    }
+};
+checkMenuItemActive();
+
+// handle logout
+function logout() {
+    axios.post('/logout').then(res => {
+        if (res.status === 200) {
+            toastr.success("Đăng xuất thành công");
+            setTimeout(() => {
+                window.location.href = '/dang-nhap';
+            },1500)
+        }
+    }).catch(err => {
+        console.log(err);
+        showError(err.response.data.message);
+    })
+}

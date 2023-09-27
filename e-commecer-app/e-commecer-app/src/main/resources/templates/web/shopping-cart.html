@@ -107,7 +107,6 @@
                         <h5>Tổng tiền giỏ hàng</h5>
                         <ul>
                             <li>Thành tiền <span class="temporary-amount">$454.98</span></li>
-                            <li>Mã giảm giá <span class="discount-amount">$454.98</span></li>
                             <li>Tổng tiền <span class="total-amount">$454.98</span></li>
                         </ul>
                         <a href="/thanh-toan" class="primary-btn">THANH TOÁN</a>
@@ -168,11 +167,9 @@
         // Tính thành tiền, tổng tiền
         const displayTotalPrice = (cartItems) => {
             const temporaryAmount = document.querySelector('.temporary-amount');
-            const discountAmount = document.querySelector('.discount-amount');
             const totalAmount = document.querySelector('.total-amount');
 
             let temporaryAmountValue = 0;
-            let discountAmountValue = 0;
             let totalAmountValue = 0;
 
             cartItems.forEach(ct => {
@@ -183,11 +180,10 @@
                 }
             })
 
-            totalAmountValue = temporaryAmountValue - discountAmountValue;
+            totalAmountValue = temporaryAmountValue;
 
             // display to UI
             temporaryAmount.innerText = temporaryAmountValue;
-            discountAmount.innerText = discountAmountValue;
             totalAmount.innerText = totalAmountValue;
         }
 

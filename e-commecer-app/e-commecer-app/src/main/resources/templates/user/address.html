@@ -78,8 +78,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary" th:onclick="|createAddress()|">Lưu</button>
+                    <button type="button" class="border-0 primary-btn bg-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="border-0 primary-btn btn-handle-address" th:onclick="|handleAddress()|">Lưu</button>
                 </div>
             </div>
         </div>
@@ -276,6 +276,9 @@
             $('#modal-address').modal('show');
             // Change title modal
             document.querySelector('#modal-address .modal-title').innerText = 'Tạo địa chỉ';
+
+            // changle label button
+            document.querySelector('#modal-address .modal-footer .btn-handle-address').innerText = 'Tạo';
         })
 
         // handle create address, call api using axios with valina js with modal
@@ -326,6 +329,7 @@
             getProvinces();
             document.getElementById('address').value = '';
             document.getElementById('set-address-default').checked = false;
+            document.getElementById('set-address-default').disabled = false;
         })
 
         // open modal update address
@@ -334,11 +338,16 @@
             // Change title modal
             document.querySelector('#modal-address .modal-title').innerText = 'Cập nhật địa chỉ';
 
+            // changle label button
+            document.querySelector('#modal-address .modal-footer .btn-handle-address').innerText = 'Cập nhật';
+
             // set data for modal
             const address = addressList.find(address => address.id === id);
-            console.log(address)
             document.getElementById('address').value = address.detail;
             document.getElementById('set-address-default').checked = address.isDefault;
+            if(address.isDefault) {
+                document.getElementById('set-address-default').disabled = true;
+            }
 
             // set province if province same province in address
             const provinceOptions = provinceSelect.options;
@@ -380,6 +389,68 @@
 
             isUpdate = true;
             idUpdate = id;
+        }
+
+        function updateAddress() {
+            const provinceSelected = provinceSelect.options[provinceSelect.selectedIndex];
+            const provinceName = provinceSelected.getAttribute('data-province-name');
+
+            const districtSelected = districtSelect.options[districtSelect.selectedIndex];
+            const districtName = districtSelected.getAttribute('data-district-name');
+
+            const wardSelected = wardSelect.options[wardSelect.selectedIndex];
+            const wardName = wardSelected.getAttribute('data-ward-name');
+
+            const address = document.getElementById('address').value;
+            const isDefault = document.getElementById('set-address-default').checked;
+
+            const data = {
+                province: provinceName,
+                district: districtName,
+                ward: wardName,
+                detail: address,
+                isDefault: isDefault
+            }
+
+            axios.put(`/api/v1/user-address/${idUpdate}`, data)
+                .then(res => {
+                    if (res.status === 200) {
+                        if(res.data.isDefault) {
+                            addressList.forEach(address => {
+                                address.isDefault = false;
+                            })
+                        }
+                        addressList.forEach(address => {
+                            if (address.id === idUpdate) {
+                                address.province = res.data.province;
+                                address.district = res.data.district;
+                                address.ward = res.data.ward;
+                                address.detail = res.data.detail;
+                                address.isDefault = res.data.isDefault;
+                            }
+                        })
+                        renderAddress();
+                        $('#modal-address').modal('hide');
+
+                        // show toast success
+                        toastr.success('Cập nhật địa chỉ thành công');
+
+                        isUpdate = false;
+                        idUpdate = null;
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    toastr.error('Cập nhật địa chỉ thất bại');
+                })
+        }
+
+        function handleAddress() {
+            if (isUpdate) {
+                updateAddress();
+            } else {
+                createAddress();
+            }
         }
     </script>
 </th:block>

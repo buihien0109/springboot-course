@@ -20,6 +20,7 @@ public class WebController {
     private final BlogService blogService;
     private final TagService tagService;
     private final OrderService orderService;
+    private final ReviewService reviewService;
 
     @GetMapping("/")
     public String getHome(Model model) {
@@ -48,6 +49,7 @@ public class WebController {
         ProductPublic product = productService.findById(id);
         model.addAttribute("product", product);
         model.addAttribute("relatedProducts", productService.findAllProductByCategoryIdAndProductIdNot(product.getCategory().getCategoryId(), id, 4));
+        model.addAttribute("reviews", reviewService.getAllReviewsByProductId(id));
         return "web/product-detail";
     }
 
@@ -121,7 +123,7 @@ public class WebController {
         return "web/forgot-password";
     }
 
-    @GetMapping("/chi-tiet-don-hang/{orderNumber}")
+    @GetMapping("/xac-nhan-don-hang/{orderNumber}")
     public String getOrderDetail(@PathVariable String orderNumber, Model model) {
         model.addAttribute("orderNumber", orderNumber);
         model.addAttribute("order", orderService.getOrderByOrderNumber(orderNumber));

@@ -18,48 +18,123 @@
                     </div>
                 </div>
                 <div class="col-lg-8">
-                    <div class="customer-info">
+                    <div class="customer-info pb-5">
                         <h4 class="mb-4">Thông tin tài khoản</h4>
                         <div class="row mb-4">
                             <div class="col-lg-2">
                                 <div class="d-flex align-items-center h-100">
-                                    <p class="mb-0">Họ tên</p>
+                                    <p class="my-0">Avatar</p>
                                 </div>
                             </div>
                             <div class="col-lg-10">
                                 <div class="checkout__input mb-0">
-                                    <input type="text" placeholder="Nhập họ tên đầy đủ">
+                                    <div class="user-avatar-container d-flex align-items-center">
+                                        <img id="avatar-preview" th:src="${currentUser.avatar}" alt="">
+                                        <label for="avatar">Đổi Avatar</label>
+                                        <input type="file" id="avatar" class="d-none">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row mb-4">
                             <div class="col-lg-2">
                                 <div class="d-flex align-items-center h-100">
-                                    <p class="mb-0">Số điện thoại</p>
+                                    <p class="my-0">Họ tên</p>
                                 </div>
                             </div>
                             <div class="col-lg-10">
                                 <div class="checkout__input mb-0">
-                                    <input type="text" placeholder="Nhập số điện thoại">
+                                    <input type="text" placeholder="Nhập họ tên đầy đủ" th:value="${currentUser.username}" id="username">
                                 </div>
                             </div>
                         </div>
                         <div class="row mb-4">
                             <div class="col-lg-2">
                                 <div class="d-flex align-items-center h-100">
-                                    <p class="mb-0">Email</p>
+                                    <p class="my-0">Số điện thoại</p>
                                 </div>
                             </div>
                             <div class="col-lg-10">
                                 <div class="checkout__input mb-0">
-                                    <input type="text" placeholder="Nhập email">
+                                    <input type="text" placeholder="Nhập số điện thoại" th:value="${currentUser.phone}" id="phone">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-lg-2">
+                                <div class="d-flex align-items-center h-100">
+                                    <p class="my-0">Email</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="checkout__input mb-0">
+                                    <input type="text" placeholder="Nhập email" disabled th:value="${currentUser.email}" id="email">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="w-100 d-flex justify-content-end">
-                                    <button class="border-0 primary-btn">Cập nhật</button>
+                                    <button class="border-0 primary-btn" id="btn-update-profile">Cập nhật</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="customer-info pt-5" style="border-top : 10px solid #f2f2f2">
+                        <h4 class="mb-4">Đổi mật khẩu</h4>
+                        <div class="row mb-4">
+                            <div class="col-lg-2">
+                                <div class="d-flex align-items-center h-100">
+                                    <p class="my-0">Mật khẩu cũ</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="checkout__input mb-0">
+                                    <div class="login-form-input">
+                                        <input type="password" id="old-password" class="input-full"
+                                               placeholder="Nhập mật khẩu cũ" autocomplete="off" required>
+                                        <span class="icon-toggle-password"><i class="fa fa-eye" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-lg-2">
+                                <div class="d-flex align-items-center h-100">
+                                    <p class="my-0">Mật khẩu mới</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="checkout__input mb-0">
+                                    <div class="login-form-input">
+                                        <input type="password" id="new-password" class="input-full"
+                                               placeholder="Nhập mật khẩu mới" autocomplete="off" required>
+                                        <span class="icon-toggle-password"><i class="fa fa-eye" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-lg-2">
+                                <div class="d-flex align-items-center h-100">
+                                    <p class="my-0">Nhập lại mật khẩu mới</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="checkout__input mb-0">
+                                    <div class="login-form-input">
+                                        <input type="password" id="confirm-password" class="input-full"
+                                               placeholder="Nhập lại mật khẩu mới" autocomplete="off" required>
+                                        <span class="icon-toggle-password"><i class="fa fa-eye" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="w-100 d-flex justify-content-end">
+                                    <button class="border-0 primary-btn" id="btn-update-password">Cập nhật</button>
                                 </div>
                             </div>
                         </div>
@@ -73,7 +148,101 @@
 
 <th:block id="js">
     <script th:inline="javascript">
+        // hide/show password with icon in inputs using valina javascript
+        const togglePasswordBtns = document.querySelectorAll('.icon-toggle-password');
+        const passwordInputs = document.querySelectorAll('input[type="password"]');
+        togglePasswordBtns.forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                if (passwordInputs[index].type === 'password') {
+                    passwordInputs[index].type = 'text';
+                    btn.innerHTML = '<i class="fa fa-eye-slash" aria-hidden="true"></i>';
+                } else {
+                    passwordInputs[index].type = 'password';
+                    btn.innerHTML = '<i class="fa fa-eye" aria-hidden="true"></i>';
+                }
+            });
+        });
 
+        // add event listener to avatar input change
+        const avatarInput = document.getElementById('avatar');
+        const avatarPreview = document.getElementById('avatar-preview');
+        avatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+
+            // create form data with key file and value is file in input
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Send post request to url /api/v1/users/update-avatar, then check request status and set src for avatar preview
+            axios.post('/api/v1/users/update-avatar', formData)
+                .then(res => {
+                    if (res.status === 200) {
+                        avatarPreview.src = res.data;
+                        toastr.success('Cập nhật avatar thành công');
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    toastr.error('Cập nhật avatar thất bại');
+                });
+        });
+
+        // add event listener to update profile button
+        const btnUpdateProfile = document.getElementById('btn-update-profile');
+        btnUpdateProfile.addEventListener('click', () => {
+            const username = document.querySelector('#username').value;
+            const phone = document.querySelector('#phone').value;
+
+            // create data with key username and value is username in input
+            const data = {
+                username: username,
+                phone: phone
+            };
+
+            // Send post request to url /api/v1/users/update-profile, then check request status and set src for avatar preview
+            axios.put('/api/v1/users/update-profile', data)
+                .then(res => {
+                    if (res.status === 200) {
+                        toastr.success('Cập nhật thông tin thành công');
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    toastr.error('Cập nhật thông tin thất bại');
+                });
+        });
+
+        // add event listener to update password button
+        const btnUpdatePassword = document.getElementById('btn-update-password');
+        btnUpdatePassword.addEventListener('click', () => {
+            const oldPassword = document.querySelector('#old-password').value;
+            const newPassword = document.querySelector('#new-password').value;
+            const confirmPassword = document.querySelector('#confirm-password').value;
+
+            // create data with key username and value is username in input
+            const data = {
+                oldPassword: oldPassword,
+                newPassword: newPassword,
+                confirmPassword: confirmPassword
+            };
+
+            // Send post request to url /api/v1/users/update-password, then check request status and set src for avatar preview
+            axios.put('/api/v1/users/update-password', data)
+                .then(res => {
+                    if (res.status === 200) {
+                        toastr.success('Cập nhật mật khẩu thành công');
+
+                        // reset all password input
+                        document.querySelector('#old-password').value = '';
+                        document.querySelector('#new-password').value = '';
+                        document.querySelector('#confirm-password').value = '';
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    showError(err.response.data.message);
+                });
+        });
     </script>
 </th:block>
 </body>

@@ -10,6 +10,8 @@ import vn.techmaster.ecommecerapp.repository.OrderTableRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
 
+import java.util.List;
+
 @Service
 public class OrderService {
 
@@ -91,5 +93,60 @@ public class OrderService {
                 .orElseThrow(() -> new ResouceNotFoundException("Order not found"));
 
         return OrderTablePublic.of(orderTable);
+    }
+
+    public List<OrderTablePublic> getOrderHistoryByUserLogin() {
+        User user = SecurityUtils.getCurrentUserLogin();
+        List<OrderTable> orderTables = orderTableRepository.findByUser_UserIdOrderByOrderDateDesc(user.getUserId());
+
+        // filter order by status. get order with status is COMPLETED, RETURNED, CANCELLED
+        List<OrderTable> orderTablesReturn = orderTables.stream()
+                .filter(order -> order.getStatus() == OrderTable.Status.COMPLETE
+                        || order.getStatus() == OrderTable.Status.RETURNED
+                        || order.getStatus() == OrderTable.Status.CANCELED)
+                .toList();
+
+        return orderTablesReturn.stream()
+                .map(OrderTablePublic::of)
+                .toList();
+    }
+
+    public List<OrderTablePublic> getAllOrderWaitAndDeliveryByUserLogin() {
+        User user = SecurityUtils.getCurrentUserLogin();
+        List<OrderTable> orderTables = orderTableRepository.findByUser_UserIdOrderByOrderDateDesc(user.getUserId());
+
+        // filter order by status. get order with status is WAIT, DELIVERY
+        List<OrderTable> orderTablesReturn = orderTables.stream()
+                .filter(order -> order.getStatus() == OrderTable.Status.WAIT
+                        || order.getStatus() == OrderTable.Status.DELIVERY)
+                .toList();
+
+        return orderTablesReturn.stream()
+                .map(OrderTablePublic::of)
+                .toList();
+    }
+
+    public void cancelOrder(Long id) {
+        // find order by id
+        OrderTable orderTable = orderTableRepository.findById(id)
+                .orElseThrow(() -> new ResouceNotFoundException("Order not found"));
+
+        // check order status
+        if (orderTable.getStatus() != OrderTable.Status.WAIT) {
+            throw new ResouceNotFoundException("Order status is not WAIT");
+        }
+
+        // update order status to CANCELED
+        orderTable.setStatus(OrderTable.Status.CANCELED);
+
+        // save order to database
+        orderTableRepository.save(orderTable);
+
+        // update product quantity
+        orderTable.getOrderItems().forEach(item -> {
+            Product product = item.getProduct();
+            product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
+            productRepository.save(product);
+        });
     }
 }

@@ -531,7 +531,7 @@ ol {
     position: relative;
 }
 
-.header__cart ul li .user-avatar-container:hover .menu{
+.header__cart ul li .user-avatar-container:hover .menu {
     display: block;
 }
 
@@ -1808,7 +1808,6 @@ ol {
 
 .product__details__text .product__details__rating i {
     margin-right: -2px;
-    color: #EDBB0E;
 }
 
 .product__details__text .product__details__rating span {
@@ -1921,13 +1920,14 @@ ol {
     display: inline-block;
 }
 
-.product__details__tab {
-    padding-top: 85px;
-}
+/*.product__details__tab {*/
+/*    padding-top: 85px;*/
+/*}*/
 
 .product__details__tab .nav-tabs {
     border-bottom: none;
     justify-content: center;
+    align-items: center;
     position: relative;
 }
 
@@ -1936,7 +1936,7 @@ ol {
     left: 0;
     top: 12px;
     height: 1px;
-    width: 430px;
+    width: 410px;
     background: #ebebeb;
     content: "";
 }
@@ -1946,7 +1946,7 @@ ol {
     right: 0;
     top: 12px;
     height: 1px;
-    width: 430px;
+    width: 410px;
     background: #ebebeb;
     content: "";
 }
@@ -1982,6 +1982,164 @@ ol {
 
 .product__details__tab .product__details__tab__desc p {
     color: #666666;
+}
+
+.review-section {
+    background: #F3F6FA;
+    padding-top: 80px;
+    padding-bottom: 80px;
+    margin-bottom: 80px;
+}
+
+.review-section .nav-tabs .nav-link.active {
+    background-color: transparent;
+}
+
+.review-overview .progress {
+    height: 10px;
+}
+
+.review-overview .progress-block, .progress-item span:last-child {
+    width: 20px;
+}
+
+#modal-review .review-product-info img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+#modal-review .review-product-info p {
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+#modal-review .review-product-content textarea {
+    width: 100%;
+    height: 120px;
+    border: 1px solid #ebebeb;
+    padding: 10px 20px 10px;
+    font-size: 14px;
+}
+
+#modal-review .review-product-rating-item {
+    font-size: 30px;
+    color: #ebebeb;
+    cursor: pointer;
+}
+
+#modal-review .review-product-rating-item:hover {
+    color: #EDBB0E;
+}
+
+#modal-review .review-product-rating-item.active {
+    color: #EDBB0E;
+}
+
+.review-overview .progress-bar {
+    background-color: #7fad39;
+    height: 10px;
+}
+
+.review-list .review-item {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.review-list .review-item:last-child {
+    margin-bottom: 0;
+}
+
+.review-list .review-item .review-avatar {
+    flex-basis: 100px;
+}
+
+.review-list .review-item img {
+    display: block;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.review-list .review-item .review-info {
+    flex-basis: calc(100% - 100px);
+    padding-left: 12px;
+}
+
+.review-list .review-item .review-info .author {
+    font-weight: 700;
+}
+
+.review-list .review-item .review-info .time {
+    font-weight: 400;
+    color: #6f6f6f;
+    font-size: 14px;
+}
+
+.review-list .review-item .review-info .rating,
+.review-overview .rating {
+    color: #EDBB0E;
+}
+
+.review-list .review-item .review-info .rating span,
+.review-overview .rating span {
+    margin-right: 3px;
+    display: inline-block;
+}
+
+.review-list .review-item .review-info .rating span.active,
+.review-overview .rating span.active,
+.product__details__rating .rating span.active {
+    color: #EDBB0E;
+}
+
+.review-list .review-item .review-info .rating span.unactive,
+.review-overview .rating span.unactive,
+.product__details__rating .rating span.unactive{
+    color: #939ca3;
+}
+
+.review-form textarea {
+    width: 100%;
+    height: 100px;
+    border: 1px solid #ebebeb;
+    padding-left: 20px;
+    font-size: 16px;
+    color: #b2b2b2;
+}
+
+#review-pagination ul li {
+    border: none;
+    border-radius: 0;
+}
+
+#review-pagination ul li.active a {
+    font-family: "Roboto", sans-serif;
+    background: #7fad39;
+    border-color: #7fad39;
+    color: #ffffff;
+}
+
+#review-pagination ul li a:hover {
+    background: #7fad39;
+    border-color: #7fad39;
+    color: #ffffff;
+}
+
+#review-pagination ul li a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+    color: #b2b2b2;
+    font-weight: 700;
+    line-height: 40px;
+    text-align: center;
+    margin-right: 16px;
+    transition: all, 0.3s;
+    border: none;
+    border-radius: 0;
 }
 
 /*---------------------
@@ -2053,12 +2211,12 @@ ol {
     display: inline-block;
 }
 
-.shoping__cart__table table tbody tr td.shoping__cart__item h5 a{
+.shoping__cart__table table tbody tr td.shoping__cart__item h5 a {
     color: #1c1c1c;
     display: inline-block;
 }
 
-.shoping__cart__table table tbody tr td.shoping__cart__item h5 a:hover{
+.shoping__cart__table table tbody tr td.shoping__cart__item h5 a:hover {
     text-decoration: underline;
 }
 
@@ -2258,6 +2416,42 @@ ol {
     color: #ffffff;
 }
 
+.checkout__input .user-avatar-container {
+    position: relative;
+    width: 100px;
+}
+
+.checkout__input .user-avatar-container img {
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.checkout__input .user-avatar-container:hover img {
+    filter: brightness(0.5);
+}
+
+.checkout__input .user-avatar-container label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    display: none;
+    font-size: 14px;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.checkout__input .user-avatar-container:hover label {
+    display: flex;
+}
+
 .checkout__form p {
     column-rule: #b2b2b2;
 }
@@ -2276,7 +2470,8 @@ ol {
 }
 
 .checkout__input input[type="text"],
-.checkout__input input[type="email"] {
+.checkout__input input[type="email"],
+.checkout__input input[type="password"] {
     width: 100%;
     height: 46px;
     border: 1px solid #ebebeb;
@@ -2411,7 +2606,7 @@ ol {
 
 .checkout__order .checkout__order__subtotal span,
 .checkout__order .checkout__order__discount span,
-.checkout__order .checkout__order__ship span{
+.checkout__order .checkout__order__ship span {
     float: right;
 }
 
@@ -3171,7 +3366,7 @@ section.wishlist {
     border: 1px solid #f2f2f2;
 }
 
-.wishlist__item__item__pic img{
+.wishlist__item__item__pic img {
     width: 150px;
     height: 120px;
     object-fit: cover;
@@ -3268,7 +3463,7 @@ section.wishlist {
     margin-top: 20px;
 }
 
-.order-detail-products >div > h4:first-child {
+.order-detail-products > div > h4:first-child {
     margin-top: 0;
 }
 
@@ -3312,8 +3507,20 @@ section.wishlist {
     width: 25px;
 }
 
+.customer-sidebar .customer-sidebar-menu .menu-item a.active {
+    background: #F3F6FA;
+}
+
 .customer-sidebar .customer-sidebar-menu .menu-item a:hover {
     background: #F3F6FA;
+}
+
+.customer-info #avatar-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    object-fit: cover;
 }
 
 .customer-info .address-detail {
@@ -3358,6 +3565,63 @@ section.wishlist {
 
 .customer-info p {
     margin: 15px 0;
+}
+
+/*---------------------
+  History Page
+-----------------------*/
+.history-section {
+    background: #F3F6FA;
+    border-bottom: 2px solid #7fad39;
+}
+
+.order-history-table {
+    border-collapse: collapse;
+}
+
+.order-history-table, .order-history-table th, .order-history-table td {
+    border: 1px solid #ebebeb;
+    color: #6f6f6f;
+}
+
+.order-history-table th, .order-history-table td {
+    padding: 10px;
+}
+
+.order-history-table ul li {
+    list-style-type: none;
+}
+
+.order-history-table ul li a {
+    color: #6f6f6f;
+}
+
+.order-history-table ul li a:hover {
+    text-decoration: underline;
+}
+
+.order-history-table ul li span {
+    font-weight: 700;
+}
+
+.order-detail-container {
+    color: #6f6f6f;
+}
+
+.order-detail-container .order-detail__title {
+    margin-top: 24px;
+}
+
+.order-detail-container .order-detail__title h4 {
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.order-detail-container .order-detail__title ul li {
+    list-style-type: none;
+    line-height: 40px;
+    padding-left: 16px;
 }
 
 /*--------------------------------- Responsive Media Quaries -----------------------------*/

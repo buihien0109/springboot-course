@@ -3,6 +3,8 @@ package vn.techmaster.ecommecerapp.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -23,5 +25,21 @@ public class Review {
     private Product product;
 
     private Integer rating;
+
+    @Column(columnDefinition = "TEXT")
     private String comment;
+
+    private Date createdAt;
+    private Date updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = new Date();
+    }
 }
