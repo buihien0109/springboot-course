@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Cart;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface CartPublic {
@@ -16,6 +17,9 @@ public interface CartPublic {
 
         @Override
         public List<CartItemPublic> getCartItems() {
+            if (cart == null) {
+                return new ArrayList<>();
+            }
             return cart.getCartItems().stream().map(CartItemPublic::of).toList();
         }
     }

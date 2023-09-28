@@ -73,7 +73,7 @@ public class OrderService {
 
         // delete all cart item in cart of user
         if (user != null) {
-            Cart cart = cartService.getCartByUserId(user.getUserId());
+            Cart cart = cartService.getCartForLoggedInUser(user.getUserId());
             cart.getCartItems().clear();
             cartService.saveCart(cart);
         }

@@ -17,7 +17,7 @@ public class CartResources {
 
     @GetMapping
     public ResponseEntity<?> getCart() {
-        return ResponseEntity.ok(cartService.getCartByUserId());
+        return ResponseEntity.ok(cartService.getCartForLoggedInUser());
     }
 
     @PostMapping("/add")

@@ -30,12 +30,12 @@
                 <div class="col-lg-3">
                     <div class="header__cart">
                         <ul>
+                            <li><a href="/yeu-thich" class="wishlist-icon"><i class="fa fa-heart"></i> <span th:text="${wishList.size()}">1</span></a></li>
+                            <li><a href="/gio-hang" class="shopping-cart-icon"><i class="fa fa-shopping-bag"></i> <span th:text="${cart.cartItems.size()}">3</span></a></li>
                             <th:block sec:authorize="not isAuthenticated()">
                                 <li><a href="/dang-nhap"><i class="fa fa-user"></i></a></li>
                             </th:block>
                             <th:block sec:authorize="isAuthenticated()">
-                                <li><a href="/yeu-thich" class="wishlist-icon"><i class="fa fa-heart"></i> <span th:text="${wishList.size()}">1</span></a></li>
-                                <li><a href="/gio-hang" class="shopping-cart-icon"><i class="fa fa-shopping-bag"></i> <span th:text="${cart.cartItems.size()}">3</span></a></li>
                                 <li>
                                     <div class="user-avatar-container">
                                         <img class="user-avatar" th:src="${#authentication.principal.getAvatar()}" alt="">

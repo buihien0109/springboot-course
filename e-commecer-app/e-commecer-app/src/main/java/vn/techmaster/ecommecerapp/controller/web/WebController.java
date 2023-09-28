@@ -54,10 +54,7 @@ public class WebController {
     }
 
     @GetMapping("/gio-hang")
-    public String getCart(Model model) {
-        if (!SecurityUtils.isAuthenticated()) {
-            return "redirect:/dang-nhap";
-        }
+    public String getCart() {
         return "web/shopping-cart";
     }
 
@@ -93,9 +90,6 @@ public class WebController {
 
     @GetMapping("/thanh-toan")
     public String getCheckout() {
-//        if (SecurityUtils.isAuthenticated()) {
-//            return "redirect:/";
-//        }
         return "web/checkout";
     }
 
