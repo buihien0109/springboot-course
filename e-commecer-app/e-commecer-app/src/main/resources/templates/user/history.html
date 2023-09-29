@@ -44,7 +44,7 @@
                                         </li>
                                     </ul>
                                 </td>
-                                <td th:text="${order.getTotalAmount()}"></td>
+                                <td class="currency" th:text="${order.getTotalAmount()}"></td>
                                 <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy')}"></td>
                                 <th:block>
                                     <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).COMPLETE}" class="text-success">Hoàn thành</td>

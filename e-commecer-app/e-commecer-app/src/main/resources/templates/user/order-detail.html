@@ -75,12 +75,12 @@
                                             </li>
                                         </ul>
                                     </td>
-                                    <td th:text="${orderItem.price}"></td>
-                                    <td th:text="${orderItem.price * orderItem.quantity}"></td>
+                                    <td class="currency" th:text="${orderItem.price}"></td>
+                                    <td class="currency" th:text="${orderItem.price * orderItem.quantity}"></td>
                                 </tr>
                                 <tr>
                                     <th colspan="2"></th>
-                                    <th colspan="2">Tổng tiền : <span class="font-weight-bold" th:text="${order.getTotalAmount()}"></span></th>
+                                    <th colspan="2">Tổng tiền : <span class="font-weight-bold currency" th:text="${order.getTotalAmount()}"></span></th>
                                 </tr>
                                 </tbody>
                             </table>

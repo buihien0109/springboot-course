@@ -41,7 +41,7 @@ public class CartService {
             return null;
         }
         Cart cart = cartRepository.findByUser_UserId(user.getUserId())
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy giỏ hàng"));
+                .orElse(null);
         return CartPublic.of(cart);
     }
 
@@ -52,18 +52,7 @@ public class CartService {
         List<CartItemInCookie> cartItemInCookies = CartUtils.getCartFromCookie(httpServletRequest);
         log.info("cartItemInCookies: {}", cartItemInCookies);
 
-        Cart cart = new Cart();
-        cartItemInCookies.forEach(cartItemInCookie -> {
-            Product product = productRepository.findById(cartItemInCookie.getProductId())
-                    .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm"));
-            CartItem cartItem = new CartItem();
-            cartItem.setCartItemId(cartItemInCookie.getCartItemId());
-            cartItem.setProduct(product);
-            cartItem.setQuantity(cartItemInCookie.getQuantity());
-            cart.addCartItem(cartItem);
-        });
-
-        return CartPublic.of(cart);
+        return getCartItemInCookieToCartPublic(cartItemInCookies);
     }
 
     public Cart getCartForLoggedInUser(Long userId) {
@@ -98,9 +87,10 @@ public class CartService {
 
     private CartPublic addToCartForGuestUser(AddToCartRequest request, Product product) {
         log.info("addToCartForGuestUser");
+        log.info("request: {}", request);
 
         List<CartItemInCookie> cartItemInCookies = CartUtils.getCartFromCookie(httpServletRequest);
-        log.info("cartItemInCookies: {}", cartItemInCookies);
+        log.info("cartItemInCookies Before Add: {}", cartItemInCookies);
 
         // check if product is already in cart
         // if product is already in cart, increase quantity
@@ -108,6 +98,7 @@ public class CartService {
         Optional<CartItemInCookie> cartItemInCookieOptional = cartItemInCookies.stream()
                 .filter(cartItemInCookie -> cartItemInCookie.getProductId().equals(request.getProductId())).findFirst();
         if (cartItemInCookieOptional.isPresent()) {
+            log.info("Cart item is already in cart");
             CartItemInCookie cartItemInCookie = cartItemInCookieOptional.get();
 
             // check if product quantity is enough
@@ -117,6 +108,7 @@ public class CartService {
 
             cartItemInCookie.setQuantity(cartItemInCookie.getQuantity() + request.getQuantity());
         } else {
+            log.info("Cart item is not in cart");
             // check if product quantity is enough
             if (product.getStockQuantity() < request.getQuantity()) {
                 throw new BadRequestException("Số lượng sản phẩm không đủ");
@@ -132,7 +124,22 @@ public class CartService {
         // save cart to cookie
         CartUtils.setCartToCookie(httpServletResponse, cartItemInCookies);
 
-        return getCartForGuestUser();
+        return getCartItemInCookieToCartPublic(cartItemInCookies);
+    }
+
+    private CartPublic getCartItemInCookieToCartPublic(List<CartItemInCookie> cartItemInCookies) {
+        Cart cart = new Cart();
+        cartItemInCookies.forEach(cartItemInCookie -> {
+            Product product = productRepository.findById(cartItemInCookie.getProductId())
+                    .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm"));
+            CartItem cartItem = new CartItem();
+            cartItem.setCartItemId(cartItemInCookie.getCartItemId());
+            cartItem.setProduct(product);
+            cartItem.setQuantity(cartItemInCookie.getQuantity());
+            cart.addCartItem(cartItem);
+        });
+
+        return CartPublic.of(cart);
     }
 
     private CartPublic addToCartForLoggedInUser(AddToCartRequest request, User user, Product product) {

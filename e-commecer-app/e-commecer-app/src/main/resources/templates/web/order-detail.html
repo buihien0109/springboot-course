@@ -89,14 +89,14 @@
                                 <th:block>
                                     <th:block th:text="${orderItem.product.name}"></th:block> (x <th:block th:text="${orderItem.quantity}"></th:block>)
                                 </th:block>
-                                <span th:text="${orderItem.quantity * orderItem.price}">21690</span>
+                                <span class="currency" th:text="${orderItem.quantity * orderItem.price}">21690</span>
                             </li>
                         </ul>
-                        <div class="checkout__order__subtotal">Thành tiền <span class="temporary-amount" th:text="${order.getTemporaryAmount()}">181456</span>
+                        <div class="checkout__order__subtotal">Thành tiền <span class="temporary-amount currency" th:text="${order.getTemporaryAmount()}">181456</span>
                         </div>
-                        <div class="checkout__order__discount">Giảm giá <span class="discount-amount" th:text="${order.getDiscountAmount()}">0</span>
+                        <div class="checkout__order__discount">Giảm giá <span class="discount-amount currency" th:text="${order.getDiscountAmount()}">0</span>
                         </div>
-                        <div class="checkout__order__total">Tổng tiền <span class="total-amount" th:text="${order.getTotalAmount()}">181456</span>
+                        <div class="checkout__order__total">Tổng tiền <span class="total-amount currency" th:text="${order.getTotalAmount()}">181456</span>
                         </div>
                     </div>
                 </div>

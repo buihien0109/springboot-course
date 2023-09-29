@@ -3,7 +3,7 @@
       th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{:: #js})}">
 
 <head>
-    <title>Quản lý giao dịch</title>
+    <title>Quản lý đơn hàng</title>
 </head>
 
 <body>
@@ -47,7 +47,7 @@
                                         </li>
                                     </ul>
                                 </td>
-                                <td th:text="${order.getTotalAmount()}"></td>
+                                <td class="currency" th:text="${order.getTotalAmount()}"></td>
                                 <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy')}"></td>
                                 <th:block>
                                     <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT}"

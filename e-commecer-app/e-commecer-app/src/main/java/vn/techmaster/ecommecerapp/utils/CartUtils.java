@@ -19,6 +19,8 @@ import java.util.List;
 @Slf4j
 public class CartUtils {
     public static List<CartItemInCookie> getCartFromCookie(HttpServletRequest request) {
+        log.info("getCartFromCookie");
+
         List<CartItemInCookie> cartItemInCookies = new ArrayList<>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -36,6 +38,7 @@ public class CartUtils {
     }
 
     public static void setCartToCookie(HttpServletResponse response, List<CartItemInCookie> cartItems) {
+        log.info("setCartToCookie");
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String originalCart = objectMapper.writeValueAsString(cartItems);

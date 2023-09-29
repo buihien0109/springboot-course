@@ -102,3 +102,13 @@ function logout() {
         showError(err.response.data.message);
     })
 }
+
+// format number to currency vnd
+// example: 1000000 => 1.000.000đ
+// example: 1000 => 1.000đ
+const formatCurrency = (number) => {
+    if (number) {
+        return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') + 'đ';
+    }
+    return number;
+}

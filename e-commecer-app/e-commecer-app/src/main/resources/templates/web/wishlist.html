@@ -45,8 +45,8 @@
                                 <div class="product-item-price d-flex align-items-center"
                                      th:classappend="${product.discounts != null} ? 'has-discount' : ''">
                                     <h5 th:if="${product.discounts != null}"
-                                        th:text="${product.discounts.remainingPrice}" class="discount-price"></h5>
-                                    <h5 th:text="${product.price}" class="original-price">$100</h5>
+                                        th:text="${product.discounts.remainingPrice}" class="discount-price currency"></h5>
+                                    <h5 th:text="${product.price}" class="original-price currency">$100</h5>
                                 </div>
                             </div>
                             <div class="wishlist-btn d-flex flex-column">

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Tất cả bài viết</title>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh sách bài viết
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <a href="/admin/blogs/create" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Viết bài
+                    </a>
+                    <a href="/admin/blogs" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Tiêu đề</th>
+                                    <th>Tác giả</th>
+                                    <th>Danh mục</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày tạo</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="blog : ${pageData.getContent()}">
+                                    <td>
+                                        <a th:href="@{/admin/blogs/{id}/detail(id=${blog.id})}" th:text="${blog.title}">Khai
+                                            giảng khóa</a>
+                                    </td>
+                                    <td>
+                                        <a href="#" th:text="${blog.user.username}">John Doe</a>
+                                    </td>
+                                    <td>
+                                        <span th:each="tag : ${blog.tags}" class="badge bg-info mr-1"
+                                              th:text="${tag.name}"></span>
+                                    </td>
+                                    <td th:text="${blog.status ? 'Công khai' : 'Nháp'}">Công khai</td>
+                                    <td th:text="${#temporals.format(blog.createdAt, 'dd/MM/yyyy')}">06-07-2022</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+                                <ul class="pagination mb-0">
+                                    <li class="paginate_button page-item previous"
+                                        th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                                        <a th:if="${currentPage == 2}" th:href="@{/admin/blogs}"
+                                           class="page-link">Previous</a>
+                                        <a th:if="${currentPage != 2}" th:href="@{/admin/blogs?page={pageNumber} (pageNumber=${currentPage-1})}"
+                                           class="page-link">Previous</a>
+                                    </li>
+                                    <li th:each="number : ${#numbers.sequence(1, pageData.getTotalPages())}"
+                                        class="paginate_button page-item"
+                                        th:classappend="${number == currentPage ? 'active' : ''}">
+                                        <a th:if="${number == 1}" th:href="@{/admin/blogs}"
+                                           class="page-link" th:text="${number}">1</a>
+                                        <a th:if="${number != 1}" th:href="@{/admin/blogs?page={pageNumber} (pageNumber=${number})}"
+                                           class="page-link" th:text="${number}">1</a>
+                                    </li>
+                                    <li class="paginate_button page-item next"
+                                        th:classappend="${currentPage == pageData.getTotalPages() ? 'disabled' : ''}">
+                                        <a th:href="@{/admin/blogs?page={pageNumber} (pageNumber=${currentPage+1})}"
+                                           class="page-link">Next</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const pageData = [[${pageData}]];
+        const currentPage = [[${currentPage}]];
+        console.log({pageData, currentPage})
+    </script>
+</th:block>
+</body>
+
+</html>

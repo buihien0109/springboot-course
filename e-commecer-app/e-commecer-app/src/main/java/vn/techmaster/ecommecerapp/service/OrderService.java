@@ -1,29 +1,32 @@
 package vn.techmaster.ecommecerapp.service;
 
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.*;
+import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.OrderTablePublic;
 import vn.techmaster.ecommecerapp.model.request.OrderRequest;
 import vn.techmaster.ecommecerapp.repository.OrderTableRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
+import vn.techmaster.ecommecerapp.utils.CartUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     private final OrderTableRepository orderTableRepository;
     private final CartService cartService;
     private final ProductRepository productRepository;
-
-    public OrderService(OrderTableRepository orderTableRepository, CartService cartService, ProductRepository productRepository) {
-        this.orderTableRepository = orderTableRepository;
-        this.cartService = cartService;
-        this.productRepository = productRepository;
-    }
+    private final HttpServletResponse httpServletResponse;
 
     public String createOrder(OrderRequest orderRequest) {
         // Lấy thông tin user từ SecurityContextHolder
@@ -53,7 +56,14 @@ public class OrderService {
 
         // save list order item from request to order item
         orderRequest.getItems().forEach(item -> {
-            Product product = productRepository.findById(item.getProductId()).orElseThrow(() -> new ResouceNotFoundException("Product not found"));
+            Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm"));
+
+            // check product quantity
+            if (product.getStockQuantity() < item.getQuantity()) {
+                throw new BadRequestException("Sản phẩm " + product.getName() + " không đủ số lượng");
+            }
+
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
             orderItem.setQuantity(item.getQuantity());
@@ -76,6 +86,8 @@ public class OrderService {
             Cart cart = cartService.getCartForLoggedInUser(user.getUserId());
             cart.getCartItems().clear();
             cartService.saveCart(cart);
+        } else {
+            CartUtils.setCartToCookie(httpServletResponse, new ArrayList<>());
         }
 
         return orderNumber;

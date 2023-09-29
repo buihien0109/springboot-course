@@ -72,8 +72,8 @@
                                     <div class="product__item__text">
                                         <h6><a th:href="@{/san-pham/{id} (id=${product.productId})}" th:text="${product.name}">Sản phẩm 1</a></h6>
                                         <div th:classappend="${product.discounts != null} ? 'product-item-price' : ''">
-                                            <h5 th:if="${product.discounts != null}" th:text="${product.discounts.remainingPrice}" class="discount-price"></h5>
-                                            <h5 th:text="${product.price}" th:classappend="${product.discounts != null ? 'original-price' : ''}">$100</h5>
+                                            <h5 th:if="${product.discounts != null}" th:text="${product.discounts.remainingPrice}" class="discount-price currency"></h5>
+                                            <h5 th:text="${product.price}" th:classappend="${product.discounts != null ? 'original-price currency' : 'currency'}">$100</h5>
                                         </div>
                                     </div>
                                 </div>

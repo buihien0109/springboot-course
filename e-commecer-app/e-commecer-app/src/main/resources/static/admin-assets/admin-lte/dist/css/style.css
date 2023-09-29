@@ -1,0 +1,22 @@
+img {
+    max-width: 100%;
+    display: block;
+    margin: auto;
+}
+
+.EasyMDEContainer {
+    position: relative;
+    z-index: 1039;
+}
+
+.user-panel {
+    display: flex;
+    align-items: center;
+}
+
+.user-panel img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}

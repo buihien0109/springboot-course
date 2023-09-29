@@ -63,9 +63,11 @@
                         <div class="product__details__price"
                              th:classappend="${product.discounts != null} ? 'has-discount' : ''">
                             <span th:if="${product.discounts != null}"
+                                  class="currency"
                                   th:classappend="${product.discounts != null} ? 'discount-price' : ''"
                                   th:text="${product.discounts.getRemainingPrice()}"></span>
-                            <span th:classappend="${product.discounts != null} ? 'original-price' : ''"
+                            <span class="currency"
+                                  th:classappend="${product.discounts != null} ? 'original-price' : ''"
                                   th:text="${product.price}"></span>
                         </div>
                         <p th:text="${product.description}">Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.
@@ -246,8 +248,9 @@
                                 phẩm 1</a></h6>
                             <div th:classappend="${rProduct.discounts != null} ? 'product-item-price' : ''">
                                 <h5 th:if="${rProduct.discounts != null}" th:text="${rProduct.discounts.remainingPrice}"
-                                    class="discount-price"></h5>
+                                    class="discount-price currency"></h5>
                                 <h5 th:text="${rProduct.price}"
+                                    class="currency"
                                     th:classappend="${rProduct.discounts != null ? 'original-price' : ''}">$100</h5>
                             </div>
                         </div>

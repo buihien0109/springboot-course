@@ -64,9 +64,11 @@
                                     <td class="shoping__cart__price"
                                         th:classappend="${cartItem.product.discounts != null} ? 'has-discount' : ''">
                                     <span th:if="${cartItem.product.discounts != null}"
+                                          class="currency"
                                           th:classappend="${cartItem.product.discounts != null} ? 'discount-price' : ''"
                                           th:text="${cartItem.product.discounts.getRemainingPrice()}"></span>
-                                        <span th:classappend="${cartItem.product.discounts != null} ? 'original-price' : ''"
+                                        <span class="currency"
+                                              th:classappend="${cartItem.product.discounts != null} ? 'original-price' : ''"
                                               th:text="${cartItem.product.price}"></span>
                                     </td>
                                     <td class="shoping__cart__quantity">
@@ -80,7 +82,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="shoping__cart__total"
+                                    <td class="shoping__cart__total currency"
                                         th:text="${cartItem.product.discounts != null ? cartItem.product.discounts.getRemainingPrice() * cartItem.quantity : cartItem.product.price * cartItem.quantity}">
                                         $110.00
                                     </td>
@@ -106,8 +108,8 @@
                     <div class="shoping__checkout">
                         <h5>Tổng tiền giỏ hàng</h5>
                         <ul>
-                            <li>Thành tiền <span class="temporary-amount">$454.98</span></li>
-                            <li>Tổng tiền <span class="total-amount">$454.98</span></li>
+                            <li>Thành tiền <span class="temporary-amount"></span></li>
+                            <li>Tổng tiền <span class="total-amount"></span></li>
                         </ul>
                         <a href="/thanh-toan" class="primary-btn">THANH TOÁN</a>
                     </div>
@@ -137,10 +139,10 @@
                         <td class="shoping__cart__price ${ct.product.discounts != null ? 'has-discount' : ''}">
                             ${
                                 ct.product.discounts != null ?
-                                    `<span class="discount-price">${ct.product.discounts.remainingPrice}</span>
-                                    <span class="original-price">${ct.product.price}</span>`
+                                    `<span class="discount-price">${formatCurrency(ct.product.discounts.remainingPrice)}</span>
+                                    <span class="original-price">${formatCurrency(ct.product.price)}</span>`
                                     :
-                                    `<span class="original-price">${ct.product.price}</span>`
+                                    `<span class="original-price">${formatCurrency(ct.product.price)}</span>`
                             }
                         </td>
                         <td class="shoping__cart__quantity">
@@ -152,7 +154,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="shoping__cart__total">${ct.product.discounts != null ? ct.product.discounts.remainingPrice * ct.quantity : ct.product.price * ct.quantity}</td>
+                        <td class="shoping__cart__total">${ct.product.discounts != null ? formatCurrency(ct.product.discounts.remainingPrice * ct.quantity) : formatCurrency(ct.product.price * ct.quantity)}</td>
                         <td class="shoping__cart__item__close">
                             <span class="icon_close" onclick="deleteCartItem(${ct.cartItemId})"></span>
                         </td>
@@ -183,8 +185,8 @@
             totalAmountValue = temporaryAmountValue;
 
             // display to UI
-            temporaryAmount.innerText = temporaryAmountValue;
-            totalAmount.innerText = totalAmountValue;
+            temporaryAmount.innerText = formatCurrency(temporaryAmountValue);
+            totalAmount.innerText = formatCurrency(totalAmountValue);
         }
 
         // Increment quantity

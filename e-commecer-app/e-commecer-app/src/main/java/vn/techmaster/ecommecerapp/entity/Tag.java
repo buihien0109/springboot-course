@@ -2,6 +2,8 @@ package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ public class Tag {
     private String slug;
 
     @ManyToMany(mappedBy = "tags")
+    @Fetch(FetchMode.SUBSELECT)
     private List<Blog> blogs = new ArrayList<>();
 
     public Tag(Integer id, String name) {

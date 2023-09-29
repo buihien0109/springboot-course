@@ -103,7 +103,7 @@
                                     <th:block th:text="|${cartItem.product.name} x ${cartItem.quantity}|">Vegetable’s
                                         Package
                                     </th:block>
-                                    <span th:text="${cartItem.product.discounts != null ? cartItem.product.discounts.getRemainingPrice() * cartItem.quantity : cartItem.product.price * cartItem.quantity}">$75.99</span>
+                                    <span class="currency" th:text="${cartItem.product.discounts != null ? cartItem.product.discounts.getRemainingPrice() * cartItem.quantity : cartItem.product.price * cartItem.quantity}">$75.99</span>
                                 </li>
                             </ul>
                             <div class="checkout__order__subtotal">Thành tiền <span
@@ -263,9 +263,9 @@
             const totalAmount = document.querySelector('.total-amount');
 
             // display to UI
-            temporaryAmount.innerText = getTemporaryAmount();
-            discountAmount.innerText = getDiscountAmount();
-            totalAmount.innerText = getTotalAmount();
+            temporaryAmount.innerText = formatCurrency(getTemporaryAmount());
+            discountAmount.innerText = formatCurrency(getDiscountAmount());
+            totalAmount.innerText = formatCurrency(getTotalAmount());
         }
 
         // check coupon
