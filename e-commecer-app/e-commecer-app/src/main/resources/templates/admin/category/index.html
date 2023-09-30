@@ -2,11 +2,13 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org"
       th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
 
+
 <head>
-    <title>Tất cả bài viết</title>
+    <title>Danh mục</title>
 </head>
 
 <body>
+<!-- BODY -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div class="content-header">
@@ -18,7 +20,7 @@
                             <a href="/admin/dashboard">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item active">
-                            Danh sách bài viết
+                            Danh mục
                         </li>
                     </ol>
                 </div>
@@ -31,10 +33,10 @@
         <div class="container-fluid">
             <div class="row py-2">
                 <div class="col-12">
-                    <a href="/admin/blogs/create" type="button" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Viết bài
-                    </a>
-                    <a href="/admin/blogs" type="button" class="btn btn-info">
+                    <button class="btn btn-primary" id="btn-open-modal">
+                        <i class="fas fa-plus"></i> Tạo danh mục
+                    </button>
+                    <a href="/admin/tags" type="button" class="btn btn-info">
                         <i class="fas fa-redo"></i> Refresh
                     </a>
                 </div>
@@ -46,11 +48,10 @@
                             <table class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Tiêu đề</th>
-                                    <th>Tác giả</th>
-                                    <th>Danh mục</th>
-                                    <th>Trạng thái</th>
-                                    <th>Ngày tạo</th>
+                                    <th>STT</th>
+                                    <th>Tên danh mục</th>
+                                    <th>Danh mục con</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -71,45 +72,45 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const blogs = [[${blogs}]];
-        console.log({blogs})
+        let categoryList = [[${categoryList}]];
+        console.log(categoryList);
 
-        // render blogs from blogs to body of table
-        const tableBody = document.querySelector('table tbody');
-        const renderBlogs = (blogList) => {
-            let html = '';
-            blogList.forEach(blog => {
+        // Render tag
+        const tableContent = document.querySelector("table tbody")
+        const renderTags = (tagList, pagination) => {
+            console.log(pagination)
+            tableContent.innerHTML = "";
+            let html = "";
+            tagList.forEach((tag, index) => {
                 html += `
                     <tr>
+                        <td>${pagination.pageSize * (pagination.pageNumber - 1) + (index + 1)}</td>
+                        <td>${tag.name}</td>
                         <td>
-                            <a href="/admin/blogs/${blog.id}/detail">${blog.title}</a>
+                            <span class="mr-2">${tag.used}</span>
+                            ${tag.used > 0 ? `(<a href="javascript:void(0)" onclick="showBlogList(${tag.id})">Xem danh sách</a>)` : ''}
                         </td>
                         <td>
-                            <a href="/admin/users/${blog.user.userId}">${blog.user.username}</a>
+                            <button class="btn btn-warning" onclick="openModalUpdate(${tag.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deletetag(${tag.id})">Delete</button>
                         </td>
-                        <td>
-                            ${blog.tags.map(tag => `<span class="badge bg-info mr-1">${tag.name}</span>`).join('')}
-                        </td>
-                        <td>${blog.status ? 'Công khai' : 'Nháp'}</td>
-                        <td>${formatDate(blog.createdAt)}</td>
                     </tr>
-                `;
+                `
             })
-            tableBody.innerHTML = html;
+            tableContent.innerHTML = html;
         }
 
         // render pagination using pagination.js
-        const renderPagination = (blogList) => {
+        const renderPagination = (tagList) => {
             $('#pagination').pagination({
-                dataSource: blogList,
+                dataSource: tagList,
                 className: 'paginationjs-theme-blue paginationjs-big',
                 callback: function (data, pagination) {
-                    renderBlogs(data);
+                    renderTags(data, pagination);
                 },
-                hideOnlyOnePage : true
+                hideOnlyOnePage: true
             })
         }
-        renderPagination(blogs);
     </script>
 </th:block>
 </body>

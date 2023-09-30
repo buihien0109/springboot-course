@@ -3,7 +3,7 @@
       th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
 
 <head>
-    <title>AdminLTE 3 | Dashboard</title>
+    <title th:text="${blog.title}">AdminLTE 3 | Dashboard</title>
 
     <th:block id="css">
         <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css"/>
@@ -11,6 +11,8 @@
 
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+        <link rel="stylesheet" th:href="@{/admin-assets/assets/css/image-management.css}">
+
     </th:block>
 </head>
 
@@ -28,7 +30,7 @@
                         <li class="breadcrumb-item">
                             <a href="/admin/blogs/own-blogs">Blog</a>
                         </li>
-                        <li class="breadcrumb-item active">
+                        <li class="breadcrumb-item active" th:text="${blog.title}">
                             Thực hành làm ứng dụng Meal Finder API
                             với Javascript (Phần 2)
                         </li>
@@ -46,16 +48,16 @@
                     <a href="/admin/blogs/own-blogs" type="button" class="btn btn-default">
                         <i class="fas fa-chevron-left"></i> Quay lại
                     </a>
-                    <button type="button" class="btn btn-info px-4">
-                        Lưu
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
                     </button>
-                    <button type="button" class="btn btn-primary px-4">
-                        Preview
-                    </button>
+<!--                    <button type="button" class="btn btn-primary px-4">-->
+<!--                        Preview-->
+<!--                    </button>-->
                 </div>
 
                 <div class="col-6 d-flex justify-content-end">
-                    <button type="button" class="btn btn-danger px-4">
+                    <button type="button" class="btn btn-danger px-4" id="btn-delete">
                         Xóa
                     </button>
                 </div>
@@ -106,11 +108,11 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <div class="thumbnail-preview-container mb-3">
-                                            <img src="" alt="" id="thumbnail"/>
+                                        <div class="image-preview-container mb-3">
+                                            <img src="https://placehold.co/1000x600" alt="" id="image"/>
                                         </div>
                                         <button type="button" class="btn btn-info btn-flat rounded" data-toggle="modal"
-                                                data-target="#modal-xl">
+                                                data-target="#modal-image" id="btn-modal-image">
                                             Chọn hình ảnh
                                         </button>
                                     </div>
@@ -123,25 +125,36 @@
         </div>
     </section>
 
-    <div class="modal fade" id="modal-xl" aria-hidden="true">
+    <div class="modal fade" id="modal-image" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Extra Large Modal</h4>
+                    <h5 class="modal-title">Danh sách hình ảnh</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>One fine body…</p>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                        Close
-                    </button>
-                    <button type="button" class="btn btn-primary">
-                        Save changes
-                    </button>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button class="btn btn-success" id="btn-chose-image" disabled>Chọn ảnh</button>
+
+                            <label for="input-image" class="btn btn-warning mb-0">Upload ảnh</label>
+                            <input type="file" id="input-image" class="d-none">
+                        </div>
+                        <div>
+                            <button class="btn btn-danger" id="btn-delete-image" disabled>Xóa ảnh</button>
+                        </div>
+                    </div>
+                    <!-- Hiển thị danh sách ảnh -->
+                    <div class="image-container mt-4 mb-4">
+
+                    </div>
+
+                    <!-- Hiển thị phần phân trang -->
+                    <div class="image-pagination-container d-flex justify-content-center">
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -153,6 +166,7 @@
     <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
 
     <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+    <script th:src="@{/admin-assets/assets/js/image-managent.js}"></script>
 
     <script th:inline="javascript">
         const blog = [[${blog}]];
@@ -160,13 +174,15 @@
         console.log({blog, tags});
 
         //Initialize Select2 Elements
-        $(".select2").select2();
+        $(".select2").select2({
+            placeholder: "Chọn danh mục",
+        });
 
         // Initialize editor
         const easyMDE = new EasyMDE({
             element: document.getElementById("content"),
             spellChecker: false,
-            maxHeight: "500px",
+            maxHeight: "350px",
             renderingConfig: {
                 codeSyntaxHighlighting: true,
             },
@@ -179,10 +195,57 @@
             $("#description").html(data.description);
             $("#status").val(String(data.status));
             $("#tag").val(data.tags.map(e => e.id)).trigger("change");
-            $("#thumbnail").attr("src", data.thumbnail);
+            $("#image").attr("src", data.thumbnail ? data.thumbnail : "https://placehold.co/1000x600");
         };
-
         initData(blog);
+
+        // Handle event update blog and send request to server using axios
+        const btnUpdate = document.getElementById("btn-update");
+        btnUpdate.addEventListener("click", () => {
+            const title = $("#title").val();
+            const content = easyMDE.value();
+            const description = $("#description").val();
+            const status = $("#status").val();
+            const tagIds = $("#tag").val();
+            const thumbnail = $("#image").attr("src");
+
+            const data = {
+                title,
+                content,
+                description,
+                status : status === "true",
+                tagIds : tagIds.map(e => Number(e)),
+                thumbnail,
+            };
+            console.log(data)
+
+            axios.put(`/api/v1/admin/blogs/${blog.id}`, data)
+                .then(res => {
+                    toastr.success("Cập nhật thành công");
+                })
+                .catch(err => {
+                    console.log(err);
+                    toastr.error("Cập nhật thất bại");
+                });
+        });
+
+        // Handle event delete blog and send request to server using axios and confirm before delete using window.confirm
+        const btnDelete = document.getElementById("btn-delete");
+        btnDelete.addEventListener("click", () => {
+            if (window.confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
+                axios.delete(`/api/v1/admin/blogs/${blog.id}`)
+                    .then(res => {
+                        toastr.success("Xóa thành công");
+                        setTimeout(() => {
+                            window.location.href = "/admin/blogs/own-blogs";
+                        }, 1500);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        toastr.error("Xóa thất bại");
+                    });
+            }
+        });
     </script>
 </th:block>
 

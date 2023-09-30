@@ -1,15 +1,16 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
-import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vn.techmaster.ecommecerapp.model.request.UpdatePasswordRequest;
-import vn.techmaster.ecommecerapp.model.request.UpdateProfileUserRequest;
+import vn.techmaster.ecommecerapp.model.projection.UserPublic;
+import vn.techmaster.ecommecerapp.model.request.CreateUserRequest;
+import vn.techmaster.ecommecerapp.model.request.UpdateUserRequest;
 import vn.techmaster.ecommecerapp.service.UserService;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/admin/users")
 public class UserResources {
 
     private final UserService userService;
@@ -18,20 +19,28 @@ public class UserResources {
         this.userService = userService;
     }
 
-    @PostMapping("/update-avatar")
-    public ResponseEntity<?> updateAvatar(@RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(userService.updateAvatar(file));
+    @PostMapping
+    public ResponseEntity<?> createUser(@RequestBody CreateUserRequest request) {
+        UserPublic user = userService.createUser(request);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update-profile")
-    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileUserRequest request) {
-        userService.updateProfile(request);
-        return ResponseEntity.ok().body("Cập nhật thông tin thành công");
+    // Cập nhật thông tin user
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(
+            @PathVariable Long id,
+            @RequestBody UpdateUserRequest request) {
+        UserPublic user = userService.updateUserById(id, request);
+        return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/update-password")
-    public ResponseEntity<?> updatePassword(@Valid @RequestBody UpdatePasswordRequest request) {
-        userService.updatePassword(request);
-        return ResponseEntity.ok().body("Cập nhật mật khẩu thành công");
+    @PostMapping("/{id}/update-avatar")
+    public ResponseEntity<?> updateAvatar(@RequestParam("file") MultipartFile file, @PathVariable Long id) {
+        return ResponseEntity.ok(userService.updateAvatar(id, file));
+    }
+
+    @PutMapping("/{id}/reset-password")
+    public ResponseEntity<?> resetPassword(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.resetPassword(id));
     }
 }

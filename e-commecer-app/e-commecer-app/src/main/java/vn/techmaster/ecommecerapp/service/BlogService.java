@@ -1,6 +1,7 @@
 package vn.techmaster.ecommecerapp.service;
 
 import com.github.slugify.Slugify;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,13 +21,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class BlogService {
     private final BlogRepository blogRepository;
     private final TagRepository tagRepository;
+    private final Slugify slugify;
 
-    public BlogService(BlogRepository blogRepository, TagRepository tagRepository) {
+    public BlogService(BlogRepository blogRepository, TagRepository tagRepository, Slugify slugify) {
         this.blogRepository = blogRepository;
         this.tagRepository = tagRepository;
+        this.slugify = slugify;
     }
 
     // get all blogs have status = 1 and sort by published_at desc and pagination by page and limit
@@ -55,14 +59,27 @@ public class BlogService {
         return pageData.map(BlogPublic::of);
     }
 
-    public Page<BlogPublic> getAllOwnBlog(Integer page, Integer pageSize) {
+    public Page<BlogPublic> getAllOwnBlog(Integer page, Integer limit) {
         User user = SecurityUtils.getCurrentUserLogin();
         Page<Blog> pageData = blogRepository.findByUser_UserIdOrderByCreatedAtDesc(
                 user.getUserId(),
-                PageRequest.of(page - 1, pageSize)
+                PageRequest.of(page - 1, limit)
         );
 
         return pageData.map(BlogPublic::of);
+    }
+
+    // admin get all blogs
+    public List<BlogPublic> getAllBlogsAdmin() {
+        List<Blog> blogs = blogRepository.findAll(Sort.by("createdAt").descending());
+        return blogs.stream().map(BlogPublic::of).toList();
+    }
+
+    // admin get all blog of logged user
+    public List<BlogPublic> getAllOwnBlogAdmin() {
+        User user = SecurityUtils.getCurrentUserLogin();
+        List<Blog> blogs = blogRepository.findByUser_UserIdOrderByCreatedAtDesc(user.getUserId());
+        return blogs.stream().map(BlogPublic::of).toList();
     }
 
     // get blog by id and slug
@@ -92,11 +109,11 @@ public class BlogService {
     }
 
     public BlogPublic createBlog(UpsertBlogRequest request) {
+        log.info("Create blog: {}", request);
         User user = SecurityUtils.getCurrentUserLogin();
         List<Tag> tags = tagRepository.findByIdIn(request.getTagIds());
 
         // Create blog
-        Slugify slugify = Slugify.builder().build();
         Blog blog = Blog.builder()
                 .title(request.getTitle())
                 .slug(slugify.slugify(request.getTitle()))
@@ -122,7 +139,6 @@ public class BlogService {
         List<Tag> tags = tagRepository.findByIdIn(request.getTagIds());
 
         // update blog
-        Slugify slugify = Slugify.builder().build();
         blog.setTitle(request.getTitle());
         blog.setSlug(slugify.slugify(request.getTitle()));
         blog.setDescription(request.getDescription());

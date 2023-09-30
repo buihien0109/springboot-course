@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import vn.techmaster.ecommecerapp.service.BlogService;
 import vn.techmaster.ecommecerapp.service.TagService;
 
@@ -22,21 +21,15 @@ public class BlogController {
 
     // Danh sách tất cả bài viết
     @GetMapping
-    public String getBlogPage(@RequestParam(required = false, defaultValue = "1") Integer page,
-                              @RequestParam(required = false, defaultValue = "10") Integer limit,
-                              Model model) {
-        model.addAttribute("pageData", blogService.getAllBlogs(page, limit));
-        model.addAttribute("currentPage", page);
+    public String getBlogPage(Model model) {
+        model.addAttribute("blogs", blogService.getAllBlogsAdmin());
         return "admin/blog/index";
     }
 
     // Danh sách bài viết của tôi
     @GetMapping("/own-blogs")
-    public String getOwnBlogPage(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                 @RequestParam(required = false, defaultValue = "10") Integer limit,
-                                 Model model) {
-        model.addAttribute("pageData", blogService.getAllOwnBlog(page, limit));
-        model.addAttribute("currentPage", page);
+    public String getOwnBlogPage(Model model) {
+        model.addAttribute("blogs", blogService.getAllOwnBlogAdmin());
         return "admin/blog/own-blog";
     }
 

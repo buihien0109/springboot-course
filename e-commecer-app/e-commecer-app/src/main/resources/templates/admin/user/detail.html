@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Chi tiết user</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
+
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/users">User</a>
+                        </li>
+                        <li class="breadcrumb-item active" th:text="${user.username}">
+                            Bui Hien
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/users" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                    <button type="button" class="btn btn-warning px-4" id="btn-reset-password">
+                        Reset mật khẩu
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="custom-content-below-home-tab" data-toggle="pill"
+                                       href="#custom-content-below-home" role="tab"
+                                       aria-controls="custom-content-below-home" aria-selected="true">Thông tin cá
+                                        nhân</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="custom-content-below-profile-tab" data-toggle="pill"
+                                       href="#custom-content-below-profile" role="tab"
+                                       aria-controls="custom-content-below-profile" aria-selected="false">Danh sách đơn
+                                        hàng</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="custom-content-below-tabContent">
+                                <div class="tab-pane fade active show" id="custom-content-below-home" role="tabpanel"
+                                     aria-labelledby="custom-content-below-home-tab">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mt-4">
+                                                <label>Họ tên</label>
+                                                <input type="text" class="form-control" id="username"
+                                                       th:value="${user.username}"/>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Email</label>
+                                                <input type="text" class="form-control" id="email"
+                                                       th:value="${user.email}" disabled/>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Số điện thoại</label>
+                                                <input type="text" class="form-control" id="phone"
+                                                       th:value="${user.phone}"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Quyền</label>
+                                                <div class="select2-purple">
+                                                    <select class="select2 form-control" multiple="multiple" id="roles">
+                                                        <option th:each="role : ${roles}"
+                                                                th:value="${role.roleId}"
+                                                                th:text="${role.name}"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group mt-4">
+                                                <label>Avatar</label>
+                                                <div class="user-avatar-container d-flex align-items-center">
+                                                    <img id="avatar-preview" th:src="${user.avatar}" alt="">
+                                                    <label for="avatar">Đổi Avatar</label>
+                                                    <input type="file" id="avatar" class="d-none">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="custom-content-below-profile" role="tabpanel"
+                                     aria-labelledby="custom-content-below-profile-tab">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="mt-4 table table-bordered table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th>Order ID</th>
+                                                    <th>Danh sách sản phẩm</th>
+                                                    <th>Tổng tiền đơn hàng</th>
+                                                    <th>Ngày đặt hàng</th>
+                                                    <th>Trạng thái</th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                <tr th:each="order : ${orders}">
+                                                    <td>
+                                                        <a th:href="@{/admin/orders/{id}/detail(id=${order.orderNumber})}"
+                                                           th:text="${order.orderNumber}"></a>
+                                                    </td>
+                                                    <td>
+                                                        <ul>
+                                                            <li th:each="orderItem : ${order.orderItems}">
+                                                                <a th:href="@{/admin/products/{id}/detail(id=${orderItem.product.productId})}"
+                                                                   th:text="${orderItem.product.name}"></a>
+                                                                <span th:text="|(x ${orderItem.quantity})|"></span>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                    <td class="currency" th:text="${order.getTotalAmount()}"></td>
+                                                    <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy')}"></td>
+                                                    <th:block>
+                                                        <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).COMPLETE}"
+                                                            class="text-success">Hoàn thành
+                                                        </td>
+                                                        <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).RETURNED}"
+                                                            class="text-secondary">Trả hàng
+                                                        </td>
+                                                        <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).CANCELED}"
+                                                            class="text-danger">Hủy đơn
+                                                        </td>
+                                                        <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT}"
+                                                            class="text-primary">Chờ xác nhận
+                                                        </td>
+                                                        <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).DELIVERY}"
+                                                            class="text-warning">Đang vận chuyển
+                                                        </td>
+                                                    </th:block>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+
+    <script th:inline="javascript">
+        const roles = [[${roles}]];
+        const orders = [[${orders}]];
+        const user = [[${user}]];
+        console.log({roles, orders, user});
+
+        //Initialize Select2 Elements
+        $(".select2").select2({
+            placeholder: "Chọn role",
+        });
+        $("#roles").val(user.roles.map(e => e.roleId)).trigger("change");
+
+        // Truy cập vào các thành phần
+        const userName = document.getElementById("username");
+        const userPhone = document.getElementById("phone");
+        const userRoles = $("#roles");
+        const btnUpdate = document.getElementById("btn-update")
+
+        // Tạo khóa học
+        btnUpdate.addEventListener("click", async () => {
+            const data = {
+                username: userName.value,
+                phone: userPhone.value,
+                roleIds: userRoles.val().map(e => Number(e))
+            }
+            console.log(data);
+
+            try {
+                let res = await axios.put(`/api/v1/admin/users/${user.userId}`, data)
+
+                if (res.data) {
+                    toastr.success("Cập nhật thành công");
+                }
+            } catch (e) {
+                toastr.error(e.response.data.message);
+                console.log(e);
+            }
+        })
+
+        // add event listener to avatar input change
+        const avatarInput = document.getElementById('avatar');
+        const avatarPreview = document.getElementById('avatar-preview');
+        avatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+
+            // create form data with key file and value is file in input
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Send post request to url /api/v1/users/update-avatar, then check request status and set src for avatar preview
+            axios.post(`/api/v1/admin/users/${user.userId}/update-avatar`, formData)
+                .then(res => {
+                    if (res.status === 200) {
+                        avatarPreview.src = res.data;
+                        toastr.success('Cập nhật avatar thành công');
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    toastr.error('Cập nhật avatar thất bại');
+                });
+        });
+
+        // Reset password
+        const btnResetPassword = document.getElementById('btn-reset-password');
+        btnResetPassword.addEventListener('click', async () => {
+            const isConfirm = confirm('Bạn có chắc chắn muốn reset mật khẩu?');
+            if (!isConfirm) return;
+            try {
+                let res = await axios.put(`/api/v1/admin/users/${user.userId}/reset-password`);
+                if (res.status === 200) {
+                    toastr.success(`Reset mật khẩu thành công. Mật khẩu mới là: ${res.data}`);
+                }
+            } catch (e) {
+                toastr.error('Reset mật khẩu thất bại');
+            }
+        })
+    </script>
+</th:block>
+
+</body>
+
+</html>

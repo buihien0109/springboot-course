@@ -18,11 +18,8 @@ public class TagController {
     }
 
     @GetMapping
-    public String getTagPage(@RequestParam(required = false, defaultValue = "1") Integer page,
-                              @RequestParam(required = false, defaultValue = "10") Integer limit,
-                              Model model) {
-        model.addAttribute("pageData", tagService.getAllTags(page, limit));
-        model.addAttribute("currentPage", page);
+    public String getTagPage(Model model) {
+        model.addAttribute("tags", tagService.getAllTagsAdmin());
         return "admin/tag/index";
     }
 }

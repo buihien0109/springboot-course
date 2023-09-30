@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.*;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
@@ -12,6 +13,7 @@ import vn.techmaster.ecommecerapp.model.projection.OrderTablePublic;
 import vn.techmaster.ecommecerapp.model.request.OrderRequest;
 import vn.techmaster.ecommecerapp.repository.OrderTableRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
+import vn.techmaster.ecommecerapp.repository.UserRepository;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
 import vn.techmaster.ecommecerapp.utils.CartUtils;
 
@@ -22,11 +24,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderService {
+    private final UserRepository userRepository;
 
     private final OrderTableRepository orderTableRepository;
     private final CartService cartService;
     private final ProductRepository productRepository;
     private final HttpServletResponse httpServletResponse;
+
+    public List<OrderTablePublic> getAllOrders() {
+        List<OrderTable> orderTables = orderTableRepository.findAll(Sort.by(Sort.Direction.DESC, "orderDate"));
+        return orderTables.stream().map(OrderTablePublic::of).toList();
+    }
 
     public String createOrder(OrderRequest orderRequest) {
         // Lấy thông tin user từ SecurityContextHolder
@@ -160,5 +168,17 @@ public class OrderService {
             product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
             productRepository.save(product);
         });
+    }
+
+    public List<OrderTablePublic> getOrdersByUserId(Long userId) {
+        // check user id is exist
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResouceNotFoundException("User not found"));
+
+        List<OrderTable> orderTables = orderTableRepository.findByUser_UserIdOrderByOrderDateDesc(userId);
+
+        return orderTables.stream()
+                .map(OrderTablePublic::of)
+                .toList();
     }
 }

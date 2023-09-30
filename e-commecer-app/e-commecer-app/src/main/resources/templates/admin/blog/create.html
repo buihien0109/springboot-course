@@ -6,10 +6,10 @@
     <title>Tạo bài viết</title>
 
     <th:block id="css">
-        <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css" />
+        <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css"/>
 
-        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}" />
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
     </th:block>
 
@@ -60,7 +60,7 @@
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label>Tiêu đề</label>
-                                        <input type="text" class="form-control" id="title" />
+                                        <input type="text" class="form-control" id="title"/>
                                     </div>
 
                                     <div class="form-group">
@@ -78,10 +78,10 @@
                                     <div class="form-group">
                                         <label>Trạng thái</label>
                                         <select id="status" class="form-control">
-                                            <option value="0">
+                                            <option value="false">
                                                 Nháp
                                             </option>
-                                            <option value="1">
+                                            <option value="true">
                                                 Công khai
                                             </option>
                                         </select>
@@ -90,7 +90,8 @@
                                         <label>Danh mục</label>
                                         <div class="select2-purple">
                                             <select class="select2 form-control" multiple="multiple" id="tag">
-                                                <option th:each="tag : ${tags}" th:value="${tag.id}" th:text="${tag.name}"></option>
+                                                <option th:each="tag : ${tags}" th:value="${tag.id}"
+                                                        th:text="${tag.name}"></option>
                                             </select>
                                         </div>
                                     </div>
@@ -113,13 +114,15 @@
 
     <script th:inline="javascript">
         //Initialize Select2 Elements
-        $(".select2").select2();
+        $(".select2").select2({
+            placeholder: "Chọn danh mục",
+        });
 
         // Initialize editor
         const easyMDE = new EasyMDE({
             element: document.getElementById("content"),
             spellChecker: false,
-            maxHeight: "500px",
+            maxHeight: "350px",
             renderingConfig: {
                 codeSyntaxHighlighting: true,
             },
@@ -132,24 +135,29 @@
         const tagEl = $("#tag");
         const btnCreate = document.getElementById("btn-create");
 
-        // Tạo blog
-        btnCreate.addEventListener("click", async () => {
-            try {
-                let res = await axios.post("/api/admin/blogs", {
-                    title : titleEl.value,
-                    description : descriptionEl.value,
-                    status : +statusEl.value,
-                    content : easyMDE.value(),
-                    tagIds : tagEl.val().map(e => Number(e))
+        // create blog using axios and promise
+        btnCreate.addEventListener("click", () => {
+            const data = {
+                title: titleEl.value,
+                content: easyMDE.value(),
+                description: descriptionEl.value,
+                status: statusEl.value === "true",
+                tagIds: tagEl.val().map(id => Number(id))
+            };
+            console.log(data)
+
+            axios.post("/api/v1/admin/blogs", data)
+                .then((res) => {
+                    toastr.success("Tạo bài viết thành công");
+                    setTimeout(() => {
+                        window.location.href = `/admin/blogs/${res.data.id}/detail`
+                    }, 1500);
                 })
-
-                alert("Tạo bài viết thành công")
-                window.location.href = "/admin/blogs";
-            } catch (e) {
-                console.log(e)
-            }
-        })
-
+                .catch((err) => {
+                    console.log(err);
+                    toastr.error(err.response.data.message);
+                });
+        });
     </script>
 </th:block>
 

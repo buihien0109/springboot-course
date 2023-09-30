@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org"
-      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{})}">
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
 
 <head>
     <title>Bài viết của tôi</title>
@@ -53,44 +53,12 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="blog : ${pageData.getContent()}">
-                                    <td>
-                                        <a th:href="@{/admin/blogs/{id}/detail(id=${blog.id})}" th:text="${blog.title}">Khai
-                                            giảng khóa</a>
-                                    </td>
-                                    <td>
-                                        <span th:each="tag : ${blog.tags}" class="badge bg-info mr-1"
-                                              th:text="${tag.name}"></span>
-                                    </td>
-                                    <td th:text="${blog.status ? 'Công khai' : 'Nháp'}">Công khai</td>
-                                    <td th:text="${#temporals.format(blog.createdAt, 'dd/MM/yyyy')}">06-07-2022</td>
-                                </tr>
+
                                 </tbody>
                             </table>
 
                             <div class="d-flex justify-content-center mt-3" id="pagination">
-                                <ul class="pagination mb-0">
-                                    <li class="paginate_button page-item previous"
-                                        th:classappend="${currentPage == 1 ? 'disabled' : ''}">
-                                        <a th:if="${currentPage == 2}" th:href="@{/admin/blogs}"
-                                           class="page-link">Previous</a>
-                                        <a th:if="${currentPage != 2}" th:href="@{/admin/blogs?page={pageNumber} (pageNumber=${currentPage-1})}"
-                                           class="page-link">Previous</a>
-                                    </li>
-                                    <li th:each="number : ${#numbers.sequence(1, pageData.getTotalPages())}"
-                                        class="paginate_button page-item"
-                                        th:classappend="${number == currentPage ? 'active' : ''}">
-                                        <a th:if="${number == 1}" th:href="@{/admin/blogs}"
-                                           class="page-link" th:text="${number}">1</a>
-                                        <a th:if="${number != 1}" th:href="@{/admin/blogs?page={pageNumber} (pageNumber=${number})}"
-                                           class="page-link" th:text="${number}">1</a>
-                                    </li>
-                                    <li class="paginate_button page-item next"
-                                        th:classappend="${currentPage == pageData.getTotalPages() ? 'disabled' : ''}">
-                                        <a th:href="@{/admin/blogs?page={pageNumber} (pageNumber=${currentPage+1})}"
-                                           class="page-link">Next</a>
-                                    </li>
-                                </ul>
+
                             </div>
                         </div>
                     </div>
@@ -99,6 +67,47 @@
         </div>
     </section>
 </div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const blogs = [[${blogs}]];
+        console.log({blogs})
+
+        // render blogs from blogs to body of table
+        const tableBody = document.querySelector('table tbody');
+        const renderBlogs = (blogList) => {
+            let html = '';
+            blogList.forEach(blog => {
+                html += `
+                    <tr>
+                        <td>
+                            <a href="/admin/blogs/${blog.id}/detail">${blog.title}</a>
+                        </td>
+                        <td>
+                            ${blog.tags.map(tag => `<span class="badge bg-info mr-1">${tag.name}</span>`).join('')}
+                        </td>
+                        <td>${blog.status ? 'Công khai' : 'Nháp'}</td>
+                        <td>${formatDate(blog.createdAt)}</td>
+                    </tr>
+                `;
+            })
+            tableBody.innerHTML = html;
+        }
+
+        // render pagination using pagination.js
+        const renderPagination = (blogList) => {
+            $('#pagination').pagination({
+                dataSource: blogList,
+                className: 'paginationjs-theme-blue paginationjs-big',
+                callback: function (data, pagination) {
+                    renderBlogs(data);
+                },
+                hideOnlyOnePage : true
+            })
+        }
+        renderPagination(blogs);
+    </script>
+</th:block>
 </body>
 
 </html>

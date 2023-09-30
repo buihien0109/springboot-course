@@ -16,6 +16,7 @@ public class TagResources {
         this.tagService = tagService;
     }
 
+    @PostMapping
     public ResponseEntity<?> createTag(@RequestBody UpsertTagRequest request) {
         return new ResponseEntity<>(tagService.createTag(request), HttpStatus.CREATED);
     }
@@ -29,5 +30,10 @@ public class TagResources {
     public ResponseEntity<?> deleteTopicById(@PathVariable Integer id) {
         tagService.deleteTagById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/blogs")
+    public ResponseEntity<?> getAllBlogsByTagId(@PathVariable Integer id) {
+        return ResponseEntity.ok(tagService.getAllBlogsByTagId(id));
     }
 }

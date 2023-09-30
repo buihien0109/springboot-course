@@ -17,6 +17,11 @@ public class FileServerResources {
         this.fileServerService = fileServerService;
     }
 
+    @GetMapping
+    public ResponseEntity<?> getAllFiles() {
+        return ResponseEntity.ok(fileServerService.getAllFilesForLoggedInUser());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> readFile(@PathVariable Long id) {
         FileServer fileServer = fileServerService.getFileById(id);

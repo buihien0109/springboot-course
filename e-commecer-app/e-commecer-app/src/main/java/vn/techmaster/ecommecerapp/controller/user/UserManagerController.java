@@ -10,11 +10,11 @@ import vn.techmaster.ecommecerapp.service.UserAddressService;
 
 @Controller
 @RequestMapping("/khach-hang")
-public class UserController {
+public class UserManagerController {
     private final UserAddressService userAddressService;
     private final OrderService orderService;
 
-    public UserController(UserAddressService userAddressService, OrderService orderService) {
+    public UserManagerController(UserAddressService userAddressService, OrderService orderService) {
         this.userAddressService = userAddressService;
         this.orderService = orderService;
     }

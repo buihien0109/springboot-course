@@ -21,18 +21,26 @@ public class FileServerService {
         this.fileServerRepository = fileServerRepository;
     }
 
-    public Map<String, Long> uploadFile(MultipartFile file) {
+    public List<FileServer> getAllFilesForLoggedInUser() {
+        User user = SecurityUtils.getCurrentUserLogin();
+        return fileServerRepository.findByUser_UserIdOrderByCreatedAtDesc(user.getUserId());
+    }
+
+    public FileServer uploadFile(MultipartFile file) {
+        User user = SecurityUtils.getCurrentUserLogin();
+        if (user == null) {
+            throw new BadRequestException("Lỗi xác thực");
+        }
         validateFile(file);
 
         try {
-            User user = SecurityUtils.getCurrentUserLogin();
             FileServer fileServer = new FileServer();
             fileServer.setType(file.getContentType());
             fileServer.setData(file.getBytes());
             fileServer.setUser(user);
             fileServerRepository.save(fileServer);
 
-            return Map.of("id", fileServer.getId());
+            return fileServer;
         } catch (IOException e) {
             throw new RuntimeException("Có lỗi xảy ra");
         }

@@ -3,7 +3,7 @@
       th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
 
 <head>
-    <title>Tất cả bài viết</title>
+    <title>Tất cả đơn hàng</title>
 </head>
 
 <body>
@@ -18,7 +18,7 @@
                             <a href="/admin/dashboard">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item active">
-                            Danh sách bài viết
+                            Danh sách đơn hàng
                         </li>
                     </ol>
                 </div>
@@ -31,10 +31,10 @@
         <div class="container-fluid">
             <div class="row py-2">
                 <div class="col-12">
-                    <a href="/admin/blogs/create" type="button" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Viết bài
+                    <a href="/admin/orders/create" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tạo đơn hàng
                     </a>
-                    <a href="/admin/blogs" type="button" class="btn btn-info">
+                    <a href="/admin/orders" type="button" class="btn btn-info">
                         <i class="fas fa-redo"></i> Refresh
                     </a>
                 </div>
@@ -46,11 +46,12 @@
                             <table class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Tiêu đề</th>
-                                    <th>Tác giả</th>
-                                    <th>Danh mục</th>
-                                    <th>Trạng thái</th>
+                                    <th>Order Number</th>
+                                    <th>Họ tên</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
                                     <th>Ngày tạo</th>
+                                    <th>Trạng thái đơn hàng</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -71,27 +72,26 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const blogs = [[${blogs}]];
-        console.log({blogs})
+        const orders = [[${orders}]];
+        console.log({orders})
 
-        // render blogs from blogs to body of table
+        // render orders from orders to body of table
         const tableBody = document.querySelector('table tbody');
-        const renderBlogs = (blogList) => {
+        const renderOrders = (orderList) => {
             let html = '';
-            blogList.forEach(blog => {
+            orderList.forEach(order => {
                 html += `
                     <tr>
                         <td>
-                            <a href="/admin/blogs/${blog.id}/detail">${blog.title}</a>
+                            <a href="/admin/orders/${order.orderNumber}">${order.orderNumber}</a>
                         </td>
                         <td>
-                            <a href="/admin/users/${blog.user.userId}">${blog.user.username}</a>
+                            ${order.username}
                         </td>
-                        <td>
-                            ${blog.tags.map(tag => `<span class="badge bg-info mr-1">${tag.name}</span>`).join('')}
-                        </td>
-                        <td>${blog.status ? 'Công khai' : 'Nháp'}</td>
-                        <td>${formatDate(blog.createdAt)}</td>
+                        <td>${order.email}</td>
+                        <td>${order.phone}</td>
+                        <td>${formatDate(order.orderDate)}</td>
+                        <td>${orderStatus(order.status)}</td>
                     </tr>
                 `;
             })
@@ -99,17 +99,34 @@
         }
 
         // render pagination using pagination.js
-        const renderPagination = (blogList) => {
+        const renderPagination = (orderList) => {
             $('#pagination').pagination({
-                dataSource: blogList,
+                dataSource: orderList,
                 className: 'paginationjs-theme-blue paginationjs-big',
                 callback: function (data, pagination) {
-                    renderBlogs(data);
+                    renderOrders(data);
                 },
                 hideOnlyOnePage : true
             })
         }
-        renderPagination(blogs);
+
+        const orderStatus = status => {
+            switch (status) {
+                case 'WAIT':
+                    return '<span class="badge badge-warning">Chờ xác nhận</span></>';
+                case 'DELIVERY':
+                    return '<span class="badge badge-primary">Đang giao</span>';
+                case 'COMPLETE':
+                    return '<span class="badge badge-success">Đã giao</span>';
+                case 'CANCELED':
+                    return '<span class="badge badge-danger">Đã hủy</span>';
+                case 'RETURNED':
+                    return '<span class="badge badge-danger">Đã trả hàng</span>';
+                default:
+                    return 'Không xác định';
+            }
+        }
+        renderPagination(orders);
     </script>
 </th:block>
 </body>

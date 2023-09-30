@@ -3,7 +3,7 @@
       th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
 
 <head>
-    <title>Tất cả bài viết</title>
+    <title>Tất cả sản phẩm</title>
 </head>
 
 <body>
@@ -18,7 +18,7 @@
                             <a href="/admin/dashboard">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item active">
-                            Danh sách bài viết
+                            Danh sách sản phẩm
                         </li>
                     </ol>
                 </div>
@@ -31,10 +31,10 @@
         <div class="container-fluid">
             <div class="row py-2">
                 <div class="col-12">
-                    <a href="/admin/blogs/create" type="button" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Viết bài
+                    <a href="/admin/products/create" type="button" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tạo sản phẩm
                     </a>
-                    <a href="/admin/blogs" type="button" class="btn btn-info">
+                    <a href="/admin/products" type="button" class="btn btn-info">
                         <i class="fas fa-redo"></i> Refresh
                     </a>
                 </div>
@@ -46,11 +46,11 @@
                             <table class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
-                                    <th>Tiêu đề</th>
-                                    <th>Tác giả</th>
-                                    <th>Danh mục</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Giá tiền</th>
+                                    <th>Số lượng</th>
                                     <th>Trạng thái</th>
-                                    <th>Ngày tạo</th>
+                                    <th>Danh mục</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -71,27 +71,27 @@
 
 <th:block id="js">
     <script th:inline="javascript">
-        const blogs = [[${blogs}]];
-        console.log({blogs})
+        const products = [[${products}]];
+        console.log({products})
 
-        // render blogs from blogs to body of table
+        // render products from products to body of table
         const tableBody = document.querySelector('table tbody');
-        const renderBlogs = (blogList) => {
+        const renderProducts = (productList) => {
             let html = '';
-            blogList.forEach(blog => {
+            productList.forEach(product => {
                 html += `
                     <tr>
                         <td>
-                            <a href="/admin/blogs/${blog.id}/detail">${blog.title}</a>
+                            <a href="/admin/products/${product.productId}">${product.name}</a>
                         </td>
                         <td>
-                            <a href="/admin/users/${blog.user.userId}">${blog.user.username}</a>
+                            ${product.price}
                         </td>
+                        <td>${product.stockQuantity}</td>
+                        <td>${productStatus(product.status)}</td>
                         <td>
-                            ${blog.tags.map(tag => `<span class="badge bg-info mr-1">${tag.name}</span>`).join('')}
+                            <a href="/admin/categories/${product.category.categoryId}/detail">${product.category.name}</a>
                         </td>
-                        <td>${blog.status ? 'Công khai' : 'Nháp'}</td>
-                        <td>${formatDate(blog.createdAt)}</td>
                     </tr>
                 `;
             })
@@ -99,17 +99,31 @@
         }
 
         // render pagination using pagination.js
-        const renderPagination = (blogList) => {
+        const renderPagination = (productList) => {
             $('#pagination').pagination({
-                dataSource: blogList,
+                dataSource: productList,
                 className: 'paginationjs-theme-blue paginationjs-big',
                 callback: function (data, pagination) {
-                    renderBlogs(data);
+                    renderProducts(data);
                 },
                 hideOnlyOnePage : true
             })
         }
-        renderPagination(blogs);
+
+        const productStatus = status => {
+            switch (status) {
+                case 'AVAILABLE':
+                    return '<span class="badge badge-success">CÒN HÀNG</span></>';
+                case 'UNAVAILABLE':
+                    return '<span class="badge badge-danger">ĐÃ HẾT</span>';
+                case 'CEASE':
+                    return '<span class="badge badge-warning">NGỪNG KINH DOANH</span>';
+                default:
+                    return 'Không xác định';
+            }
+        }
+
+        renderPagination(products);
     </script>
 </th:block>
 </body>

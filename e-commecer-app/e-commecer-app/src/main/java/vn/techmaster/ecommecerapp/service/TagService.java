@@ -1,11 +1,14 @@
 package vn.techmaster.ecommecerapp.service;
 
+import com.github.slugify.Slugify;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.Tag;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.projection.BlogPublic;
+import vn.techmaster.ecommecerapp.model.projection.TagAdminPublic;
 import vn.techmaster.ecommecerapp.model.projection.TagPublic;
 import vn.techmaster.ecommecerapp.model.request.UpsertTagRequest;
 import vn.techmaster.ecommecerapp.repository.TagRepository;
@@ -15,9 +18,11 @@ import java.util.List;
 @Service
 public class TagService {
     private final TagRepository tagRepository;
+    private final Slugify slugify;
 
-    public TagService(TagRepository tagRepository) {
+    public TagService(TagRepository tagRepository, Slugify slugify) {
         this.tagRepository = tagRepository;
+        this.slugify = slugify;
     }
 
     public List<TagPublic> getAllTags() {
@@ -29,7 +34,11 @@ public class TagService {
         return pageData.map(TagPublic::of);
     }
 
-    public TagPublic createTag(UpsertTagRequest request) {
+    public List<TagAdminPublic> getAllTagsAdmin() {
+        return tagRepository.findAll().stream().map(TagAdminPublic::of).toList();
+    }
+
+    public TagAdminPublic createTag(UpsertTagRequest request) {
         // check tag name is exist
         if (tagRepository.findByName(request.getName()).isPresent()) {
             throw new BadRequestException("Tag đã tồn tại");
@@ -37,11 +46,12 @@ public class TagService {
 
         Tag tag = new Tag();
         tag.setName(request.getName());
+        tag.setSlug(slugify.slugify(request.getName()));
         tagRepository.save(tag);
-        return TagPublic.of(tag);
+        return TagAdminPublic.of(tag);
     }
 
-    public TagPublic updateTagById(Integer id, UpsertTagRequest request) {
+    public TagAdminPublic updateTagById(Integer id, UpsertTagRequest request) {
         // find tag by id
         Tag tag = tagRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy tag có id = " + id));
@@ -52,8 +62,9 @@ public class TagService {
         }
 
         tag.setName(request.getName());
+        tag.setSlug(slugify.slugify(request.getName()));
         tagRepository.save(tag);
-        return TagPublic.of(tag);
+        return TagAdminPublic.of(tag);
     }
 
     public void deleteTagById(Integer id) {
@@ -67,5 +78,13 @@ public class TagService {
         }
 
         tagRepository.delete(tag);
+    }
+
+    public List<BlogPublic> getAllBlogsByTagId(Integer id) {
+        // find tag by id
+        Tag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy tag có id = " + id));
+
+        return tag.getBlogs().stream().map(BlogPublic::of).toList();
     }
 }

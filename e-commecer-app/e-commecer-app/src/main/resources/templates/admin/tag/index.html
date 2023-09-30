@@ -1,10 +1,310 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
 
+
+<head>
+    <title>Danh mục tag</title>
+</head>
+
+<body>
+<!-- BODY -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh mục tag
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <button class="btn btn-primary" id="btn-open-modal">
+                        <i class="fas fa-plus"></i> Tạo Tag
+                    </button>
+                    <a href="/admin/tags" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên Tag</th>
+                                    <th>Số lượng sử dụng</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Tag -->
+            <div class="modal fade" id="modal-tag" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                 aria-labelledby="modal-tag-title" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title fs-5" id="modal-tag-title">Tạo Tag</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" class="form-control" id="input-name" placeholder="Enter name">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary" id="btn-handle-tag">Xác nhận</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-blog-list" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Extra Large Modal</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-bordered table-hover">
+                                <tbody>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tiêu đề</th>
+                                        <th>Tác giả</th>
+                                        <th>Ngày tạo</th>
+                                    </tr>
+                                </tbody>
+                                <tbody id="modal-blog-list-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        let tags = [[${tags}]];
+        console.log(tags);
+        let idTagUpdate = null;
+
+        // Render tag
+        const tableContent = document.querySelector("table tbody")
+        const renderTags = (tagList, pagination) => {
+            console.log(pagination)
+            tableContent.innerHTML = "";
+            let html = "";
+            tagList.forEach((tag, index) => {
+                html += `
+                    <tr>
+                        <td>${pagination.pageSize * (pagination.pageNumber - 1) + (index + 1)}</td>
+                        <td>${tag.name}</td>
+                        <td>
+                            <span class="mr-2">${tag.used}</span>
+                            ${tag.used > 0 ? `(<a href="javascript:void(0)" onclick="showBlogList(${tag.id})">Xem danh sách</a>)` : ''}
+                        </td>
+                        <td>
+                            <button class="btn btn-warning" onclick="openModalUpdate(${tag.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deletetag(${tag.id})">Delete</button>
+                        </td>
+                    </tr>
+                `
+            })
+            tableContent.innerHTML = html;
+        }
+
+        // render pagination using pagination.js
+        const renderPagination = (tagList) => {
+            $('#pagination').pagination({
+                dataSource: tagList,
+                className: 'paginationjs-theme-blue paginationjs-big',
+                callback: function (data, pagination) {
+                    renderTags(data, pagination);
+                },
+                hideOnlyOnePage: true
+            })
+        }
+
+        // Open modal create
+        const inputNameEl = document.getElementById("input-name");
+        const btnOpenModal = document.getElementById("btn-open-modal");
+        btnOpenModal.addEventListener("click", () => {
+            $('#modal-tag').modal('show');
+
+            // set title modal
+            const modalTitle = document.getElementById("modal-tag-title")
+            modalTitle.innerText = "Tạo tag"
+        })
+
+        $('#modal-tag').on('hidden.bs.modal', function (event) {
+            inputNameEl.value = "";
+            idTagUpdate = null;
+        })
+
+        // Create tag using axios and vanilla js
+        const createTag = () => {
+            const name = inputNameEl.value;
+            if (!name || name.trim() === "") {
+                toastr.error("Tên tag không được để trống")
+                return
+            }
+
+            axios.post("/api/v1/admin/tags", {name})
+                .then(res => {
+                    tags.push(res.data)
+                    renderPagination(tags)
+                    inputNameEl.value = "";
+
+                    $('#modal-tag').modal('hide');
+                    toastr.success("Tạo thành công")
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        // Update tag using axios and vanilla js
+        const updateTag = () => {
+            const name = inputNameEl.value;
+            if (!name || name.trim() === "") {
+                toastr.error("Tên tag không được để trống")
+                return
+            }
+
+            axios.put(`/api/v1/admin/tags/${idTagUpdate}`, {name})
+                .then(res => {
+                    const tag = tags.find(tag => tag.id === idTagUpdate)
+                    tag.name = res.data.name;
+
+                    renderPagination(tags)
+                    inputNameEl.value = "";
+
+                    $('#modal-tag').modal('hide');
+                    toastr.success("Cập nhật thành công");
+                    idTagUpdate = null;
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        // Handle open modal update
+        const openModalUpdate = id => {
+            const tag = tags.find(tag => tag.id === id)
+            inputNameEl.value = tag.name
+            idTagUpdate = tag.id;
+            $('#modal-tag').modal('show');
+
+            // set title modal
+            const modalTitle = document.getElementById("modal-tag-title")
+            modalTitle.innerText = "Cập nhật tag"
+        }
+
+        // Handle tag
+        const btnHandleTag = document.getElementById("btn-handle-tag")
+        btnHandleTag.addEventListener("click", () => {
+            if (idTagUpdate) {
+                updateTag()
+            } else {
+                createTag()
+            }
+        })
+
+        // Xóa
+        const deletetag = (id) => {
+            const isDelete = confirm("Bạn có chắc chắn muốn xóa tag này không?")
+            if (isDelete) {
+                axios.delete(`/api/v1/admin/tags/${id}`)
+                    .then(() => {
+                        tags = tags.filter(tag => tag.id !== id)
+                        renderPagination(tags)
+                        toastr.success("Xóa thành công")
+                    })
+                    .catch(e => {
+                        toastr.error(e.response.data.message);
+                        console.log(e);
+                    })
+            }
+        }
+
+        // call api get blog by tag id and show blog list in modal
+        const showBlogList = (id) => {
+            axios.get(`/api/v1/admin/tags/${id}/blogs`)
+                .then(res => {
+                    const blogList = res.data;
+                    let html = "";
+                    blogList.forEach((blog, index) => {
+                        html += `
+                            <tr>
+                                <td>${index + 1}</td>
+                               <td>
+                                    <a href="/admin/blogs/${blog.id}/detail">${blog.title}</a>
+                                </td>
+                                <td>
+                                    <a href="/admin/users/${blog.user.userId}">${blog.user.username}</a>
+                                </td>
+                                <td>${formatDate(blog.createdAt)}</td>
+                            </tr>
+                        `
+                    })
+                    document.getElementById("modal-blog-list-body").innerHTML = html;
+
+                    // update modal title
+                    const modalTitle = document.querySelector("#modal-blog-list .modal-title")
+                    const tag = tags.find(tag => tag.id === id)
+                    modalTitle.innerHTML = `Danh sách bài viết sử dụng tag <span class="text-primary">${tag.name}</span>`
+                    $('#modal-blog-list').modal('show');
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        renderPagination(tags);
+    </script>
+</th:block>
 </body>
+
 </html>

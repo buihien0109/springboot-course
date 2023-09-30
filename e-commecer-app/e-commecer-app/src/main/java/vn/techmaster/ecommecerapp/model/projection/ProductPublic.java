@@ -20,6 +20,8 @@ public interface ProductPublic {
 
     Integer getStockQuantity();
 
+    Product.Status getStatus();
+
     CategoryPublic getCategory();
 
     ProductImageSeparatePublic getImages();
@@ -57,6 +59,11 @@ public interface ProductPublic {
         @Override
         public Integer getStockQuantity() {
             return product.getStockQuantity();
+        }
+
+        @Override
+        public Product.Status getStatus() {
+            return product.getStatus();
         }
 
         @Override

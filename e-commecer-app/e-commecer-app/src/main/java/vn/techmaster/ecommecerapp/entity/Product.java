@@ -26,6 +26,9 @@ public class Product {
     private Integer price;
     private Integer stockQuantity;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -41,4 +44,8 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
     private List<Discount> discounts = new ArrayList<>();
+
+    public enum Status {
+        AVAILABLE, UNAVAILABLE, CEASE
+    }
 }
