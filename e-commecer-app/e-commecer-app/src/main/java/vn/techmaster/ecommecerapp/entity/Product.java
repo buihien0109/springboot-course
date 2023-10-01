@@ -1,7 +1,10 @@
 package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -20,6 +23,8 @@ public class Product {
     private Long productId;
 
     private String name;
+
+    private String slug;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -45,7 +50,22 @@ public class Product {
     @Fetch(FetchMode.SUBSELECT)
     private List<Discount> discounts = new ArrayList<>();
 
+    @Getter
     public enum Status {
-        AVAILABLE, UNAVAILABLE, CEASE
+        NOT_YET_SOLD("Chưa mở bán"),
+        AVAILABLE("Đang bán"),
+        UNAVAILABLE("Hết hàng"),
+        CEASE("Ngừng bán");
+
+        private final String displayValue;
+
+        Status(String displayValue) {
+            this.displayValue = displayValue;
+        }
+    }
+
+    public void addAttribute(ProductAttribute attribute) {
+        attributes.add(attribute);
+        attribute.setProduct(this);
     }
 }

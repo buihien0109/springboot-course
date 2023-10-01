@@ -1,9 +1,11 @@
 package vn.techmaster.ecommecerapp;
 
 import com.github.javafaker.Faker;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import vn.techmaster.ecommecerapp.entity.Category;
 import vn.techmaster.ecommecerapp.entity.Product;
 import vn.techmaster.ecommecerapp.entity.ProductAttribute;
@@ -96,5 +98,35 @@ public class ProductTests {
             product.setCategory(category);
             productRepository.save(product);
         }
+    }
+
+    @Transactional
+    @Test
+    void insert_an_product_attribute_to_product() {
+        // Insert an attribute to an existing product
+        Product product = productRepository.findById(1L).get();
+        ProductAttribute attribute = new ProductAttribute();
+        attribute.setAttributeName("Xuất Xứ");
+        attribute.setAttributeValue("Việt Nam");
+        attribute.setProduct(product);
+        product.getAttributes().add(attribute);
+
+        System.out.println(attribute);
+        productRepository.save(product);
+    }
+
+    @Transactional
+    @Test
+    void insert_an_product_image_to_product() {
+        // Insert an image to an existing product
+        Product product = productRepository.findById(1L).get();
+        ProductImage image = new ProductImage();
+        image.setImageUrl("https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fvn%2Fphotos%2F%25C4%2591%25E1%25BB%2591i-h%25E1%25BB%258Dc&psig=AOvVaw0QZ3Z3Z2Z2Z2Z2Z2Z2Z2Z2&ust=1629788450008000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCJjQ1ZqBzvICFQAAAAAdAAAAABAD");
+        image.setImageType(ProductImage.ImageType.MAIN);
+        image.setProduct(product);
+        product.getImages().add(image);
+
+        System.out.println(image);
+        productRepository.save(product);
     }
 }
