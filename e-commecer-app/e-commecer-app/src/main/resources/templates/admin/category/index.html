@@ -33,25 +33,26 @@
         <div class="container-fluid">
             <div class="row py-2">
                 <div class="col-12">
-                    <button class="btn btn-primary" id="btn-open-modal">
-                        <i class="fas fa-plus"></i> Tạo danh mục
+                    <button class="btn btn-primary" id="btn-open-modal-parent">
+                        <i class="fas fa-plus"></i> Tạo danh mục cha
                     </button>
-                    <a href="/admin/tags" type="button" class="btn btn-info">
+                    <button class="btn btn-warning" id="btn-open-modal-sub">
+                        <i class="fas fa-plus"></i> Tạo danh mục con
+                    </button>
+                    <a href="/admin/categories" type="button" class="btn btn-info">
                         <i class="fas fa-redo"></i> Refresh
                     </a>
                 </div>
             </div>
             <div class="row">
-                <div class="col-12">
+                <div class="col-lg-6 cl-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover" id="table-category">
                                 <thead>
                                 <tr>
-                                    <th>STT</th>
-                                    <th>Tên danh mục</th>
+                                    <th>Danh mục cha</th>
                                     <th>Danh mục con</th>
-                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -68,49 +69,367 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal Parent Category -->
+    <div class="modal fade" id="modal-parent-category" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="modal-tag-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fs-5" id="modal-parent-title">Tạo danh mục</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="input-parent-name" placeholder="Enter name">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="btn-handle-parent">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sub Category -->
+    <div class="modal fade" id="modal-sub-category" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="modal-tag-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fs-5" id="modal-sub-title">Tạo danh mục</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label>Danh mục cha</label>
+                    <select name="parent-category-list" class="form-control mb-3" id="input-parent-id">
+                        <option hidden="hidden">Chọn danh mục cha</option>
+                        <option th:each="categoryParent : ${categoryParentList}" th:value="${categoryParent.categoryId}" th:text="${categoryParent.name}">123</option>
+                    </select>
+                    <label>Tên danh mục con</label>
+                    <input type="text" class="form-control" id="input-sub-name" placeholder="Enter name">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="btn-handle-sub">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <th:block id="js">
     <script th:inline="javascript">
         let categoryList = [[${categoryList}]];
         console.log(categoryList);
+        let idParentUpdate = null;
+        let idSubUpdate = null;
 
         // Render tag
         const tableContent = document.querySelector("table tbody")
-        const renderTags = (tagList, pagination) => {
-            console.log(pagination)
-            tableContent.innerHTML = "";
+        const renderCategoryList = (data) => {
             let html = "";
-            tagList.forEach((tag, index) => {
+            data.forEach((item) => {
                 html += `
-                    <tr>
-                        <td>${pagination.pageSize * (pagination.pageNumber - 1) + (index + 1)}</td>
-                        <td>${tag.name}</td>
-                        <td>
-                            <span class="mr-2">${tag.used}</span>
-                            ${tag.used > 0 ? `(<a href="javascript:void(0)" onclick="showBlogList(${tag.id})">Xem danh sách</a>)` : ''}
-                        </td>
-                        <td>
-                            <button class="btn btn-warning" onclick="openModalUpdate(${tag.id})">Edit</button>
-                            <button class="btn btn-danger" onclick="deletetag(${tag.id})">Delete</button>
-                        </td>
-                    </tr>
-                `
-            })
+                        <tr>
+                            <td rowspan="${item.subCategories.length + 1}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>${item.mainCategory.name}</span>
+                                    <div>
+                                        <span class="btn-action btn-action-edit" onclick="openModalUpdateParent(${item.mainCategory.categoryId})"><i class="fas fa-pencil-alt"></i></span>
+                                        <span class="btn-action btn-action-delete" onclick="deleteCategory(${item.mainCategory.categoryId}, 'main')"><i class="fas fa-trash-alt"></i></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                `;
+                item.subCategories.forEach((subItem) => {
+                    html += `
+                        <tr>
+                            <td>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>${subItem.name}</span>
+                                    <div>
+                                        <span class="btn-action btn-action-edit" onclick="openModalUpdateSub(${subItem.categoryId})"><i class="fas fa-pencil-alt"></i></span>
+                                        <span class="btn-action btn-action-delete" onclick="deleteCategory(${subItem.categoryId}, 'sub')"><i class="fas fa-trash-alt"></i></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
             tableContent.innerHTML = html;
-        }
+        };
 
         // render pagination using pagination.js
-        const renderPagination = (tagList) => {
+        const renderPagination = (categories) => {
             $('#pagination').pagination({
-                dataSource: tagList,
+                dataSource: categories,
                 className: 'paginationjs-theme-blue paginationjs-big',
-                callback: function (data, pagination) {
-                    renderTags(data, pagination);
+                callback: function (data) {
+                    renderCategoryList(data);
                 },
                 hideOnlyOnePage: true
             })
         }
+
+        // handle delete category using axios
+        const deleteCategory = (categoryId, type) => {
+            const isDelete = confirm("Bạn có chắc chắn muốn xóa danh mục này không?");
+            if (!isDelete) return;
+            axios.delete(`/api/v1/admin/categories/${categoryId}`)
+                .then((response) => {
+                    if (response.status === 200) {
+                        toastr.success("Xóa thành công");
+
+                        // if type = 'main' => delete main category
+                        if (type === 'main') {
+                            categoryList = categoryList.filter((item) => {
+                                return item.mainCategory.categoryId !== categoryId;
+                            });
+                        } else {
+                            // if type = 'sub' => delete sub category
+                            categoryList.forEach((item) => {
+                                item.subCategories = item.subCategories.filter((subItem) => {
+                                    return subItem.categoryId !== categoryId;
+                                });
+                            });
+                        }
+
+                        renderPagination(categoryList);
+
+                    } else {
+                        toastr.error("Xóa thất bại");
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    toastr.error(error.response.data.message);
+                })
+        }
+
+        // ------------ PARENT CATEGORY ------------
+        // Open modal create
+        const inputParentNameEl = document.getElementById("input-parent-name");
+        const btnOpenModalParent = document.getElementById("btn-open-modal-parent");
+        btnOpenModalParent.addEventListener("click", () => {
+            $('#modal-parent-category').modal('show');
+
+            // set title modal
+            const modalParentTitle = document.getElementById("modal-parent-title")
+            modalParentTitle.innerText = "Tạo danh mục cha"
+        })
+
+        $('#modal-parent-category').on('hidden.bs.modal', function (event) {
+            inputParentNameEl.value = "";
+            idParentUpdate = null;
+        })
+
+        // Create tag using axios and vanilla js
+        const createParentCategory = () => {
+            const name = inputParentNameEl.value;
+            if (!name || name.trim() === "") {
+                toastr.error("Tên danh mục không được để trống")
+                return
+            }
+
+            axios.post("/api/v1/admin/categories/add-parent", {name})
+                .then(res => {
+                    categoryList.push(res.data)
+                    renderPagination(categoryList)
+                    inputParentNameEl.value = "";
+
+                    $('#modal-parent-category').modal('hide');
+                    toastr.success("Tạo thành công")
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        // Update tag using axios and vanilla js
+        const updateParentCategory = () => {
+            const name = inputParentNameEl.value;
+            if (!name || name.trim() === "") {
+                toastr.error("Tên danh mục không được để trống")
+                return
+            }
+
+            axios.put(`/api/v1/admin/categories/${idParentUpdate}/update-parent`, {name})
+                .then(res => {
+                    const category = categoryList.find(category => category.mainCategory.categoryId === idParentUpdate).mainCategory;
+                    category.name = res.data.name;
+
+                    renderPagination(categoryList)
+                    inputParentNameEl.value = "";
+
+                    $('#modal-parent-category').modal('hide');
+                    toastr.success("Cập nhật thành công");
+                    idParentUpdate = null;
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        // Handle open modal update
+        const openModalUpdateParent = id => {
+            const category = categoryList.find(category => category.mainCategory.categoryId === id).mainCategory;
+            console.log(category);
+            inputParentNameEl.value = category.name
+            idParentUpdate = category.categoryId;
+            $('#modal-parent-category').modal('show');
+
+            // set title modal
+            const modalTitle = document.getElementById("modal-parent-title")
+            modalTitle.innerText = "Cập nhật danh mục cha"
+        }
+
+        // Handle tag
+        const btnHandleParent = document.getElementById("btn-handle-parent")
+        btnHandleParent.addEventListener("click", () => {
+            if (idParentUpdate) {
+                updateParentCategory()
+            } else {
+                createParentCategory()
+            }
+        })
+
+        // ------------ SUB CATEGORY ------------
+        // Open modal create
+        const inputSubNameEl = document.getElementById("input-sub-name");
+        const inputParentIdEl = document.getElementById("input-parent-id");
+        const btnOpenModalSub = document.getElementById("btn-open-modal-sub");
+        btnOpenModalSub.addEventListener("click", () => {
+            $('#modal-sub-category').modal('show');
+
+            // set title modal
+            const modalSubTitle = document.getElementById("modal-sub-title")
+            modalSubTitle.innerText = "Tạo danh mục con"
+        })
+
+        $('#modal-sub-category').on('hidden.bs.modal', function (event) {
+            inputSubNameEl.value = "";
+            inputParentIdEl.value = "";
+            idSubUpdate = null;
+        })
+
+        // Create tag using axios and vanilla js
+        const createSubCategory = () => {
+            const parentCategoryId = inputParentIdEl.value;
+            const name = inputSubNameEl.value;
+            if (!name || name.trim() === "") {
+                toastr.error("Tên danh mục không được để trống")
+                return
+            }
+
+            const data = {
+                name,
+                parentCategoryId: Number(parentCategoryId)
+            }
+            console.log(data)
+
+            axios.post("/api/v1/admin/categories/add-sub", data)
+                .then(res => {
+                    // find main category
+                    const category = categoryList.find(category => category.mainCategory.categoryId === res.data.parentCategoryId);
+                    // push sub category to sub category
+                    category.subCategories.push(res.data);
+
+                    renderPagination(categoryList)
+                    inputSubNameEl.value = "";
+                    inputParentIdEl.value = "";
+
+                    $('#modal-sub-category').modal('hide');
+                    toastr.success("Tạo thành công")
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        // Update tag using axios and vanilla js
+        const updateSubCategory = () => {
+            const parentCategoryId = inputParentIdEl.value;
+            const name = inputSubNameEl.value;
+            if (!name || name.trim() === "") {
+                toastr.error("Tên danh mục không được để trống")
+                return
+            }
+
+            const data = {
+                name,
+                parentCategoryId: Number(parentCategoryId)
+            }
+
+            axios.put(`/api/v1/admin/categories/${idSubUpdate}/update-sub`, data)
+                .then(res => {
+                    // find sub category in sub category list
+                    const subCategory = categoryList.find(category => category.subCategories.find(subCategory => subCategory.categoryId === idSubUpdate)).subCategories.find(subCategory => subCategory.categoryId === idSubUpdate);
+                    if(subCategory.parentCategoryId === res.data.parentCategoryId) {
+                        subCategory.name = res.data.name;
+                        subCategory.slug = res.data.slug;
+                    } else {
+                        // remove sub category in sub category list
+                        categoryList.forEach(category => {
+                            category.subCategories = category.subCategories.filter(subCategory => subCategory.categoryId !== idSubUpdate)
+                        })
+
+                        // find main category
+                        const category = categoryList.find(category => category.mainCategory.categoryId === res.data.parentCategoryId);
+                        // push sub category to sub category
+                        category.subCategories.push(res.data);
+                    }
+
+                    console.log(categoryList)
+                    renderPagination(categoryList)
+                    inputSubNameEl.value = "";
+                    inputParentIdEl.value = "";
+
+                    $('#modal-sub-category').modal('hide');
+                    toastr.success("Cập nhật thành công");
+                    idSubUpdate = null;
+                })
+                .catch(e => {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                })
+        }
+
+        // Handle open modal update
+        const openModalUpdateSub = id => {
+            // find sub category
+            const subCategory = categoryList.find(category => category.subCategories.find(subCategory => subCategory.categoryId === id)).subCategories.find(subCategory => subCategory.categoryId === id);
+
+            inputSubNameEl.value = subCategory.name
+            inputParentIdEl.value = subCategory.parentCategoryId
+            idSubUpdate = subCategory.categoryId;
+            $('#modal-sub-category').modal('show');
+
+            // set title modal
+            const modalTitle = document.getElementById("modal-sub-title")
+            modalTitle.innerText = "Cập nhật danh mục con"
+        }
+
+        // Handle tag
+        const btnHandleSub = document.getElementById("btn-handle-sub")
+        btnHandleSub.addEventListener("click", () => {
+            if (idSubUpdate) {
+                updateSubCategory()
+            } else {
+                createSubCategory()
+            }
+        })
+
+
+        renderPagination(categoryList);
     </script>
 </th:block>
 </body>

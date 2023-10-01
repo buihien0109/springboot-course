@@ -32,9 +32,9 @@ public class Category {
     private Category parentCategory;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "parentCategory")
+    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
-    private List<Category> subCategories;
+    private List<Category> subCategories = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)

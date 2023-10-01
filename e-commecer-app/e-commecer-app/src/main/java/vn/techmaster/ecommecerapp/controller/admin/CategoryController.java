@@ -18,7 +18,8 @@ public class CategoryController {
 
     @GetMapping
     public String getCategoryPage(Model model) {
-        model.addAttribute("categoryList", categoryService.findAll());
+        model.addAttribute("categoryList", categoryService.findAllByParentCategoryIsNull());
+        model.addAttribute("categoryParentList", categoryService.findAllParentCategory());
         return "admin/category/index";
     }
 }
