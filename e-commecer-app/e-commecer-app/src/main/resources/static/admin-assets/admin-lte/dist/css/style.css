@@ -113,6 +113,7 @@ img {
     height: 200px;
     border-radius: 5px;
     overflow: hidden;
+    position: relative;
 }
 
 #product-image .product-image-item label {
@@ -157,6 +158,30 @@ img {
     height: 100%;
     object-fit: cover;
     transition: all 0.3s ease-in-out;
+}
+
+#product-image .product-image-item .btn-action-delete {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 14px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    color: #ffffff;
+    background-color: #dc3545;
+}
+
+#product-image .product-image-item .btn-action-delete:hover {
+    background-color: #ffffff;
+    color: #dc3545;
+    border: 1px solid #dc3545;
 }
 
 #product-attribute .btn-action {

@@ -7,19 +7,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.techmaster.ecommecerapp.entity.Category;
-import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.entity.ProductAttribute;
-import vn.techmaster.ecommecerapp.entity.ProductImage;
+import org.springframework.web.multipart.MultipartFile;
+import vn.techmaster.ecommecerapp.entity.*;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.CategorySeparatePublic;
 import vn.techmaster.ecommecerapp.model.projection.ProductAttributePublic;
+import vn.techmaster.ecommecerapp.model.projection.ProductImagePublic;
 import vn.techmaster.ecommecerapp.model.projection.ProductPublic;
 import vn.techmaster.ecommecerapp.model.request.CreateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpsertProductAttributeRequest;
 import vn.techmaster.ecommecerapp.repository.CategoryRepository;
 import vn.techmaster.ecommecerapp.repository.ProductAttributeRepository;
+import vn.techmaster.ecommecerapp.repository.ProductImageRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 
 import java.util.ArrayList;
@@ -36,6 +36,8 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final Slugify slugify;
     private final ProductAttributeRepository productAttributeRepository;
+    private final FileServerService fileServerService;
+    private final ProductImageRepository productImageRepository;
 
     public List<ProductPublic> findAll() {
         List<Product> products = productRepository.findAll();
@@ -202,36 +204,17 @@ public class ProductService {
         product.setStatus(request.getStatus());
         product.setCategory(category);
 
-        // update main image url
-        if (request.getMainImageUrl() != null && !request.getMainImageUrl().isEmpty()) {
-            ProductImage mainImage = new ProductImage();
-            mainImage.setImageUrl(request.getMainImageUrl());
-            mainImage.setImageType(ProductImage.ImageType.MAIN);
-            mainImage.setProduct(product);
-            product.getImages().add(mainImage);
-        }
+        // update attribute for request
+        request.getAttributes().forEach(attributeRequest -> {
+            // check attribute id is exist
+            ProductAttribute productAttribute = product.getAttributes().stream()
+                    .filter(attribute -> attribute.getAttributeId().equals(attributeRequest.getAttributeId()))
+                    .findFirst()
+                    .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy thuộc tính với id " + attributeRequest.getAttributeId()));
 
-        // update sub image url
-        if (request.getSubImageUrls() != null && !request.getSubImageUrls().isEmpty()) {
-            request.getSubImageUrls().forEach(subImageUrl -> {
-                ProductImage subImage = new ProductImage();
-                subImage.setImageUrl(subImageUrl);
-                subImage.setImageType(ProductImage.ImageType.SUB);
-                subImage.setProduct(product);
-                product.getImages().add(subImage);
-            });
-        }
-
-        // update attribute
-        if (request.getAttributes() != null && !request.getAttributes().isEmpty()) {
-            request.getAttributes().forEach(attribute -> {
-                ProductAttribute productAttribute = new ProductAttribute();
-                productAttribute.setAttributeName(attribute.getName());
-                productAttribute.setAttributeValue(attribute.getValue());
-                productAttribute.setProduct(product);
-                product.getAttributes().add(productAttribute);
-            });
-        }
+            productAttribute.setAttributeName(attributeRequest.getAttributeName());
+            productAttribute.setAttributeValue(attributeRequest.getAttributeValue());
+        });
 
         productRepository.save(product);
         return ProductPublic.of(product);
@@ -300,6 +283,62 @@ public class ProductService {
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy thuộc tính với id " + attributeId));
 
         product.getAttributes().remove(productAttribute);
+        productRepository.save(product);
+    }
+
+    public ProductImagePublic uploadMainImage(Long productId, MultipartFile file) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm với id " + productId));
+
+        FileServer fileServer = fileServerService.uploadFile(file);
+        String url = "/api/v1/files/" + fileServer.getId();
+
+        // delete old main image
+        product.getImages().stream()
+                .filter(image -> image.getImageType().equals(ProductImage.ImageType.MAIN))
+                .findFirst()
+                .ifPresent(productImage -> {
+                    product.getImages().remove(productImage);
+                    productRepository.save(product);
+                });
+
+        ProductImage mainImage = new ProductImage();
+        mainImage.setImageUrl(url);
+        mainImage.setImageType(ProductImage.ImageType.MAIN);
+        mainImage.setProduct(product);
+
+        product.getImages().add(mainImage);
+        productRepository.save(product);
+
+        return ProductImagePublic.of(mainImage);
+    }
+
+    public ProductImagePublic uploadSubImage(Long productId, MultipartFile file) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm với id " + productId));
+
+        FileServer fileServer = fileServerService.uploadFile(file);
+        String url = "/api/v1/files/" + fileServer.getId();
+
+        ProductImage subImage = new ProductImage();
+        subImage.setImageUrl(url);
+        subImage.setImageType(ProductImage.ImageType.SUB);
+        subImage.setProduct(product);
+
+        productImageRepository.save(subImage);
+        return ProductImagePublic.of(subImage);
+    }
+
+    public void deleteSubImage(Long productId, Long imageId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm với id " + productId));
+
+        ProductImage productImage = product.getImages().stream()
+                .filter(image -> image.getImageId().equals(imageId))
+                .findFirst()
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy ảnh với id " + imageId));
+
+        product.getImages().remove(productImage);
         productRepository.save(product);
     }
 }

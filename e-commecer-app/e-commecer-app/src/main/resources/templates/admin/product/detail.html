@@ -91,7 +91,7 @@
                                                 <label>Trạng thái</label>
                                                 <select id="status" class="form-control">
                                                     <option th:each="status : ${statusList}" th:value="${status}"
-                                                            th:checked="${product.status == status}"
+                                                            th:selected="${product.status == status}"
                                                             th:text="${status.getDisplayValue()}"></option>
                                                 </select>
                                             </div>
@@ -119,13 +119,13 @@
                                         <div class="col-12">
                                             <label>Ảnh đại diện</label>
                                             <div class="d-flex align-items-center">
-                                                <div class="product-image-item product-main-image-item mr-4">
+                                                <div th:if="${product.images.mainImage != null}" class="product-image-item product-main-image-item mr-4">
                                                     <img th:src="${product.images.mainImage.imageUrl}" alt="Ảnh đại diện"
                                                          class="img-fluid">
                                                 </div>
                                                 <div class="product-image-item">
                                                     <label for="input-upload-main-image">
-                                                        <span>Đổi ảnh đại diện</span>
+                                                        <span>Upload ảnh đại diện</span>
                                                         <img src="/img/image-placeholder.png" alt="Ảnh upload"
                                                              class="img-fluid">
                                                     </label>
@@ -138,14 +138,19 @@
                                     <div class="row mt-4">
                                         <div class="col-12">
                                             <label>Ảnh mô tả</label>
-                                            <div class="d-flex align-items-center">
-                                                <div class="product-image-item product-sub-image-item mr-4" th:each="image : ${product.images.subImages}">
-                                                    <img th:src="${image.imageUrl}" alt="Ảnh mô tả"
-                                                         class="img-fluid">
+                                            <div class="d-flex align-items-center flex-wrap">
+                                                <div class="d-flex align-items-center flex-wrap" id="list-product-sub-image-item">
+                                                    <div th:if="not ${#lists.isEmpty(product.images.subImages)}"
+                                                         th:each="image : ${product.images.subImages}"
+                                                         class="product-image-item product-sub-image-item mr-4" th:data-image-sub-id="${image.imageId}">
+                                                        <img th:src="${image.imageUrl}" alt="Ảnh mô tả"
+                                                             class="img-fluid">
+                                                        <span class="btn-action btn-action-delete" th:onclick="|deleteSubImage(${image.imageId})|"><i class="fas fa-times-circle"></i></span>
+                                                    </div>
                                                 </div>
                                                 <div class="product-image-item">
                                                     <label for="input-upload-sub-image">
-                                                        <span>Thêm ảnh mô tả</span>
+                                                        <span>Upload ảnh mô tả</span>
                                                         <img src="/img/image-placeholder.png" alt="Ảnh upload"
                                                              class="img-fluid">
                                                     </label>
@@ -167,7 +172,7 @@
                                                         <span class="btn-action btn-action-delete" th:onclick="|deleteAttribute(${attribute.attributeId})|"><i class="fas fa-trash-alt"></i></span>
                                                     </div>
                                                 </div>
-                                                <textarea th:text="${attribute.attributeValue}" class="form-control" rows="5"></textarea>
+                                                <textarea th:text="${attribute.attributeValue}" class="form-control" rows="5" th:onkeyup="|saveAttributeValue(this, ${attribute.attributeId})|"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -185,7 +190,7 @@
         </div>
     </section>
 
-    <!-- Modal Tag -->
+    <!-- Modal Attribute -->
     <div class="modal fade" id="modal-attribute" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="modal-attribute-title" aria-hidden="true">
         <div class="modal-dialog">
@@ -216,190 +221,10 @@
         const categoryList = [[${categoryList}]];
 
         console.log({product, statusList, categoryList});
-
-        // --------- Product Info ---------
-        // render sub category
-        const renderSubCategory = (parentId) => {
-            const subCategoryList = categoryList.find(category => category.mainCategory.categoryId == parentId).subCategories;
-            subCategory.innerHTML = ""
-            let html = '<option hidden="hidden">Chọn danh mục con</option>';
-            subCategoryList.forEach(subCategory => {
-                html += `<option value="${subCategory.categoryId}">${subCategory.name}</option>`
-            });
-            subCategory.innerHTML = html;
-        }
-
-        // triger value parent category, sub category
-        const parentCategory = document.getElementById('parent-category');
-        const subCategory = document.getElementById('sub-category');
-        parentCategory.value = product.category.parentCategoryId;
-        renderSubCategory(product.category.parentCategoryId);
-        subCategory.value = product.category.categoryId;
-
-        // format price
-        const price = document.getElementById('price');
-        price.value = product.price.toString().replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-        // Handle event change parent category and load sub category using vanilla js
-        parentCategory.addEventListener('change', function (event) {
-            const categoryId = event.target.value;
-            renderSubCategory(Number(categoryId));
-        });
-
-        // format price when user input
-        price.addEventListener('keyup', function (event) {
-            const value = event.target.value;
-            event.target.value = value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        });
-
-        // convert price to number when user submit
-        const formatPrice = (price) => {
-            return parseInt(price.replace(/,/g, ""));
-        }
-
-        // --------- Product Attribute ---------
-        let attributeId = null;
-        const btnOpenModalCreateAttribute = document.getElementById('btn-open-modal-create-attribute');
-        btnOpenModalCreateAttribute.addEventListener('click', function () {
-            const modalTitle = document.getElementById('modal-attribute-title');
-            const inputAttributeName = document.getElementById('input-attribute-name');
-            modalTitle.innerText = "Thêm thuộc tính";
-            inputAttributeName.value = "";
-            $('#modal-attribute').modal('show');
-        });
-
-        function openModalUpdateAttribute(id) {
-            // find attribute by id
-            console.log("product :", product);
-            const attribute = product.attributes.find(attribute => attribute.attributeId == id);
-            console.log(attribute)
-
-            const modalTitle = document.getElementById('modal-attribute-title');
-            const inputAttributeName = document.getElementById('input-attribute-name');
-            modalTitle.innerText = "Cập nhật thuộc tính";
-            inputAttributeName.value = attribute.attributeName;
-            $('#modal-attribute').modal('show');
-            attributeId = id;
-        }
-
-        $('#modal-attribute').on('hidden.bs.modal', function (event) {
-            attributeId = null;
-            const inputAttributeName = document.getElementById('input-attribute-name');
-            inputAttributeName.value = "";
-        })
-
-        // Handle create attribute send request to server
-        const createAttribute = () => {
-            const attributeName = document.getElementById('input-attribute-name').value;
-            const attribute = {
-                attributeName
-            }
-
-            axios.post(`/api/v1/admin/products/${product.productId}/attributes`, attribute)
-                .then(response => {
-                    console.log(response);
-                    if (response.status === 200) {
-                        toastr.success("Thêm thuộc tính thành công");
-
-                        // add attribute to UI
-                        const productAttributeList = document.getElementById('product-attribute-list');
-                        productAttributeList.insertAdjacentHTML("beforeend", `
-                            <div class="col-6" data-attribute-id="${response.data.attributeId}">
-                                <div class="product-attribute-item mb-3">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <label class="mb-0">${response.data.attributeName}</label>
-                                        <div class="ml-2">
-                                            <span class="btn-action btn-action-edit" onclick="openModalUpdateAttribute(${response.data.attributeId})"><i class="fas fa-pencil-alt"></i></span>
-                                            <span class="btn-action btn-action-delete" onclick="deleteAttribute(${response.data.attributeId})"><i class="fas fa-trash-alt"></i></span>
-                                        </div>
-                                    </div>
-                                    <textarea class="form-control" rows="5">${response.data.attributeValue}</textarea>
-                                </div>
-                            </div>
-                        `)
-
-                        // add attribute to product
-                        product.attributes.push(response.data);
-
-                        $("#modal-attribute").modal('hide')
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    toastr.error(error.response.data.message);
-                })
-        }
-
-        const updateAttribute = (attributeId) => {
-            const attributeName = document.getElementById('input-attribute-name').value;
-            const attribute = {
-                attributeName
-            }
-            console.log(attribute);
-
-            axios.put(`/api/v1/admin/products/${product.productId}/attributes/${attributeId}`, attribute)
-                .then(response => {
-                    console.log(response);
-                    if (response.status === 200) {
-                        toastr.success("Cập nhật thuộc tính thành công");
-
-                        // find attribute item on UI using data-attribute-id
-                        const productAttributeList = document.getElementById('product-attribute-list');
-                        const attributeItem = productAttributeList.querySelector(`[data-attribute-id="${attributeId}"]`);
-                        attributeItem.querySelector('label').innerText = response.data.attributeName;
-
-                        // update attribute in product
-                        const attribute = product.attributes.find(attribute => attribute.attributeId == attributeId);
-                        attribute.attributeName = response.data.attributeName;
-                        console.log(product)
-
-                        $("#modal-attribute").modal('hide')
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    toastr.error(error.response.data.message);
-                })
-        }
-
-        const btnHandleAttribute = document.getElementById('btn-handle-attribute');
-        btnHandleAttribute.addEventListener('click', function () {
-            if (attributeId) {
-                updateAttribute(attributeId);
-            } else {
-                createAttribute();
-            }
-        });
-
-        // handle delete attribute
-        function deleteAttribute(id) {
-            const isDelete = confirm("Bạn có chắc chắn muốn xóa thuộc tính này?");
-            if (isDelete) {
-                axios.delete(`/api/v1/admin/products/${product.productId}/attributes/${id}`)
-                    .then(response => {
-                        console.log(response);
-                        if (response.status === 200) {
-                            toastr.success("Xóa thuộc tính thành công");
-
-                            // delete attribute on UI using data-attribute-id
-                            const productAttributeList = document.getElementById('product-attribute-list');
-                            const attributeItem = productAttributeList.querySelector(`[data-attribute-id="${id}"]`);
-                            attributeItem.parentNode.removeChild(attributeItem);
-
-                            // delete attribute in product
-                            const attributeIndex = product.attributes.findIndex(attribute => attribute.attributeId == id);
-                            product.attributes.splice(attributeIndex, 1);
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        toastr.error(error.response.data.message);
-                    })
-            }
-        }
-
-        // --------- Product Image ---------
     </script>
+    <script th:src="@{/admin-assets/assets/js/product/product-info.js}"></script>
+    <script th:src="@{/admin-assets/assets/js/product/product-image.js}"></script>
+    <script th:src="@{/admin-assets/assets/js/product/product-attribute.js}"></script>
 </th:block>
 
 </body>

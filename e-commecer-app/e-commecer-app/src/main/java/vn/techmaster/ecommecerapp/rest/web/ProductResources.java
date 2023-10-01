@@ -2,6 +2,7 @@ package vn.techmaster.ecommecerapp.rest.web;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vn.techmaster.ecommecerapp.model.request.CreateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpsertProductAttributeRequest;
@@ -57,4 +58,22 @@ public class ProductResources {
         productService.deleteAttribute(productId, attributeId);
         return ResponseEntity.ok().build();
     }
+
+    // ------------------- API for image -------------------
+    @PostMapping("/admin/products/{productId}/images/upload-main-image")
+    public ResponseEntity<?> uploadMainImage(@RequestParam("file") MultipartFile file, @PathVariable Long productId) {
+        return ResponseEntity.ok(productService.uploadMainImage(productId, file));
+    }
+
+    @PostMapping("/admin/products/{productId}/images/upload-sub-image")
+    public ResponseEntity<?> uploadSubImage(@RequestParam("file") MultipartFile file, @PathVariable Long productId) {
+        return ResponseEntity.ok(productService.uploadSubImage(productId, file));
+    }
+
+    @DeleteMapping("/admin/products/{productId}/images/{imageId}")
+    public ResponseEntity<?> deleteSubImage(@PathVariable Long productId, @PathVariable Long imageId) {
+        productService.deleteSubImage(productId, imageId);
+        return ResponseEntity.ok().build();
+    }
+
 }

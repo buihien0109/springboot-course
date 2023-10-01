@@ -17,8 +17,6 @@ public class UpdateProductRequest {
     private String description;
     private Product.Status status;
     private Long categoryId;
-    private String mainImageUrl;
-    private List<String> subImageUrls;
     private List<AttributeRequest> attributes;
 
     @Getter
@@ -27,7 +25,8 @@ public class UpdateProductRequest {
     @AllArgsConstructor
     @ToString
     public static class AttributeRequest {
-        private String name;
-        private String value;
+        private Long attributeId;
+        private String attributeName;
+        private String attributeValue;
     }
 }

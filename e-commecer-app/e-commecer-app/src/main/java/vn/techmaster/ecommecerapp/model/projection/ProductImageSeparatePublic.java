@@ -18,7 +18,8 @@ public interface ProductImageSeparatePublic {
 
         @Override
         public ProductImagePublic getMainImage() {
-            ProductImage mainImage = productImages.stream().filter(image -> image.getImageType().equals(ProductImage.ImageType.MAIN)).findFirst().orElse(null);
+            ProductImage mainImage = productImages.stream()
+                    .filter(image -> image.getImageType().equals(ProductImage.ImageType.MAIN)).findFirst().orElse(null);
             if (mainImage == null) {
                 return null;
             }
@@ -27,7 +28,8 @@ public interface ProductImageSeparatePublic {
 
         @Override
         public List<ProductImagePublic> getSubImages() {
-            List<ProductImage> subImages = productImages.stream().filter(image -> image.getImageType().equals(ProductImage.ImageType.SUB)).toList();
+            List<ProductImage> subImages = productImages.stream()
+                    .filter(image -> image.getImageType().equals(ProductImage.ImageType.SUB)).toList();
             return subImages.stream().map(ProductImagePublic::of).toList();
         }
     }
