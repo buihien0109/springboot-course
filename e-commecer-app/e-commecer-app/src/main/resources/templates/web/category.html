@@ -63,7 +63,7 @@
                         <th:block th:with="products=${pageData.getContent()}">
                             <div class="col-lg-4 col-md-6 col-sm-6" th:each="product : ${products}">
                                 <div class="product__item">
-                                    <div class="product__item__pic set-bg" th:style="|background-image: url(${product.images.mainImage.imageUrl})|">
+                                    <div class="product__item__pic set-bg" th:style="|background-image: url(${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'})|">
                                         <ul class="product__item__pic__hover">
                                             <li><a href="javascript:void(0)" th:onclick="|addToWishList(${product.productId})|"><i class="fa fa-heart"></i></a></li>
                                             <li><a href="javascript:void(0)" th:onclick="|addToCart(${product.productId}, 1)|"><i class="fa fa-shopping-cart"></i></a></li>
@@ -71,9 +71,9 @@
                                     </div>
                                     <div class="product__item__text">
                                         <h6><a th:href="@{/san-pham/{id} (id=${product.productId})}" th:text="${product.name}">Sản phẩm 1</a></h6>
-                                        <div th:classappend="${product.discounts != null} ? 'product-item-price' : ''">
-                                            <h5 th:if="${product.discounts != null}" th:text="${product.discounts.remainingPrice}" class="discount-price currency"></h5>
-                                            <h5 th:text="${product.price}" th:classappend="${product.discounts != null ? 'original-price currency' : 'currency'}">$100</h5>
+                                        <div th:classappend="${product.discountPrice != null} ? 'product-item-price' : ''">
+                                            <h5 th:if="${product.discountPrice != null}" th:text="${product.discountPrice}" class="discount-price currency"></h5>
+                                            <h5 th:text="${product.price}" th:classappend="${product.discountPrice != null ? 'original-price currency' : 'currency'}">$100</h5>
                                         </div>
                                     </div>
                                 </div>

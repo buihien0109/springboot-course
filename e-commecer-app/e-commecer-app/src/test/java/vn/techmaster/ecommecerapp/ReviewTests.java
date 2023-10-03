@@ -61,4 +61,16 @@ public class ReviewTests {
             }
         }
     }
+
+    @Test
+    void update_review() {
+        Product product = productRepository.findById(1L).get();
+        List<Review> reviews = reviewRepository.findByProduct_ProductIdOrderByUpdatedAtDesc(product.getProductId());
+
+        // update review status
+        for (Review review : reviews) {
+            review.setStatus(Review.Status.ACCEPTED);
+            reviewRepository.save(review);
+        }
+    }
 }

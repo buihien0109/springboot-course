@@ -108,12 +108,13 @@ public class ProductService {
 
     // get all product has discount valid date (not expies) and pagination with param page and size
     public Map<String, Object> findAllProductHasDiscountValidDate(Integer page, Integer size) {
-        Page<Product> pageData = productRepository.findByDiscounts_EndDateAfter(
-                new Date(),
+        Page<Product> pageData = productRepository.findByDiscounts_DiscountCampaign_Status(
+                DiscountCampaign.Status.ACTIVE,
                 PageRequest.of(page - 1, size)
         );
         return Map.of(
                 "name", "Sản phẩm giảm giá",
+                "slug", "",
                 "products", pageData.getContent().stream().map(ProductPublic::of).toList(),
                 "totalElements", pageData.getTotalElements(),
                 "remain", pageData.getTotalElements() - (long) page * size < 0 ? 0 : pageData.getTotalElements() - (long) page * size,

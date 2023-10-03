@@ -13,6 +13,8 @@ public interface ReviewPublic {
 
     Integer getRating();
 
+    Review.Status getStatus();
+
     Long getAuthorId();
 
     String getAuthorName();
@@ -44,18 +46,23 @@ public interface ReviewPublic {
         }
 
         @Override
+        public Review.Status getStatus() {
+            return review.getStatus();
+        }
+
+        @Override
         public Long getAuthorId() {
-            return review.getUser().getUserId();
+            return review.getUser() == null ? null : review.getUser().getUserId();
         }
 
         @Override
         public String getAuthorName() {
-            return review.getUser().getUsername();
+            return review.getUser() == null ? review.getAuthorName() : review.getUser().getUsername();
         }
 
         @Override
         public String getAuthorAvatar() {
-            return review.getUser().getAvatar();
+            return review.getUser() == null ? review.getAuthorAvatar() : review.getUser().getAvatar();
         }
 
         @Override

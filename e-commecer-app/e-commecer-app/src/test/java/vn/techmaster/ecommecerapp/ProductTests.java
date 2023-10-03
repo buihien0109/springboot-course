@@ -1,6 +1,7 @@
 package vn.techmaster.ecommecerapp;
 
 import com.github.javafaker.Faker;
+import com.github.slugify.Slugify;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class ProductTests {
     private CategoryRepository categoryRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private Slugify slugify;
 
     @Test
     void save_products() {
@@ -128,5 +131,14 @@ public class ProductTests {
 
         System.out.println(image);
         productRepository.save(product);
+    }
+
+    @Test
+    void update_slug() {
+        // update all slug of products
+        for (Product product : productRepository.findAll()) {
+            product.setSlug(slugify.slugify(product.getName()));
+            productRepository.save(product);
+        }
     }
 }

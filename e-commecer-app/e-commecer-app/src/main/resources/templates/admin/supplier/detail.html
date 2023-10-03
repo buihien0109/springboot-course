@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Chi tiết nhà cung cấp</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
+
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/suppliers">Nhà cung cấp</a>
+                        </li>
+                        <li class="breadcrumb-item active" th:text="${supplier.name}">
+                            Bui Hien
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/suppliers" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="custom-content-below-home-tab" data-toggle="pill"
+                                       href="#custom-content-below-home" role="tab"
+                                       aria-controls="custom-content-below-home" aria-selected="true">Thông tin nhà cung
+                                        cấp</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="custom-content-below-profile-tab" data-toggle="pill"
+                                       href="#custom-content-below-profile" role="tab"
+                                       aria-controls="custom-content-below-profile" aria-selected="false">Danh sách nhập
+                                        hàng</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="custom-content-below-tabContent">
+                                <div class="tab-pane fade active show" id="custom-content-below-home" role="tabpanel"
+                                     aria-labelledby="custom-content-below-home-tab">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mt-4">
+                                                <label>Tên nhà cung cấp</label>
+                                                <input type="text" class="form-control" id="name"
+                                                       th:value="${supplier.name}"/>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Email</label>
+                                                <input type="text" class="form-control" id="email"
+                                                       th:value="${supplier.email}"/>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Số điện thoại</label>
+                                                <input type="text" class="form-control" id="phone"
+                                                       th:value="${supplier.phone}"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Địa chỉ</label>
+                                                <input type="text" class="form-control" id="address"
+                                                       th:value="${supplier.address}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group mt-4">
+                                                <label>Thumbnail</label>
+                                                <div class="user-avatar-container d-flex align-items-center">
+                                                    <img id="avatar-preview" th:src="${supplier.thumbnail}" alt="">
+                                                    <label for="avatar">Đổi Thumbnail</label>
+                                                    <input type="file" id="avatar" class="d-none">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="custom-content-below-profile" role="tabpanel"
+                                     aria-labelledby="custom-content-below-profile-tab">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="mt-4 table table-bordered table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th>Mã đơn hàng</th>
+                                                    <th>Ngày đặt hàng</th>
+                                                    <th>Tổng tiền đơn hàng</th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+
+    <script th:inline="javascript">
+        const supplier = [[${supplier}]];
+        console.log(supplier)
+
+        // Truy cập vào các thành phần
+        const nameEl = document.getElementById("name");
+        const emailEl = document.getElementById("email");
+        const phoneEl = document.getElementById("phone");
+        const addressEl = document.getElementById("address");
+        const btnCreate = document.getElementById("btn-update")
+
+        btnCreate.addEventListener("click", async () => {
+            const data = {
+                name: nameEl.value,
+                email: emailEl.value,
+                phone: phoneEl.value,
+                address: addressEl.value
+            }
+            console.log(data)
+
+            try {
+                let res = await axios.put(`/api/v1/admin/suppliers/${supplier.supplierId}`, data)
+
+                if (res.status === 200) {
+                    toastr.success("Cập nhật nhà cung cấp thành công");
+                } else {
+                    toastr.error("Cập nhật nhà cung cấp thất bại");
+                }
+            } catch (e) {
+                toastr.error(e.response.data.message);
+                console.log(e);
+            }
+        })
+        // add event listener to avatar input change
+        const thumbnailInput = document.getElementById('avatar');
+        const thumbnailPreview = document.getElementById('avatar-preview');
+        thumbnailInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+
+            // create form data with key file and value is file in input
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Send post request to url /api/v1/users/update-avatar, then check request status and set src for avatar preview
+            axios.post(`/api/v1/admin/suppliers/${supplier.supplierId}/update-thumbnail`, formData)
+                .then(res => {
+                    if (res.status === 200) {
+                        thumbnailPreview.src = res.data;
+                        toastr.success('Cập nhật thumbnail thành công');
+                    } else {
+                        toastr.error('Cập nhật thumbnail thất bại');
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    toastr.error(err.response.data.message);
+                });
+        });
+    </script>
+</th:block>
+
+</body>
+
+</html>

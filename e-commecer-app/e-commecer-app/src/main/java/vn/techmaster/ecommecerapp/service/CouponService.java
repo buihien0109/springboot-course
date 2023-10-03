@@ -8,6 +8,7 @@ import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.repository.CouponRepository;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -44,4 +45,7 @@ public class CouponService {
     }
 
 
+    public List<Coupon> getAllCoupons() {
+        return couponRepository.findAll();
+    }
 }

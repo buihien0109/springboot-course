@@ -215,3 +215,13 @@ img {
     background-color: #dc3545;
     color: #ffffff;
 }
+
+#modal-review .review-product-rating-item {
+    font-size: 30px;
+    color: #ebebeb;
+    cursor: pointer;
+}
+
+#modal-review .review-product-rating-item.active {
+    color: #EDBB0E;
+}

@@ -103,7 +103,7 @@
                                     <th:block th:text="|${cartItem.product.name} x ${cartItem.quantity}|">Vegetable’s
                                         Package
                                     </th:block>
-                                    <span class="currency" th:text="${cartItem.product.discounts != null ? cartItem.product.discounts.getRemainingPrice() * cartItem.quantity : cartItem.product.price * cartItem.quantity}">$75.99</span>
+                                    <span class="currency" th:text="${cartItem.product.discountPrice != null ? cartItem.product.discountPrice * cartItem.quantity : cartItem.product.price * cartItem.quantity}">$75.99</span>
                                 </li>
                             </ul>
                             <div class="checkout__order__subtotal">Thành tiền <span
@@ -234,8 +234,8 @@
             let cartItems = cart.cartItems;
             let temporaryAmountValue = 0;
             cartItems.forEach(ct => {
-                if (ct.product.discounts != null) {
-                    temporaryAmountValue += ct.product.discounts.remainingPrice * ct.quantity;
+                if (ct.product.discountPrice != null) {
+                    temporaryAmountValue += ct.product.discountPrice * ct.quantity;
                 } else {
                     temporaryAmountValue += ct.product.price * ct.quantity;
                 }
@@ -314,7 +314,7 @@
                 return {
                     productId: cartItem.product.productId,
                     quantity: cartItem.quantity,
-                    price: cartItem.product.discounts != null ? cartItem.product.discounts.remainingPrice : cartItem.product.price
+                    price: cartItem.product.discountPrice != null ? cartItem.product.discountPrice : cartItem.product.price
                 }
             })
 

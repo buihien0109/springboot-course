@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Chi tiết banner</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/assets/css/image-management.css}">
+
+        <style>
+            .image-preview-container #image {
+                height: 450px;
+            }
+        </style>
+    </th:block>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/banners">Banner</a>
+                        </li>
+                        <li class="breadcrumb-item active" th:text="${banner.name}">
+                            Chi tiết banner
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/banners" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                </div>
+
+                <div class="col-6 d-flex justify-content-end">
+                    <button type="button" class="btn btn-danger px-4" id="btn-delete">
+                        Xóa
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Tên banner</label>
+                                        <input type="text" class="form-control" id="name" th:value="${banner.name}"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Redirect To Url</label>
+                                        <input type="text" class="form-control" id="link-redirect"
+                                               th:value="${banner.linkRedirect}"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Trạng thái</label>
+                                        <select id="status" class="form-control">
+                                            <option value="false" th:selected="${banner.status == false}">Vô hiệu hóa
+                                            </option>
+                                            <option value="true" th:selected="${banner.status == true}">Kích hoạt
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <div class="image-preview-container mb-3">
+                                            <img th:src="${banner.url}" alt="" id="image"/>
+                                        </div>
+                                        <button type="button" class="btn btn-info btn-flat rounded" data-toggle="modal"
+                                                data-target="#modal-image" id="btn-modal-image">
+                                            Chọn hình ảnh
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modal-image" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Danh sách hình ảnh</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button class="btn btn-success" id="btn-chose-image" disabled>Chọn ảnh</button>
+
+                            <label for="input-image" class="btn btn-warning mb-0">Upload ảnh</label>
+                            <input type="file" id="input-image" class="d-none">
+                        </div>
+                        <div>
+                            <button class="btn btn-danger" id="btn-delete-image" disabled>Xóa ảnh</button>
+                        </div>
+                    </div>
+                    <!-- Hiển thị danh sách ảnh -->
+                    <div class="image-container mt-4 mb-4">
+
+                    </div>
+
+                    <!-- Hiển thị phần phân trang -->
+                    <div class="image-pagination-container d-flex justify-content-center">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/assets/js/image-managent.js}"></script>
+    <script th:inline="javascript">
+        const banner = [[${banner}]];
+        console.log(banner);
+
+        // send request to server when click button create using axios
+        const btnUpdate = document.getElementById('btn-update');
+        btnUpdate.addEventListener('click', function () {
+            const name = document.getElementById('name').value;
+            const linkRedirect = document.getElementById('link-redirect').value;
+            const status = document.getElementById('status').value;
+            const url = document.getElementById('image').src;
+
+            const data = {
+                name: name,
+                linkRedirect: linkRedirect,
+                status: status === "true",
+                url: url
+            };
+
+            axios.put(`/api/v1/admin/banners/${banner.id}`, data)
+                .then(function (response) {
+                    if (response.status === 200) {
+                        toastr.success('Cập nhật banner thành công');
+                    } else {
+                        toastr.error('Cập nhật banner thất bại');
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toastr.error(error.response.data.message);
+                });
+        });
+
+        // send request to server when click button delete using axios
+        const btnDelete = document.getElementById('btn-delete');
+        btnDelete.addEventListener('click', function () {
+            const isConfirm = confirm('Bạn có chắc chắn muốn xóa banner này?');
+            if (!isConfirm) return;
+            axios.delete(`/api/v1/admin/banners/${banner.id}`)
+                .then(function (response) {
+                    if (response.status === 200) {
+                        toastr.success('Xóa banner thành công');
+                        setTimeout(function () {
+                            window.location.href = '/admin/banners';
+                        }, 1500);
+                    } else {
+                        toastr.error('Xóa banner thất bại');
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toastr.error(error.response.data.message);
+                });
+        });
+
+    </script>
+</th:block>
+
+</body>
+
+</html>

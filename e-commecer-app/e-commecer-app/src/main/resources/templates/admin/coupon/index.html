@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+
+<head>
+    <title>Danh mục coupon</title>
+</head>
+
+<body>
+<!-- BODY -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh mục coupon
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <button class="btn btn-primary" id="btn-open-modal">
+                        <i class="fas fa-plus"></i> Tạo coupon
+                    </button>
+                    <a href="/admin/coupons" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Mã kích hoạt</th>
+                                    <th>% giảm</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thời gian</th>
+                                    <th>Số lượng áp dụng</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Tag -->
+            <div class="modal fade" id="modal-coupon" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                 aria-labelledby="modal-tag-title" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title fs-5" id="modal-coupon-title">Tạo Coupon</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" class="form-control" id="input-name" placeholder="Enter name">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary" id="btn-handle-coupon">Xác nhận</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        let coupons = [[${coupons}]];
+        console.log(coupons);
+
+        // Compare 2 date string
+        const compareDate = (date1, date2) => {
+            const d1 = new Date(date1);
+            const d2 = new Date(date2);
+            return d1.getTime() - d2.getTime();
+        }
+
+        // Generate status discount
+        const generateStatus = (validFrom, validTo) => {
+            const now = new Date();
+            const from = new Date(validFrom);
+            const to = new Date(validTo);
+            if (compareDate(now, from) < 0) {
+                return `<span class="badge badge-warning">Chưa kích hoạt</span>`;
+            } else if (compareDate(now, to) > 0) {
+                return `<span class="badge badge-secondary">Đã hết hạn</span>`;
+            } else {
+                return `<span class="badge badge-success">Đang kích hoạt</span>`;
+            }
+        }
+
+        // Render tag
+        const tableContent = document.querySelector("table tbody")
+        const renderCoupons = (couponList) => {
+            tableContent.innerHTML = "";
+            let html = "";
+            couponList.forEach((coupon) => {
+                html += `
+                    <tr>
+                        <td>${coupon.code}</td>
+                        <td>${coupon.discount}%</td>
+                        <td>${generateStatus(coupon.validFrom, coupon.validTo)}</td>
+                        <td>${formatDate(coupon.validFrom)} - ${formatDate(coupon.validTo)}</td>
+                        <td>20</td>
+                    </tr>
+                `
+            })
+            tableContent.innerHTML = html;
+        }
+
+        // render pagination using pagination.js
+        const renderPagination = () => {
+            $('#pagination').pagination({
+                dataSource: coupons,
+                className: 'paginationjs-theme-blue paginationjs-big',
+                callback: function (data, pagination) {
+                    renderCoupons(data);
+                },
+                hideOnlyOnePage: true
+            })
+        }
+
+        renderPagination();
+    </script>
+</th:block>
+</body>
+
+</html>

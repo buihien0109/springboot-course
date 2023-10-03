@@ -4,6 +4,10 @@
 
 <head>
     <title>Chi tiết sản phẩm</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}" />
+    </th:block>
 </head>
 
 <body>
@@ -49,21 +53,28 @@
                         <div class="card-body">
                             <ul class="nav nav-tabs" id="custom-content-below-tab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="custom-content-below-home-tab" data-toggle="pill"
+                                    <a class="nav-link active" id="custom-content-below-product-info-tab"
+                                       data-toggle="pill"
                                        href="#product-info" role="tab"
                                        aria-controls="custom-content-below-home" aria-selected="true">Thông tin sản
                                         phẩm</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="custom-content-below-profile-tab" data-toggle="pill"
+                                    <a class="nav-link" id="custom-content-below-product-image-tab" data-toggle="pill"
                                        href="#product-image" role="tab"
                                        aria-controls="custom-content-below-profile" aria-selected="false">Ảnh mô tả</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="custom-content-below-messages-tab" data-toggle="pill"
+                                    <a class="nav-link" id="custom-content-below-product-attribute-tab"
+                                       data-toggle="pill"
                                        href="#product-attribute" role="tab"
                                        aria-controls="custom-content-below-messages" aria-selected="false">Thuộc
                                         tính</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="custom-content-below-product-review-tab" data-toggle="pill"
+                                       href="#product-review" role="tab"
+                                       aria-controls="custom-content-below-settings" aria-selected="false">Đánh giá</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="custom-content-below-tabContent">
@@ -73,7 +84,8 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label>Tên sản phẩm</label>
-                                                <input type="text" class="form-control" id="name" th:value="${product.name}"/>
+                                                <input type="text" class="form-control" id="name"
+                                                       th:value="${product.name}"/>
                                             </div>
                                             <div class="form-group">
                                                 <label>Mô tả ngắn</label>
@@ -85,7 +97,8 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Giá sản phẩm</label>
-                                                <input type="text" class="form-control" id="price" th:value="${product.price}"/>
+                                                <input type="text" class="form-control" id="price"
+                                                       th:value="${product.price}"/>
                                             </div>
                                             <div class="form-group">
                                                 <label>Trạng thái</label>
@@ -119,8 +132,10 @@
                                         <div class="col-12">
                                             <label>Ảnh đại diện</label>
                                             <div class="d-flex align-items-center">
-                                                <div th:if="${product.images.mainImage != null}" class="product-image-item product-main-image-item mr-4">
-                                                    <img th:src="${product.images.mainImage.imageUrl}" alt="Ảnh đại diện"
+                                                <div th:if="${product.images.mainImage != null}"
+                                                     class="product-image-item product-main-image-item mr-4">
+                                                    <img th:src="${product.images.mainImage.imageUrl}"
+                                                         alt="Ảnh đại diện"
                                                          class="img-fluid">
                                                 </div>
                                                 <div class="product-image-item">
@@ -139,13 +154,17 @@
                                         <div class="col-12">
                                             <label>Ảnh mô tả</label>
                                             <div class="d-flex align-items-center flex-wrap">
-                                                <div class="d-flex align-items-center flex-wrap" id="list-product-sub-image-item">
+                                                <div class="d-flex align-items-center flex-wrap"
+                                                     id="list-product-sub-image-item">
                                                     <div th:if="not ${#lists.isEmpty(product.images.subImages)}"
                                                          th:each="image : ${product.images.subImages}"
-                                                         class="product-image-item product-sub-image-item mr-4" th:data-image-sub-id="${image.imageId}">
+                                                         class="product-image-item product-sub-image-item mr-4"
+                                                         th:data-image-sub-id="${image.imageId}">
                                                         <img th:src="${image.imageUrl}" alt="Ảnh mô tả"
                                                              class="img-fluid">
-                                                        <span class="btn-action btn-action-delete" th:onclick="|deleteSubImage(${image.imageId})|"><i class="fas fa-times-circle"></i></span>
+                                                        <span class="btn-action btn-action-delete"
+                                                              th:onclick="|deleteSubImage(${image.imageId})|"><i
+                                                                class="fas fa-times-circle"></i></span>
                                                     </div>
                                                 </div>
                                                 <div class="product-image-item">
@@ -163,22 +182,55 @@
                                 <div class="tab-pane fade" id="product-attribute" role="tabpanel"
                                      aria-labelledby="custom-content-below-messages-tab">
                                     <div class="row mt-4" id="product-attribute-list">
-                                        <div class="col-6" th:each="attribute : ${product.attributes}" th:data-attribute-id="${attribute.attributeId}">
+                                        <div class="col-6" th:each="attribute : ${product.attributes}"
+                                             th:data-attribute-id="${attribute.attributeId}">
                                             <div class="product-attribute-item mb-3">
                                                 <div class="d-flex align-items-center mb-2">
                                                     <label th:text="${attribute.attributeName}" class="mb-0"></label>
                                                     <div class="ml-2">
-                                                        <span class="btn-action btn-action-edit" th:onclick="|openModalUpdateAttribute(${attribute.attributeId})|"><i class="fas fa-pencil-alt"></i></span>
-                                                        <span class="btn-action btn-action-delete" th:onclick="|deleteAttribute(${attribute.attributeId})|"><i class="fas fa-trash-alt"></i></span>
+                                                        <span class="btn-action btn-action-edit"
+                                                              th:onclick="|openModalUpdateAttribute(${attribute.attributeId})|"><i
+                                                                class="fas fa-pencil-alt"></i></span>
+                                                        <span class="btn-action btn-action-delete"
+                                                              th:onclick="|deleteAttribute(${attribute.attributeId})|"><i
+                                                                class="fas fa-trash-alt"></i></span>
                                                     </div>
                                                 </div>
-                                                <textarea th:text="${attribute.attributeValue}" class="form-control" rows="5" th:onkeyup="|saveAttributeValue(this, ${attribute.attributeId})|"></textarea>
+                                                <textarea th:text="${attribute.attributeValue}" class="form-control"
+                                                          rows="5"
+                                                          th:onkeyup="|saveAttributeValue(this, ${attribute.attributeId})|"></textarea>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                            <button class="btn btn-info" id="btn-open-modal-create-attribute">Thêm thuộc tính</button>
+                                            <button class="btn btn-info" id="btn-open-modal-create-attribute">Thêm thuộc
+                                                tính
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="product-review" role="tabpanel"
+                                     aria-labelledby="custom-content-below-settings-tab">
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <table class="table table-bordered table-hover" id="table-review">
+                                                <thead>
+                                                <tr>
+                                                    <th style="width: 17%">Username</th>
+                                                    <th style="width: 10%">Đánh giá</th>
+                                                    <th style="width: 40%">Nội dung</th>
+                                                    <th style="width: 10%">Thời gian</th>
+                                                    <th style="width: 10%">Trạng thái</th>
+                                                    <th style="width: 13%"></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                </tbody>
+                                            </table>
+                                            <div class="d-flex justify-content-center mt-3" id="review-pagination"></div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -202,7 +254,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" class="form-control" id="input-attribute-name" placeholder="Enter attribute name">
+                    <input type="text" class="form-control" id="input-attribute-name"
+                           placeholder="Enter attribute name">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
@@ -210,6 +263,43 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Modal Review -->
+    <div class="modal fade" id="modal-review" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cập nhật đánh giá</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="review-product-rating">
+                        <div class="text-center">
+                            <span class="review-product-rating-item" data-rating="1" data-message="Không thích"><i class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="2" data-message="Tạm được"><i class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="3" data-message="Bình thường"><i class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="4" data-message="Hài lòng"><i class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="5" data-message="Tuyệt vời"><i class="fa fa-star"></i></span>
+                        </div>
+                        <div class="text-center">
+                            <p class="review-product-rating-result"></p>
+                        </div>
+                    </div>
+                    <div class="review-product-content">
+                        <textarea id="review-content" placeholder="Nhập review" class="form-control" rows="5"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="btn-update-review">Cập nhật</button>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </div>
 
@@ -219,12 +309,14 @@
         const product = [[${product}]];
         const statusList = [[${statusList}]];
         const categoryList = [[${categoryList}]];
+        const reviewList = [[${reviewList}]];
 
-        console.log({product, statusList, categoryList});
+        console.log({product, statusList, categoryList, reviewList});
     </script>
     <script th:src="@{/admin-assets/assets/js/product/product-info.js}"></script>
     <script th:src="@{/admin-assets/assets/js/product/product-image.js}"></script>
     <script th:src="@{/admin-assets/assets/js/product/product-attribute.js}"></script>
+    <script th:src="@{/admin-assets/assets/js/product/product-review.js}"></script>
 </th:block>
 
 </body>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+
+<head>
+    <title>Danh sách nhập hàng</title>
+</head>
+
+<body>
+<!-- BODY -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh sách nhập hàng
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <a href="/admin/transactions/create" class="btn btn-primary" id="btn-open-modal">
+                        <i class="fas fa-plus"></i> Tạo phiếu nhập hàng
+                    </a>
+                    <a href="/admin/transactions" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Tên nhà cung cấp</th>
+                                    <th>Ngày nhập</th>
+                                    <th>Người nhận</th>
+                                    <th>Người gửi</th>
+                                    <th>Tổng tiền</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        let transactions = [[${transactions}]];
+        console.log(transactions);
+
+        // Render transactions
+        const tableContent = document.querySelector("table tbody")
+        const renderTransactions = (transactionList) => {
+            tableContent.innerHTML = "";
+            let html = "";
+            transactionList.forEach(transaction => {
+                html += `
+                    <tr>
+                        <td>
+                            <a href="/admin/transactions/${transaction.id}/detail">${transaction.id}</a>
+                        </td>
+                        <td>
+                            <a href="/admin/suppliers/${transaction.supplier.supplierId}/detail">${transaction.supplier.name}</a>
+                        </td>
+                        <td>${formatDate(transaction.transactionDate)}</td>
+                        <td>${transaction.receiverName}</td>
+                        <td>${transaction.senderName}</td>
+                        <td>${transaction.totalAmount}</td>
+                    </tr>
+                `
+            })
+            tableContent.innerHTML = html;
+        }
+
+        // render pagination using pagination.js
+        const renderPagination = () => {
+            $('#pagination').pagination({
+                dataSource: transactions,
+                className: 'paginationjs-theme-blue paginationjs-big',
+                callback: function (data, pagination) {
+                    renderTransactions(data);
+                },
+                hideOnlyOnePage: true
+            })
+        }
+
+        renderPagination();
+    </script>
+</th:block>
+</body>
+
+</html>

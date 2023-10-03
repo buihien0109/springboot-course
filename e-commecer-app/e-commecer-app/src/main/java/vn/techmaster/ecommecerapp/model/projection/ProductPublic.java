@@ -4,15 +4,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.techmaster.ecommecerapp.entity.Discount;
+import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
 import vn.techmaster.ecommecerapp.entity.Product;
 import vn.techmaster.ecommecerapp.entity.ProductImage;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ProductPublic {
     Long getProductId();
 
     String getName();
+
+    String getSlug();
 
     String getDescription();
 
@@ -28,7 +32,7 @@ public interface ProductPublic {
 
     List<ProductAttributePublic> getAttributes();
 
-    DiscountPublic getDiscounts();
+    Integer getDiscountPrice();
 
     @RequiredArgsConstructor
     @Slf4j
@@ -44,6 +48,11 @@ public interface ProductPublic {
         @Override
         public String getName() {
             return product.getName();
+        }
+
+        @Override
+        public String getSlug() {
+            return product.getSlug();
         }
 
         @Override
@@ -83,13 +92,24 @@ public interface ProductPublic {
         }
 
         @Override
-        public DiscountPublic getDiscounts() {
-            // find discount not expired
-            Discount discount = product.getDiscounts().stream().filter(d -> d.getEndDate().getTime() > System.currentTimeMillis()).findFirst().orElse(null);
-            if (discount == null) {
-                return null;
+        public Integer getDiscountPrice() {
+            // check if product has discount and discount campaign is active
+            Set<Discount> discounts = product.getDiscounts();
+
+            if (!discounts.isEmpty()) {
+                for (Discount discount : discounts) {
+                    DiscountCampaign discountCampaign = discount.getDiscountCampaign();
+                    if (discountCampaign.getStatus() == DiscountCampaign.Status.ACTIVE) {
+                        // check if discount is valid
+                        if (discount.getDiscountType() == Discount.DiscountType.PERCENT) {
+                            return product.getPrice() * (100 - discount.getDiscountValue()) / 100;
+                        } else if (discount.getDiscountType() == Discount.DiscountType.AMOUNT) {
+                            return product.getPrice() - discount.getDiscountValue();
+                        }
+                    }
+                }
             }
-            return DiscountPublic.of(discount);
+            return null;
         }
     }
 

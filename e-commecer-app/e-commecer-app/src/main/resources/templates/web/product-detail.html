@@ -41,7 +41,7 @@
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
                             <img class="product__details__pic__item--large"
-                                 th:src="${product.images.mainImage.imageUrl}" alt="">
+                                 th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'}" alt="">
                         </div>
                         <div class="product__details__pic__slider owl-carousel">
                             <th:block th:if="not ${#lists.isEmpty(product.images.subImages)}">
@@ -61,13 +61,13 @@
                             <span>(<span class="review-count d-inline-block m-0">18</span> đánh giá)</span>
                         </div>
                         <div class="product__details__price"
-                             th:classappend="${product.discounts != null} ? 'has-discount' : ''">
-                            <span th:if="${product.discounts != null}"
+                             th:classappend="${product.discountPrice != null} ? 'has-discount' : ''">
+                            <span th:if="${product.discountPrice != null}"
                                   class="currency"
-                                  th:classappend="${product.discounts != null} ? 'discount-price' : ''"
-                                  th:text="${product.discounts.getRemainingPrice()}"></span>
+                                  th:classappend="${product.discountPrice != null} ? 'discount-price' : ''"
+                                  th:text="${product.discountPrice}"></span>
                             <span class="currency"
-                                  th:classappend="${product.discounts != null} ? 'original-price' : ''"
+                                  th:classappend="${product.discountPrice != null} ? 'original-price' : ''"
                                   th:text="${product.price}"></span>
                         </div>
                         <p th:text="${product.description}">Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.
@@ -127,7 +127,7 @@
                             </div>
                             <div class="tab-pane active" id="tabs-2" role="tabpanel">
                                 <div class="product__details__tab__desc">
-                                    <div class="review-overview mb-4 bg-white p-4">
+                                    <div class="review-overview mb-5 bg-white p-4">
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="overview-avg d-flex justify-content-center align-items-center flex-column h-100">
@@ -189,7 +189,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="review-product-info text-center">
-                        <img th:src="${product.images.mainImage.imageUrl}" alt="">
+                        <img th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'}" alt="">
                         <p th:text="${product.name}"></p>
                     </div>
                     <div class="review-product-rating">
@@ -235,7 +235,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6" th:each="rProduct : ${relatedProducts}">
                     <div class="product__item">
                         <div class="product__item__pic set-bg"
-                             th:style="|background-image: url(${rProduct.images.mainImage.imageUrl})|">
+                             th:style="|background-image: url(${rProduct.images.mainImage != null ? rProduct.images.mainImage.imageUrl : '/img/image-placeholder.png'})|">
                             <ul class="product__item__pic__hover">
                                 <li><a href="javascript:void(0)" th:onclick="|addToWishList(${rProduct.productId})|"><i
                                         class="fa fa-heart"></i></a></li>
@@ -246,12 +246,12 @@
                         <div class="product__item__text">
                             <h6><a th:href="@{/san-pham/{id} (id=${rProduct.productId})}" th:text="${rProduct.name}">Sản
                                 phẩm 1</a></h6>
-                            <div th:classappend="${rProduct.discounts != null} ? 'product-item-price' : ''">
-                                <h5 th:if="${rProduct.discounts != null}" th:text="${rProduct.discounts.remainingPrice}"
+                            <div th:classappend="${rProduct.discountPrice != null} ? 'product-item-price' : ''">
+                                <h5 th:if="${rProduct.discountPrice != null}" th:text="${rProduct.discountPrice}"
                                     class="discount-price currency"></h5>
                                 <h5 th:text="${rProduct.price}"
                                     class="currency"
-                                    th:classappend="${rProduct.discounts != null ? 'original-price' : ''}">$100</h5>
+                                    th:classappend="${rProduct.discountPrice != null ? 'original-price' : ''}">$100</h5>
                             </div>
                         </div>
                     </div>

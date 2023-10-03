@@ -37,15 +37,15 @@
                          th:with="product=${wishListItem.product}" th:data-id="${wishListItem.wishlistId}">
                         <div class="wishlist__item">
                             <div class="wishlist__item__item__pic set-bg">
-                                <img th:src="${product.images.mainImage.imageUrl}" alt="">
+                                <img th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'}" alt="">
                             </div>
                             <div class="wishlist-info d-flex flex-column justify-content-center">
                                 <h6><a th:href="@{/san-pham/{id} (id=${product.productId})}" th:text="${product.name}">Sản
                                     phẩm 1</a></h6>
                                 <div class="product-item-price d-flex align-items-center"
-                                     th:classappend="${product.discounts != null} ? 'has-discount' : ''">
-                                    <h5 th:if="${product.discounts != null}"
-                                        th:text="${product.discounts.remainingPrice}" class="discount-price currency"></h5>
+                                     th:classappend="${product.discountPrice != null} ? 'has-discount' : ''">
+                                    <h5 th:if="${product.discountPrice != null}"
+                                        th:text="${product.discountPrice}" class="discount-price currency"></h5>
                                     <h5 th:text="${product.price}" class="original-price currency">$100</h5>
                                 </div>
                             </div>

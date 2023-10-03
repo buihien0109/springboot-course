@@ -7,5 +7,5 @@ import java.util.Date;
 import java.util.List;
 
 public interface DiscountRepository extends JpaRepository<Discount, Long> {
-    List<Discount> findByEndDateAfter(Date date);
+
 }

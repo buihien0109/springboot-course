@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Chi tiết khuyến mại</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
+
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/discount-campaigns">Khuyến mại</a>
+                        </li>
+                        <li class="breadcrumb-item active" th:text="${discountCampaign.name}">
+                            Giảm giá tết
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/discount-campaigns" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Tên khuyến mại</label>
+                                        <input type="text" class="form-control" id="name"
+                                               th:value="${discountCampaign.name}"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Mô tả</label>
+                                        <textarea class="form-control" id="description" rows="5"
+                                                  th:text="${discountCampaign.description}"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Trạng thái</label>
+                                        <select id="status" class="form-control">
+                                            <option th:each="status : ${statusList}"
+                                                    th:value="${status}"
+                                                    th:selected="${status == discountCampaign.status}"
+                                                    th:text="${status.getValue()}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Thời gian áp dụng</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="far fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                            <input type="text" class="form-control float-right" id="date">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/moment/moment.min.js}"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.js}"></script>
+    <script th:inline="javascript">
+        const discountCampaign = [[${discountCampaign}]];
+        console.log(discountCampaign);
+
+        $('#date').daterangepicker({
+            startDate: moment(discountCampaign.startDate, "YYYY-MM-DD"), // Set your desired start date
+            endDate: moment(discountCampaign.endDate, "YYYY-MM-DD"),   // Set your desired end date
+        })
+
+        // handle create discount campaign when click button using vanilla javascript and axios
+        const btnUpdate = document.getElementById('btn-update')
+        btnUpdate.addEventListener('click', () => {
+            const name = document.getElementById('name').value
+            const description = document.getElementById('description').value
+            const status = document.getElementById('status').value
+            const date = document.getElementById('date').value
+
+            // get date from daterangepicker
+            const dateArr = date.split(' - ')
+            const startDate = dateArr[0]
+            const endDate = dateArr[1]
+
+            const data = {
+                name: name,
+                description: description,
+                status: status,
+                startDate: new Date(startDate),
+                endDate: new Date(endDate)
+            }
+            console.log(data)
+
+            axios.put(`/api/v1/admin/discount-campaigns/${discountCampaign.campaignId}`, data)
+                .then(res => {
+                    if (res.status === 200) {
+                        toastr.success('Cập nhật khuyến mại thành công')
+                    } else {
+                        toastr.error('Cập nhật khuyến mại thất bại')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    toastr.error(err.response.data.message)
+                })
+        })
+
+
+    </script>
+</th:block>
+
+</body>
+
+</html>

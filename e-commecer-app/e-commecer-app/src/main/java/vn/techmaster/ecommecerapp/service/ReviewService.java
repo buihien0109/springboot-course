@@ -5,6 +5,7 @@ import vn.techmaster.ecommecerapp.entity.Product;
 import vn.techmaster.ecommecerapp.entity.Review;
 import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
+import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.ReviewPublic;
 import vn.techmaster.ecommecerapp.model.request.UpsertReviewRequest;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
@@ -34,16 +35,25 @@ public class ReviewService {
                 .toList();
     }
 
+    public List<ReviewPublic> getAllReviewsByProductIdByAdmin(Long productId) {
+        List<Review> reviews = reviewRepository.getAllReviewsByProductId(productId);
+
+        // covert reviews to List<ReviewPublic> and sort items by updatedAt desc using stream
+        return reviews.stream()
+                .map(ReviewPublic::of)
+                .toList();
+    }
+
     public ReviewPublic createReview(UpsertReviewRequest request) {
         // get user id from security context
         User user = SecurityUtils.getCurrentUserLogin();
         if (user == null) {
-            throw new BadRequestException("User not found!");
+            throw new BadRequestException("Không tìm thấy người dùng!");
         }
 
         // get product id from request
         Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found!"));
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm!"));
 
         // create review
         Review review = new Review();
@@ -63,15 +73,15 @@ public class ReviewService {
         // get user id from security context
         User user = SecurityUtils.getCurrentUserLogin();
         if (user == null) {
-            throw new BadRequestException("User not found!");
+            throw new BadRequestException("Không tìm thấy người dùng!");
         }
 
         // check user is owner of review
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Review not found!"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đánh giá!"));
 
         if (!review.getUser().getUserId().equals(user.getUserId())) {
-            throw new BadRequestException("You are not owner of this review!");
+            throw new BadRequestException("Bạn không phải là chủ sở hữu của đánh giá này!");
         }
 
         // update review
@@ -89,18 +99,87 @@ public class ReviewService {
         // get user id from security context
         User user = SecurityUtils.getCurrentUserLogin();
         if (user == null) {
-            throw new BadRequestException("User not found!");
+            throw new BadRequestException("Không tìm thấy người dùng!");
         }
 
         // check user is owner of review
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Review not found!"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đánh giá!"));
 
         if (!review.getUser().getUserId().equals(user.getUserId())) {
-            throw new BadRequestException("You are not owner of this review!");
+            throw new BadRequestException("Bạn không phải là chủ sở hữu của đánh giá này!");
         }
 
         // delete review
         reviewRepository.delete(review);
+    }
+
+    public ReviewPublic adminUpdateReview(UpsertReviewRequest request, Long id) {
+        // get user id from security context
+        User user = SecurityUtils.getCurrentUserLogin();
+        if (user == null) {
+            throw new BadRequestException("Không tìm thấy người dùng!");
+        }
+
+        // check user is owner of review
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đánh giá!"));
+
+        // update review
+        review.setRating(request.getRating());
+        review.setComment(request.getComment());
+
+        // save review
+        reviewRepository.save(review);
+
+        // return review
+        return ReviewPublic.of(review);
+    }
+
+    public void adminDeleteReview(Long id) {
+        // get user id from security context
+        User user = SecurityUtils.getCurrentUserLogin();
+        if (user == null) {
+            throw new BadRequestException("Không tìm thấy người dùng!");
+        }
+
+        // find review by id
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đánh giá!"));
+
+        // delete review
+        reviewRepository.delete(review);
+    }
+
+    public ReviewPublic adminChangeStatusReview(Review.Status status, Long id) {
+        // get user id from security context
+        User user = SecurityUtils.getCurrentUserLogin();
+        if (user == null) {
+            throw new BadRequestException("Không tìm thấy người dùng!");
+        }
+
+        // find review by id
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đánh giá!"));
+
+        // check status is not PENDING
+        if (review.getStatus() != Review.Status.PENDING) {
+            throw new BadRequestException("Trạng thái đánh giá không hợp lệ!");
+        }
+
+        // update status
+        if (status == Review.Status.ACCEPTED) {
+            review.setStatus(Review.Status.ACCEPTED);
+        } else if (status == Review.Status.REJECTED) {
+            review.setStatus(Review.Status.REJECTED);
+        } else {
+            throw new BadRequestException("Trạng thái đánh giá không hợp lệ!");
+        }
+
+        // save review
+        reviewRepository.save(review);
+
+        // return review
+        return ReviewPublic.of(review);
     }
 }

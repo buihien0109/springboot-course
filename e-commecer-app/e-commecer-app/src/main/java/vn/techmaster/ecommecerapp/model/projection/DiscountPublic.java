@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Discount;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public interface DiscountPublic {
     Long getDiscountId();
@@ -13,11 +15,7 @@ public interface DiscountPublic {
 
     Integer getDiscountValue();
 
-    Integer getRemainingPrice();
-
-    Date getStartDate();
-
-    Date getEndDate();
+    List<ProductPublic> getProducts();
 
     @RequiredArgsConstructor
     class DiscountPublicImpl implements DiscountPublic {
@@ -40,18 +38,11 @@ public interface DiscountPublic {
         }
 
         @Override
-        public Integer getRemainingPrice() {
-            return discount.getRemainingPrice();
-        }
-
-        @Override
-        public Date getStartDate() {
-            return discount.getStartDate();
-        }
-
-        @Override
-        public Date getEndDate() {
-            return discount.getEndDate();
+        public List<ProductPublic> getProducts() {
+            if (discount.getProducts() == null) {
+                return new ArrayList<>();
+            }
+            return discount.getProducts().stream().map(ProductPublic::of).toList();
         }
     }
 

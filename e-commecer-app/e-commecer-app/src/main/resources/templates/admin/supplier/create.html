@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Tạo nhà cung cấp</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
+
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/suppliers">Nhà cung cấp</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Tạo nhà cung cấp
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/suppliers" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-create">
+                        Lưu
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Tên nhà cung cấp</label>
+                                        <input type="text" class="form-control" id="name"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" class="form-control" id="email"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Số điện thoại</label>
+                                        <input type="text" class="form-control" id="phone"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Địa chỉ</label>
+                                        <input type="text" class="form-control" id="address"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+
+    <script th:inline="javascript">
+        // Truy cập vào các thành phần
+        const nameEl = document.getElementById("name");
+        const emailEl = document.getElementById("email");
+        const phoneEl = document.getElementById("phone");
+        const addressEl = document.getElementById("address");
+        const btnCreate = document.getElementById("btn-create")
+
+        btnCreate.addEventListener("click", async () => {
+            const data = {
+                name: nameEl.value,
+                email: emailEl.value,
+                phone: phoneEl.value,
+                address: addressEl.value
+            }
+
+            try {
+                let res = await axios.post("/api/v1/admin/suppliers", data)
+
+                if (res.status === 200) {
+                    toastr.success("Tạo nhà cung cấp thành công");
+                    setTimeout(() => {
+                        window.location.href = `/admin/suppliers/${res.data.supplierId}/detail`
+                    }, 1500)
+                } else {
+                    toastr.error("Tạo nhà cung cấp thất bại");
+                }
+            } catch (e) {
+                toastr.error(e.response.data.message);
+                console.log(e);
+            }
+        })
+    </script>
+</th:block>
+
+</body>
+
+</html>

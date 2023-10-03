@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Sắp xếp banner</title>
+
+    <th:block id="css">
+        <style>
+            #banner-container .banner {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100px;
+                background-color: #f1f1f1;
+                border: 1px solid #ddd;
+                margin-right: 10px;
+                padding: 16px;
+                cursor: move;
+            }
+
+            #banner-container .banner:hover {
+                background-color: #ddd;
+            }
+        </style>
+    </th:block>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/banners">Banner</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Sắp xếp banner
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <a href="/admin/banners" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex" id="banner-container">
+                                <div th:each="banner : ${banners}"
+                                     class="banner"
+                                     th:data-id="${banner.id}"
+                                     th:text="${banner.name}">Intelligent Copper Hat
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script th:inline="javascript">
+        const banners = [[${banners}]];
+        console.log(banners)
+
+        const bannerContainer = document.getElementById('banner-container');
+        // Khởi tạo Sortable
+        new Sortable(bannerContainer, {
+            animation: 150, // Thời gian animation
+            ghostClass: 'bg-info', // Class của item khi đang drag
+            onEnd: function (evt) {
+                // Xử lý khi thay đổi vị trí của các banner
+                const items = Array.from(bannerContainer.children);
+                const newOrder = items.map((item) => item.dataset.id);
+            },
+        });
+
+        // Xử lý khi click vào nút cập nhật và gửi request lên server sử dụng Axios
+        const btnUpdate = document.getElementById('btn-update');
+        btnUpdate.addEventListener('click', function () {
+            const items = Array.from(bannerContainer.children);
+            const newOrder = items.map((item) => Number(item.dataset.id));
+
+            // In ra thứ tự mới của các banner
+            console.log('Thứ tự mới:', newOrder);
+
+            // Gửi request lên server
+            axios.post('/api/v1/admin/banners/sort', newOrder)
+                .then(function (response) {
+                    if(response.status === 200) {
+                        toastr.success('Cập nhật vị trí các banner thành công!');
+                    } else {
+                        toastr.error('Cập nhật vị trí các banner thất bại!');
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    toastr.error(error.response.data.message);
+                });
+        });
+    </script>
+</th:block>
+</body>
+
+</html>

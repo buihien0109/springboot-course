@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import vn.techmaster.ecommecerapp.entity.Product;
 import vn.techmaster.ecommecerapp.service.CategoryService;
 import vn.techmaster.ecommecerapp.service.ProductService;
+import vn.techmaster.ecommecerapp.service.ReviewService;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -15,10 +16,12 @@ public class ProductController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final ReviewService reviewService;
 
-    public ProductController(ProductService productService, CategoryService categoryService) {
+    public ProductController(ProductService productService, CategoryService categoryService, ReviewService reviewService) {
         this.productService = productService;
         this.categoryService = categoryService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping
@@ -39,6 +42,8 @@ public class ProductController {
         model.addAttribute("product", productService.findById(id));
         model.addAttribute("statusList", Product.Status.values());
         model.addAttribute("categoryList", categoryService.findAllByParentCategoryIsNull());
+        model.addAttribute("reviewList", reviewService.getAllReviewsByProductIdByAdmin(id));
+
         return "admin/product/detail";
     }
 }
