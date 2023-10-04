@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,13 +11,9 @@ import vn.techmaster.ecommecerapp.service.DiscountCampaingService;
 
 @Controller
 @RequestMapping("/admin/discount-campaigns")
+@RequiredArgsConstructor
 public class DiscountCampaingController {
-
     private final DiscountCampaingService discountCampaingService;
-
-    public DiscountCampaingController(DiscountCampaingService discountCampaingService) {
-        this.discountCampaingService = discountCampaingService;
-    }
 
     @GetMapping
     public String getDiscountPage(Model model) {

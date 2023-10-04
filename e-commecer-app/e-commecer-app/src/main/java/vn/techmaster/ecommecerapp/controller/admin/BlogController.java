@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,14 +11,10 @@ import vn.techmaster.ecommecerapp.service.TagService;
 
 @Controller
 @RequestMapping("/admin/blogs")
+@RequiredArgsConstructor
 public class BlogController {
     private final BlogService blogService;
     private final TagService tagService;
-
-    public BlogController(BlogService blogService, TagService tagService) {
-        this.blogService = blogService;
-        this.tagService = tagService;
-    }
 
     // Danh sách tất cả bài viết
     @GetMapping

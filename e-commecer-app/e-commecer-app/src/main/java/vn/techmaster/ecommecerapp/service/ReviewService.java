@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.Product;
 import vn.techmaster.ecommecerapp.entity.Review;
@@ -15,15 +16,10 @@ import vn.techmaster.ecommecerapp.security.SecurityUtils;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ReviewService {
-
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
-
-    public ReviewService(ReviewRepository reviewRepository, ProductRepository productRepository) {
-        this.reviewRepository = reviewRepository;
-        this.productRepository = productRepository;
-    }
 
     public List<ReviewPublic> getAllReviewsByProductId(Long productId) {
         List<Review> reviews = reviewRepository.findByProduct_ProductIdOrderByUpdatedAtDesc(productId);

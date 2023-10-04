@@ -25,7 +25,6 @@ import java.util.List;
 @Slf4j
 public class OrderService {
     private final UserRepository userRepository;
-
     private final OrderTableRepository orderTableRepository;
     private final CartService cartService;
     private final ProductRepository productRepository;

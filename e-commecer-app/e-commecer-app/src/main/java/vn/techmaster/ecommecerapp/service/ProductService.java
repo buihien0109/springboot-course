@@ -2,6 +2,7 @@ package vn.techmaster.ecommecerapp.service;
 
 import com.github.slugify.Slugify;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +30,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;

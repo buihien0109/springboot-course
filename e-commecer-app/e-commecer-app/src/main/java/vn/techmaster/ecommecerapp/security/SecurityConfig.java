@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -14,14 +15,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final CustomFilter customFilter;
-
-    public SecurityConfig(AuthenticationProvider authenticationProvider, CustomFilter customFilter) {
-        this.authenticationProvider = authenticationProvider;
-        this.customFilter = customFilter;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

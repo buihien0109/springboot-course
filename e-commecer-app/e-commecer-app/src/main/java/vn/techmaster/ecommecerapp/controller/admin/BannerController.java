@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,12 +10,9 @@ import vn.techmaster.ecommecerapp.service.BannerService;
 
 @Controller
 @RequestMapping("/admin/banners")
+@RequiredArgsConstructor
 public class BannerController {
     private final BannerService bannerService;
-
-    public BannerController(BannerService bannerService) {
-        this.bannerService = bannerService;
-    }
 
     @GetMapping
     public String getBannerPage(Model model) {

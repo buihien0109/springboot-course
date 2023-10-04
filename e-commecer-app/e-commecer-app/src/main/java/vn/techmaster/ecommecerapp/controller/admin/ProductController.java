@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,17 +13,11 @@ import vn.techmaster.ecommecerapp.service.ReviewService;
 
 @Controller
 @RequestMapping("/admin/products")
+@RequiredArgsConstructor
 public class ProductController {
-
     private final ProductService productService;
     private final CategoryService categoryService;
     private final ReviewService reviewService;
-
-    public ProductController(ProductService productService, CategoryService categoryService, ReviewService reviewService) {
-        this.productService = productService;
-        this.categoryService = categoryService;
-        this.reviewService = reviewService;
-    }
 
     @GetMapping
     public String getProductPage(Model model) {

@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,16 +12,11 @@ import vn.techmaster.ecommecerapp.service.UserService;
 
 @Controller
 @RequestMapping("/admin/users")
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final RoleService roleService;
     private final OrderService orderService;
-
-    public UserController(UserService userService, RoleService roleService, OrderService orderService) {
-        this.userService = userService;
-        this.roleService = roleService;
-        this.orderService = orderService;
-    }
 
     // Danh sách tất cả user
     @GetMapping

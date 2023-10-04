@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,12 +9,9 @@ import vn.techmaster.ecommecerapp.service.SupplierService;
 
 @RestController
 @RequestMapping("/api/v1/admin/suppliers")
+@RequiredArgsConstructor
 public class SupplierResources {
     private final SupplierService supplierService;
-
-    public SupplierResources(SupplierService supplierService) {
-        this.supplierService = supplierService;
-    }
 
     // Tạo các RestfulAPI CURD cho Supplier
     @GetMapping

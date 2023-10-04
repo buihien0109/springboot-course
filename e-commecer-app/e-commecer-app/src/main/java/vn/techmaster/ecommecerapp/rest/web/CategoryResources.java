@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.techmaster.ecommecerapp.model.request.UpsertParentCategory;
@@ -8,13 +9,9 @@ import vn.techmaster.ecommecerapp.service.CategoryService;
 
 @RestController
 @RequestMapping("/api/v1/admin/categories")
+@RequiredArgsConstructor
 public class CategoryResources {
-
     private final CategoryService categoryService;
-
-    public CategoryResources(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {

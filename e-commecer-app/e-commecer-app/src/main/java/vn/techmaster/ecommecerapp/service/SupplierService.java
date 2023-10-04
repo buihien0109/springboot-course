@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import vn.techmaster.ecommecerapp.entity.FileServer;
@@ -11,15 +12,10 @@ import vn.techmaster.ecommecerapp.repository.SupplierRepository;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class SupplierService {
-
     private final SupplierRepository supplierRepository;
     private final FileServerService fileServerService;
-
-    public SupplierService(SupplierRepository supplierRepository, FileServerService fileServerService) {
-        this.supplierRepository = supplierRepository;
-        this.fileServerService = fileServerService;
-    }
 
     public List<SupplierPublic> getAllSuppliers() {
         List<Supplier> suppliers = supplierRepository.findAll();

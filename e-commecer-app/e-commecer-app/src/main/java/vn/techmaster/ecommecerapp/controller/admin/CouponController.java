@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,13 +9,9 @@ import vn.techmaster.ecommecerapp.service.CouponService;
 
 @Controller
 @RequestMapping("/admin/coupons")
+@RequiredArgsConstructor
 public class CouponController {
-
     private final CouponService couponService;
-
-    public CouponController(CouponService couponService) {
-        this.couponService = couponService;
-    }
 
     @GetMapping
     public String getCouponPage(Model model) {

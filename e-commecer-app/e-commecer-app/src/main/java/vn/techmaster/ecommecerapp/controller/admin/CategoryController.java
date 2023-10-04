@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,13 +9,9 @@ import vn.techmaster.ecommecerapp.service.CategoryService;
 
 @Controller
 @RequestMapping("/admin/categories")
+@RequiredArgsConstructor
 public class CategoryController {
-
     private final CategoryService categoryService;
-
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
 
     @GetMapping
     public String getCategoryPage(Model model) {

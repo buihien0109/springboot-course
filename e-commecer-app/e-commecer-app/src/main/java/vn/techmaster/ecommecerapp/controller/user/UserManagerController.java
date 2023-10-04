@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.controller.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,14 +11,10 @@ import vn.techmaster.ecommecerapp.service.UserAddressService;
 
 @Controller
 @RequestMapping("/khach-hang")
+@RequiredArgsConstructor
 public class UserManagerController {
     private final UserAddressService userAddressService;
     private final OrderService orderService;
-
-    public UserManagerController(UserAddressService userAddressService, OrderService orderService) {
-        this.userAddressService = userAddressService;
-        this.orderService = orderService;
-    }
 
     @GetMapping("/tai-khoan")
     public String account() {

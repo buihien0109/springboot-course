@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.OrderItem;
 import vn.techmaster.ecommecerapp.entity.OrderTable;
@@ -10,13 +11,9 @@ import vn.techmaster.ecommecerapp.security.SecurityUtils;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class OrderItemService {
-
     private final OrderItemRepository orderItemRepository;
-
-    public OrderItemService(OrderItemRepository orderItemRepository) {
-        this.orderItemRepository = orderItemRepository;
-    }
 
     // get all order complete item by user login
     public List<OrderItem> findAllOrderItemByUserLogin() {

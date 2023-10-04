@@ -21,7 +21,6 @@ import java.util.Objects;
 public class BannerService {
     private final BannerRepository bannerRepository;
 
-
     public List<BannerPublic> getAllBanners() {
         List<Banner> banners = bannerRepository.findAll(Sort.by("createdAt").descending());
         return banners.stream().map(BannerPublic::of).toList();

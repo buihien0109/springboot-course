@@ -99,7 +99,11 @@
     <script th:src="@{/admin-assets/admin-lte/plugins/moment/moment.min.js}"></script>
     <script th:src="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.js}"></script>
     <script th:inline="javascript">
-        $('#date').daterangepicker()
+        $('#date').daterangepicker({
+            locale: {
+                format: 'DD/MM/yyyy'
+            }
+        })
 
         // handle create discount campaign when click button using vanilla javascript and axios
         const btnCreate = document.getElementById('btn-create')

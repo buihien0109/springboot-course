@@ -1,10 +1,413 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Tạo phiếu nhập hàng</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet"
+              th:href="@{/admin-assets/admin-lte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
+
 </head>
+
 <body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/transactions">Nhập hàng</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Tạo phiếu nhập hàng
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/transactions" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-create">
+                        Lưu
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Tên người gửi</label>
+                                        <input type="text" class="form-control" id="sender-name"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Tên người nhận</label>
+                                        <input type="text" class="form-control" id="receiver-name"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Nhà cung cấp</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" id="supplier">
+                                            <option></option>
+                                            <option th:each="supplier : ${suppliers}"
+                                                    th:value="${supplier.supplierId}"
+                                                    th:text="${supplier.name}"
+                                            ></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Thời gian</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="far fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                            <input type="text" class="form-control float-right" id="date">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Tên sản phẩm</th>
+                                            <th>Số lượng</th>
+                                            <th>Giá nhập</th>
+                                            <th>Thành tiền</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="product-selected">
+
+                                        </tbody>
+                                    </table>
+                                    <div>
+                                        <button class="btn btn-primary" onclick="openModalCreateProduct()">Thêm sản phẩm
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modal-product">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Thêm sản phẩm</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Chọn sản phẩm</label>
+                        <select class="form-control select2bs4" style="width: 100%;" id="product">
+                            <option></option>
+                            <option th:each="product : ${products}"
+                                    th:value="${product.productId}"
+                                    th:text="${product.name}"
+                            ></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng nhập</label>
+                        <input type="text" class="form-control" id="quantity"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Giá nhập</label>
+                        <input type="text" class="form-control" id="purchase-price"/>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="btn-handle">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/moment/moment.min.js}"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.js}"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+    <script th:inline="javascript">
+        //Initialize Select2 Elements
+        $('#product').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Chọn sản phẩm'
+        })
+
+        $('#supplier').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Chọn nhà cung cấp'
+        })
+
+        //Date picker
+        $('#date').daterangepicker({
+            singleDatePicker: true,
+            locale: {
+                format: 'DD/MM/yyyy'
+            }
+        })
+        let products = [];
+        let idUpdate = null;
+
+        function openModalCreateProduct() {
+            $('#modal-product').modal('show');
+
+            // change title
+            const modalTitle = document.querySelector('#modal-product .modal-title');
+            modalTitle.innerHTML = 'Thêm sản phẩm';
+        }
+
+        function openModalUpdateProduct(id) {
+            $('#modal-product').modal('show');
+
+            // change title
+            const modalTitle = document.querySelector('#modal-product .modal-title');
+            modalTitle.innerHTML = 'Cập nhật sản phẩm';
+
+            // fill data
+            const product = products.find((product, index) => index === id);
+            const quantity = document.getElementById('quantity');
+            const purchasePrice = document.getElementById('purchase-price');
+
+            // Trigger value product using select2
+            $('#product').val(product.productId);
+            $('#product').trigger('change');
+            quantity.value = product.quantity;
+            purchasePrice.value = product.purchasePrice;
+
+            idUpdate = id;
+        }
+
+        // add event modal hidden
+        $('#modal-product').on('hidden.bs.modal', function (e) {
+            // clear input
+            const quantity = document.getElementById('quantity');
+            const purchasePrice = document.getElementById('purchase-price');
+
+            $('#product').val("");
+            $('#product').trigger('change');
+            quantity.value = '';
+            purchasePrice.value = '';
+
+            idUpdate = null;
+        })
+
+        const renderProducts = () => {
+            const productSelected = document.getElementById('product-selected');
+            productSelected.innerHTML = '';
+            products.forEach((product, index) => {
+                const productSelectedHtml = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${product.productName}</td>
+                        <td>${product.quantity}</td>
+                        <td>${product.purchasePrice}</td>
+                        <td>${product.quantity * product.purchasePrice}</td>
+                        <td>
+                             <button type="button" class="btn btn-primary btn-sm" onclick="openModalUpdateProduct(${index})">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                productSelected.innerHTML += productSelectedHtml;
+            })
+            // render total amount at the end of table
+            const totalAmount = getTotalAmount();
+            const totalAmountHtml = `
+                    <tr>
+                        <td colspan="4" class="text-right">Tổng tiền</td>
+                        <td colspan="1">${totalAmount}</td>
+                    </tr>
+                `;
+            productSelected.innerHTML += totalAmountHtml;
+        }
+
+        const getTotalAmount = () => {
+            return products.reduce((total, product) => {
+                return total + product.quantity * product.purchasePrice;
+            }, 0);
+        }
+
+        const deleteProduct = (index) => {
+            const isDelete = confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');
+            if (!isDelete) return;
+
+            products.splice(index, 1);
+            renderProducts();
+        }
+
+        const product = document.getElementById('product');
+        const quantity = document.getElementById('quantity');
+        const purchasePrice = document.getElementById('purchase-price');
+
+        // handle add product
+        const addProduct = () => {
+            const quantityValue = quantity.value;
+            const purchasePriceValue = Number(purchasePrice.value);
+            const productSelectedId = product.value;
+            const productSelectedName = product.options[product.selectedIndex].text;
+
+            const productSelectedObject = {
+                productId: productSelectedId,
+                productName: productSelectedName,
+                quantity: quantityValue,
+                purchasePrice: purchasePriceValue
+            }
+
+            // check product exist
+            const productExist = products.find(product => product.productId === productSelectedId);
+            if (productExist) {
+                toastr.error('Sản phẩm đã tồn tại');
+                return;
+            }
+            products.push(productSelectedObject);
+            renderProducts();
+
+            // clear input
+            quantity.value = '';
+            purchasePrice.value = '';
+
+            // close modal
+            $('#modal-product').modal('hide');
+        }
+
+        // handle update product
+        const updateProduct = () => {
+            // find product by idUpdate
+            const quantityValue = quantity.value;
+            const purchasePriceValue = Number(purchasePrice.value);
+            const productSelectedId = product.value;
+            const productSelectedName = product.options[product.selectedIndex].text;
+
+            const productSelectedObject = {
+                productId: productSelectedId,
+                productName: productSelectedName,
+                quantity: quantityValue,
+                purchasePrice: purchasePriceValue
+            }
+
+            // check product exist and different idUpdate
+            const productExist = products.find((product, index) => product.productId === productSelectedId && index !== idUpdate);
+            if (productExist) {
+                toastr.error('Sản phẩm đã tồn tại');
+                return;
+            }
+
+            // find product by idUpdate and update
+            for (let i = 0; i < products.length; i++) {
+                if (i === idUpdate) {
+                    products[i] = productSelectedObject;
+                    break;
+                }
+            }
+
+            renderProducts();
+
+            // clear input
+            quantity.value = '';
+            purchasePrice.value = '';
+
+            // reset idUpdate
+            idUpdate = null;
+
+            // close modal
+            $('#modal-product').modal('hide');
+        }
+
+        const btnHandle = document.getElementById('btn-handle');
+        btnHandle.addEventListener("click", () => {
+            if (idUpdate === null) {
+                addProduct();
+            } else {
+                updateProduct();
+            }
+        })
+
+        // add event handle for create button and send data to server using axios
+        const btnCreate = document.getElementById('btn-create');
+        const senderName = document.getElementById('sender-name');
+        const receiverName = document.getElementById('receiver-name');
+        const supplier = document.getElementById('supplier');
+        const date = document.getElementById('date');
+
+        btnCreate.addEventListener("click", () => {
+            const senderNameValue = senderName.value;
+            const receiverNameValue = receiverName.value;
+            const supplierValue = supplier.value;
+            const dateValue = date.value;
+
+            const data = {
+                senderName: senderNameValue,
+                receiverName: receiverNameValue,
+                supplierId: Number(supplierValue),
+                transactionDate: new Date(dateValue),
+                transactionItems: products
+            }
+            console.log(data)
+
+            axios.post('/api/v1/admin/transactions', data)
+                .then(response => {
+                    toastr.success('Tạo phiếu nhập hàng thành công');
+                    setTimeout(() => {
+                        window.location.href = '/admin/transactions';
+                    }, 1000)
+                })
+                .catch(error => {
+                    toastr.error('Tạo phiếu nhập hàng thất bại');
+                })
+        })
+
+
+    </script>
+</th:block>
 
 </body>
+
 </html>

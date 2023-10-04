@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.entity.UserAddress;
@@ -12,13 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserAddressService {
-
     private final UserAddressRepository userAddressRepository;
-
-    public UserAddressService(UserAddressRepository userAddressRepository) {
-        this.userAddressRepository = userAddressRepository;
-    }
 
     // find all address by user id
     public List<UserAddress> findAllAddressByUserId(Long userId) {

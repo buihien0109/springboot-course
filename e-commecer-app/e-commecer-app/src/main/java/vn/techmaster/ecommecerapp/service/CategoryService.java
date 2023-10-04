@@ -1,6 +1,7 @@
 package vn.techmaster.ecommecerapp.service;
 
 import com.github.slugify.Slugify;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.Category;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
@@ -14,15 +15,10 @@ import vn.techmaster.ecommecerapp.repository.CategoryRepository;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
-
     private final CategoryRepository categoryRepository;
     private final Slugify slugify;
-
-    public CategoryService(CategoryRepository categoryRepository, Slugify slugify) {
-        this.categoryRepository = categoryRepository;
-        this.slugify = slugify;
-    }
 
     public List<CategoryPublic> findAll() {
         List<Category> categories = categoryRepository.findAll();

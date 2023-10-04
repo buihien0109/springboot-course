@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,13 +11,9 @@ import vn.techmaster.ecommecerapp.service.ProductService;
 
 @RestController
 @RequestMapping("/api/v1")
+@RequiredArgsConstructor
 public class ProductResources {
-
     private final ProductService productService;
-
-    public ProductResources(ProductService productService) {
-        this.productService = productService;
-    }
 
     @GetMapping("/products/load-more")
     public ResponseEntity<?> loadMore(

@@ -1,6 +1,7 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,13 +11,9 @@ import vn.techmaster.ecommecerapp.service.UserService;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
 public class UserManagerResources {
-
     private final UserService userService;
-
-    public UserManagerResources(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping("/update-avatar")
     public ResponseEntity<?> updateAvatar(@RequestParam("file") MultipartFile file) {

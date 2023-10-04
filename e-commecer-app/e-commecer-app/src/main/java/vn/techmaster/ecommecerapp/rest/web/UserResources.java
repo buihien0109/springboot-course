@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +12,9 @@ import vn.techmaster.ecommecerapp.service.UserService;
 
 @RestController
 @RequestMapping("/api/v1/admin/users")
+@RequiredArgsConstructor
 public class UserResources {
-
     private final UserService userService;
-
-    public UserResources(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody CreateUserRequest request) {

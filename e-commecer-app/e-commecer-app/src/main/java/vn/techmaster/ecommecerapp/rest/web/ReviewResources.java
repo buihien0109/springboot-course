@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.techmaster.ecommecerapp.entity.Review;
@@ -8,13 +9,9 @@ import vn.techmaster.ecommecerapp.service.ReviewService;
 
 @RestController
 @RequestMapping("/api/v1")
+@RequiredArgsConstructor
 public class ReviewResources {
-
     private final ReviewService reviewService;
-
-    public ReviewResources(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
 
     @PostMapping("/reviews")
     public ResponseEntity<?> createReview(@RequestBody UpsertReviewRequest request) {

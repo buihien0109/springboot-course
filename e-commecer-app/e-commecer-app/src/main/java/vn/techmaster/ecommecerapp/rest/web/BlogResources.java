@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,13 +9,9 @@ import vn.techmaster.ecommecerapp.service.BlogService;
 
 @RestController
 @RequestMapping("/api/v1/admin/blogs")
+@RequiredArgsConstructor
 public class BlogResources {
-
     private final BlogService blogService;
-
-    public BlogResources(BlogService blogService) {
-        this.blogService = blogService;
-    }
 
     // 1. Tạo bài viết
     @PostMapping

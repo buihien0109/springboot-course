@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import vn.techmaster.ecommecerapp.entity.FileServer;
@@ -14,12 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class FileServerService {
     private final FileServerRepository fileServerRepository;
-
-    public FileServerService(FileServerRepository fileServerRepository) {
-        this.fileServerRepository = fileServerRepository;
-    }
 
     public List<FileServer> getAllFilesForLoggedInUser() {
         User user = SecurityUtils.getCurrentUserLogin();

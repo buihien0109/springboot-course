@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.controller.admin;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,13 +10,9 @@ import vn.techmaster.ecommecerapp.service.SupplierService;
 
 @Controller
 @RequestMapping("/admin/suppliers")
+@RequiredArgsConstructor
 public class SupplierController {
-
     private final SupplierService supplierService;
-
-    public SupplierController(SupplierService supplierService) {
-        this.supplierService = supplierService;
-    }
 
     @GetMapping
     public String getSupplierPage(Model model) {

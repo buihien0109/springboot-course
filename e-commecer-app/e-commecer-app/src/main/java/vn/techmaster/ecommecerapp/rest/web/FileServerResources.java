@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,13 +10,9 @@ import vn.techmaster.ecommecerapp.service.FileServerService;
 
 @RestController
 @RequestMapping("/api/v1/files")
+@RequiredArgsConstructor
 public class FileServerResources {
-
     private final FileServerService fileServerService;
-
-    public FileServerResources(FileServerService fileServerService) {
-        this.fileServerService = fileServerService;
-    }
 
     @GetMapping
     public ResponseEntity<?> getAllFiles() {

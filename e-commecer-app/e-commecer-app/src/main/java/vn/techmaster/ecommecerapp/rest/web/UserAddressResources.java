@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.techmaster.ecommecerapp.model.request.UpsertUserAddressRequest;
@@ -7,12 +8,9 @@ import vn.techmaster.ecommecerapp.service.UserAddressService;
 
 @RestController
 @RequestMapping("/api/v1/user-address")
+@RequiredArgsConstructor
 public class UserAddressResources {
     private final UserAddressService userAddressService;
-
-    public UserAddressResources(UserAddressService userAddressService) {
-        this.userAddressService = userAddressService;
-    }
 
     @PostMapping
     public ResponseEntity<?> createNewUserAddress(@RequestBody UpsertUserAddressRequest request) {

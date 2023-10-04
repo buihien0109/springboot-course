@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.techmaster.ecommecerapp.model.request.UpsertDiscountCampaignRequest;
@@ -7,13 +8,9 @@ import vn.techmaster.ecommecerapp.service.DiscountCampaingService;
 
 @RestController
 @RequestMapping("/api/v1/admin/discount-campaigns")
+@RequiredArgsConstructor
 public class DiscountCampaingResources {
-
     private final DiscountCampaingService discountCampaingService;
-
-    public DiscountCampaingResources(DiscountCampaingService discountCampaingService) {
-        this.discountCampaingService = discountCampaingService;
-    }
 
     @PostMapping
     public ResponseEntity<?> createDiscountCampaign(@RequestBody UpsertDiscountCampaignRequest request) {

@@ -1,6 +1,7 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,13 +11,9 @@ import vn.techmaster.ecommecerapp.service.AddressService;
 
 @RestController
 @RequestMapping("/api/v1/address")
+@RequiredArgsConstructor
 public class AddressResources {
-
     private final AddressService addressService;
-
-    public AddressResources(AddressService addressService) {
-        this.addressService = addressService;
-    }
 
     // get all province
     @GetMapping("/provinces")

@@ -1,6 +1,7 @@
 package vn.techmaster.ecommecerapp.service;
 
 import com.github.slugify.Slugify;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,16 +23,11 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class BlogService {
     private final BlogRepository blogRepository;
     private final TagRepository tagRepository;
     private final Slugify slugify;
-
-    public BlogService(BlogRepository blogRepository, TagRepository tagRepository, Slugify slugify) {
-        this.blogRepository = blogRepository;
-        this.tagRepository = tagRepository;
-        this.slugify = slugify;
-    }
 
     // get all blogs have status = 1 and sort by published_at desc and pagination by page and limit
     public Page<BlogPublic> getAllBlogs(String tagSlug, Integer page, Integer limit) {

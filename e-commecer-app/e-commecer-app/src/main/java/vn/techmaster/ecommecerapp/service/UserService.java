@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,18 +23,12 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final FileServerService fileServerService;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
-
-    public UserService(UserRepository userRepository, FileServerService fileServerService, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
-        this.userRepository = userRepository;
-        this.fileServerService = fileServerService;
-        this.passwordEncoder = passwordEncoder;
-        this.roleRepository = roleRepository;
-    }
 
     // get all user return list userpublic
     public List<UserPublic> getAllUsers() {

@@ -1,6 +1,7 @@
 package vn.techmaster.ecommecerapp.service;
 
 import com.github.slugify.Slugify;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -16,14 +17,10 @@ import vn.techmaster.ecommecerapp.repository.TagRepository;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TagService {
     private final TagRepository tagRepository;
     private final Slugify slugify;
-
-    public TagService(TagRepository tagRepository, Slugify slugify) {
-        this.tagRepository = tagRepository;
-        this.slugify = slugify;
-    }
 
     public List<TagPublic> getAllTags() {
         return tagRepository.findAll().stream().map(TagPublic::of).toList();
