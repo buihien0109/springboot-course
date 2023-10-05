@@ -50,6 +50,8 @@
                                 <tr>
                                     <th>Tên khuyến mại</th>
                                     <th>Trạng thái</th>
+                                    <th>Hình thức giảm</th>
+                                    <th>Giá trị giảm</th>
                                     <th>Thời gian</th>
                                     <th>Số sản phẩm áp dụng</th>
                                 </tr>
@@ -89,15 +91,6 @@
             }
         }
 
-        // get total product using discount in discount campaign
-        const getTotalProductUsingDiscount = (discountCampaign) => {
-            let total = 0;
-            discountCampaign.discounts.forEach((discount) => {
-                total += discount.products.length;
-            })
-            return total;
-        }
-
         // Render tag
         const tableContent = document.querySelector("table tbody")
         const renderDiscountCampaings = (discountCampaingList) => {
@@ -112,8 +105,10 @@
                         </a>
                     </td>
                     <td>${generateStatus(discountCampaing.status)}</td>
+                    <td>${discountCampaing.discountType}</td>
+                    <td>${discountCampaing.discountValue}</td>
                     <td>${formatDate(discountCampaing.startDate)} - ${formatDate(discountCampaing.endDate)}</td>
-                    <td>${getTotalProductUsingDiscount(discountCampaing)}</td>
+                    <td>${discountCampaing.products.length}</td>
                 </tr>
                 `
             })

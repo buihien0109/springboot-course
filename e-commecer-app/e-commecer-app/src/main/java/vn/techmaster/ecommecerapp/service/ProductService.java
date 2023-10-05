@@ -1,7 +1,6 @@
 package vn.techmaster.ecommecerapp.service;
 
 import com.github.slugify.Slugify;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,7 +23,6 @@ import vn.techmaster.ecommecerapp.repository.ProductImageRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -62,33 +60,15 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    // get all product by category id
-    public List<ProductPublic> findAllProductByCategoryId(Long id) {
-        List<Product> products = productRepository.findByCategory_CategoryId(id);
-        return products.stream().map(ProductPublic::of).toList();
-    }
-
     // get products list same category with product id and get by limit
     public List<ProductPublic> findAllProductByCategoryIdAndProductIdNot(Long categoryId, Long productId, int limit) {
         List<Product> products = productRepository.findByCategory_CategoryIdAndProductIdNot(categoryId, productId);
         return products.stream().map(ProductPublic::of).limit(limit).toList();
     }
 
-    // get all product by category name
-    public List<ProductPublic> findAllProductByCategoryName(String name) {
-        List<Product> products = productRepository.findByCategory_NameIgnoreCase(name);
-        return products.stream().map(ProductPublic::of).toList();
-    }
-
     // get all product by parent category name
     public List<ProductPublic> findAllProductByParentCategoryName(String name) {
         List<Product> products = productRepository.findByCategory_ParentCategory_NameIgnoreCase(name);
-        return products.stream().map(ProductPublic::of).toList();
-    }
-
-    // get all product by parent category slug
-    public List<ProductPublic> findAllProductByParentCategorySlug(String slug) {
-        List<Product> products = productRepository.findByCategory_ParentCategory_SlugIgnoreCase(slug);
         return products.stream().map(ProductPublic::of).toList();
     }
 
@@ -109,7 +89,7 @@ public class ProductService {
 
     // get all product has discount valid date (not expies) and pagination with param page and size
     public Map<String, Object> findAllProductHasDiscountValidDate(Integer page, Integer size) {
-        Page<Product> pageData = productRepository.findByDiscounts_DiscountCampaign_Status(
+        Page<Product> pageData = productRepository.findByDiscounts_Status(
                 DiscountCampaign.Status.ACTIVE,
                 PageRequest.of(page - 1, size)
         );
@@ -174,7 +154,7 @@ public class ProductService {
     }
 
     public ProductPublic createProduct(CreateProductRequest request) {
-        // check category id is exist
+        // check category id is existed
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy danh mục với id " + request.getCategoryId()));
 
@@ -195,7 +175,7 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm với id " + id));
 
-        // check category id is exist
+        // check category id is existed
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy danh mục với id " + request.getCategoryId()));
 
@@ -208,7 +188,7 @@ public class ProductService {
 
         // update attribute for request
         request.getAttributes().forEach(attributeRequest -> {
-            // check attribute id is exist
+            // check attribute id is existed
             ProductAttribute productAttribute = product.getAttributes().stream()
                     .filter(attribute -> attribute.getAttributeId().equals(attributeRequest.getAttributeId()))
                     .findFirst()

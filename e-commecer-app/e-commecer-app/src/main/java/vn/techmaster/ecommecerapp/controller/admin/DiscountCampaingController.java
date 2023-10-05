@@ -24,6 +24,7 @@ public class DiscountCampaingController {
     @GetMapping("/create")
     public String getDiscountCreatePage(Model model) {
         model.addAttribute("statusList", DiscountCampaign.Status.values());
+        model.addAttribute("typeList", DiscountCampaign.DiscountType.values());
         return "admin/discount-campaing/create";
     }
 
@@ -31,6 +32,7 @@ public class DiscountCampaingController {
     public String getDiscountDetailPage(@PathVariable Long id, Model model) {
         model.addAttribute("discountCampaign", discountCampaingService.getDiscountCampaignById(id));
         model.addAttribute("statusList", DiscountCampaign.Status.values());
+        model.addAttribute("typeList", DiscountCampaign.DiscountType.values());
         return "admin/discount-campaing/detail";
     }
 }

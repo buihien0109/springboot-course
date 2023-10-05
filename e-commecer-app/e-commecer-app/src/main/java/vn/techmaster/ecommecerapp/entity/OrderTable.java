@@ -93,19 +93,19 @@ public class OrderTable {
         orderItem.setOrder(null);
     }
 
-    public static enum Status {
+    public enum Status {
         WAIT, DELIVERY, COMPLETE, CANCELED, RETURNED
     }
 
-    public static enum PaymentMethod {
+    public enum PaymentMethod {
         COD, PAYPAL, STRIPE
     }
 
-    public static enum ShippingMethod {
+    public enum ShippingMethod {
         STANDARD, EXPRESS
     }
 
-    public static enum UseType {
+    public enum UseType {
         USER, ANONYMOUS
     }
 

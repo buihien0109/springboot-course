@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org"
-      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
 
 
 <head>
     <title>Danh mục coupon</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
 </head>
 
 <body>
@@ -48,11 +53,11 @@
                             <table class="table table-bordered table-hover">
                                 <thead>
                                 <tr>
+                                    <th>Coupon ID</th>
                                     <th>Mã kích hoạt</th>
                                     <th>% giảm</th>
                                     <th>Trạng thái</th>
                                     <th>Thời gian</th>
-                                    <th>Số lượng áp dụng</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -69,22 +74,39 @@
             </div>
 
             <!-- Modal Tag -->
-            <div class="modal fade" id="modal-coupon" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                 aria-labelledby="modal-tag-title" aria-hidden="true">
+            <div class="modal fade" id="modal-coupon">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title fs-5" id="modal-coupon-title">Tạo Coupon</h5>
+                            <h4 class="modal-title">Default Modal</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">×</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <input type="text" class="form-control" id="input-name" placeholder="Enter name">
+                            <div class="form-group">
+                                <label>Mã kích hoạt</label>
+                                <input type="text" class="form-control" id="code"/>
+                            </div>
+                            <div class="form-group">
+                                <label>% giảm</label>
+                                <input type="text" class="form-control" id="discount"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Thời gian áp dụng</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="far fa-calendar-alt"></i>
+                                                </span>
+                                    </div>
+                                    <input type="text" class="form-control float-right" id="date">
+                                </div>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                            <button type="button" class="btn btn-primary" id="btn-handle-coupon">Xác nhận</button>
+                        <div class="modal-footer justify-content-end">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+                            <button type="button" class="btn btn-primary" id="btn-handle">Xác nhận</button>
                         </div>
                     </div>
                 </div>
@@ -94,9 +116,14 @@
 </div>
 
 <th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/moment/moment.min.js}"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.js}"></script>
     <script th:inline="javascript">
         let coupons = [[${coupons}]];
         console.log(coupons);
+        let idUpdate = null;
+
+        $('#date').daterangepicker()
 
         // Compare 2 date string
         const compareDate = (date1, date2) => {
@@ -127,11 +154,19 @@
             couponList.forEach((coupon) => {
                 html += `
                     <tr>
+                        <td>${coupon.couponId}</td>
                         <td>${coupon.code}</td>
                         <td>${coupon.discount}%</td>
                         <td>${generateStatus(coupon.validFrom, coupon.validTo)}</td>
                         <td>${formatDate(coupon.validFrom)} - ${formatDate(coupon.validTo)}</td>
-                        <td>20</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm btn-delete" onclick="openModalUpdateCoupon(${coupon.couponId})">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm btn-delete" onclick="deleteCoupon(${coupon.couponId})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
                     </tr>
                 `
             })
@@ -148,6 +183,164 @@
                 },
                 hideOnlyOnePage: true
             })
+        }
+
+        // Handle open modal create coupon
+        const btnOpenModal = document.getElementById("btn-open-modal");
+        btnOpenModal.addEventListener("click", () => {
+            // change modal title
+            const modalTitle = document.querySelector(".modal-title");
+            modalTitle.innerHTML = "Tạo coupon";
+
+            $('#modal-coupon').modal('show');
+        })
+
+        const openModalUpdateCoupon = id => {
+            // change modal title
+            const modalTitle = document.querySelector(".modal-title");
+            modalTitle.innerHTML = "Cập nhật coupon";
+
+            // get coupon by id
+            const coupon = coupons.find(coupon => coupon.couponId === id);
+
+            // set value for input
+            const code = document.getElementById("code");
+            const discount = document.getElementById("discount");
+
+            code.value = coupon.code;
+            discount.value = coupon.discount;
+
+            // set date for daterangepicker
+            $('#date').daterangepicker({
+                startDate: moment(coupon.validFrom, "YYYY-MM-DD"), // Set your desired start date
+                endDate: moment(coupon.validTo, "YYYY-MM-DD"), // Set your desired end date
+            })
+
+            // set id for update
+            idUpdate = id;
+
+            $('#modal-coupon').modal('show');
+        }
+
+        // Handle hidden modal
+        $('#modal-coupon').on('hidden.bs.modal', function (e) {
+            // reset value for input
+            const code = document.getElementById("code");
+            const discount = document.getElementById("discount");
+
+            code.value = "";
+            discount.value = "";
+
+            // reset date for daterangepicker
+            $("#date").data('daterangepicker').setStartDate(moment().format("MM-DD-YYYY"));
+            $("#date").data('daterangepicker').setEndDate(moment().format("MM-DD-YYYY"));
+
+            // reset id for update
+            idUpdate = null;
+        })
+
+        // Handle create coupon
+        const createCoupon = () => {
+            const code = document.getElementById("code").value;
+            const discount = document.getElementById("discount").value;
+            const date = document.getElementById("date").value;
+
+            console.log(date)
+            const [validFrom, validTo] = date.split(" - ");
+            console.log({validFrom, validTo})
+
+            const coupon = {
+                code,
+                discount,
+                validFrom: new Date(validFrom),
+                validTo: new Date(validTo)
+            }
+            console.log(coupon)
+
+            // send request to server using axios
+            axios.post("/api/v1/admin/coupons", coupon)
+                .then(res => {
+                    // add new coupon to list
+                    coupons.push(res.data);
+
+                    // render pagination
+                    renderPagination();
+
+                    // hidden modal
+                    $('#modal-coupon').modal('hide');
+
+                    toastr.success("Tạo coupon thành công");
+                })
+                .catch(err => {
+                    console.log(err);
+                    toastr.error(err.response.data.message);
+                })
+        }
+
+        const updateCoupon = () => {
+            // get value from input
+            const code = document.getElementById("code").value;
+            const discount = document.getElementById("discount").value;
+            const date = document.getElementById("date").value;
+
+            const [validFrom, validTo] = date.split(" - ");
+            const coupon = {
+                code,
+                discount,
+                validFrom: new Date(validFrom),
+                validTo: new Date(validTo)
+            }
+
+            // send request to server using axios
+            axios.put(`/api/v1/admin/coupons/${idUpdate}`, coupon)
+                .then(res => {
+                    // update coupon in list
+                    const index = coupons.findIndex(coupon => coupon.couponId === idUpdate);
+                    coupons[index] = res.data;
+
+                    // render pagination
+                    renderPagination();
+
+                    // hidden modal
+                    $('#modal-coupon').modal('hide');
+
+                    toastr.success("Cập nhật coupon thành công");
+                })
+                .catch(err => {
+                    console.log(err);
+                    toastr.error(err.response.data.message);
+                })
+        }
+
+        const btnHandle = document.getElementById("btn-handle");
+        btnHandle.addEventListener("click", () => {
+            if (idUpdate) {
+                updateCoupon();
+            } else {
+                createCoupon();
+            }
+        })
+
+        const deleteCoupon = id => {
+            const isDelete = confirm("Bạn có chắc chắn muốn xóa coupon này?");
+            if (!isDelete) return;
+
+            // send request to server using axios
+            axios.delete(`/api/v1/admin/coupons/${id}`)
+                .then(res => {
+                    // remove coupon in list
+                    const index = coupons.findIndex(coupon => coupon.couponId === id);
+                    coupons.splice(index, 1);
+
+                    // render pagination
+                    renderPagination();
+
+                    toastr.success("Xóa coupon thành công");
+                })
+                .catch(err => {
+                    console.log(err);
+                    toastr.error(err.response.data.message);
+                })
         }
 
         renderPagination();

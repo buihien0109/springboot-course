@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -27,30 +29,44 @@ public class DiscountCampaign {
     private String slug;
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    private DiscountType discountType;
+    private Integer discountValue;
+
     private Date startDate;
     private Date endDate;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @ManyToMany(mappedBy = "discounts")
     @Fetch(FetchMode.SUBSELECT)
-    @OneToMany(mappedBy = "discountCampaign", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Discount> discounts = new LinkedHashSet<>();
+    private Set<Product> products = new LinkedHashSet<>();
 
     @Getter
     public enum Status {
         PENDING("Chưa kích hoạt"),
         ACTIVE("Đang hoạt động"),
-        EXPIRED("Đã hết hạn");
+        EXPIRED("Đã hết hạn"),
+        CANCEL("Hủy bỏ");
 
         private final String value;
 
         Status(String value) {
             this.value = value;
         }
+    }
 
-        public String getValue() {
-            return value;
+    @Getter
+    public enum DiscountType {
+        PERCENT("Phần trăm"),
+        AMOUNT("Số tiền"),
+        SAME_PRICE("Đồng giá");
+
+        private final String value;
+
+        DiscountType(String value) {
+            this.value = value;
         }
     }
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,13 +16,17 @@ public interface DiscountCampaignPublic {
 
     String getDescription();
 
+    DiscountCampaign.DiscountType getDiscountType();
+
+    Integer getDiscountValue();
+
     Date getStartDate();
 
     Date getEndDate();
 
     DiscountCampaign.Status getStatus();
 
-    List<DiscountPublic> getDiscounts();
+    List<ProductPublic> getProducts();
 
     @RequiredArgsConstructor
     class DiscountCampaignPublicImpl implements DiscountCampaignPublic {
@@ -51,6 +54,16 @@ public interface DiscountCampaignPublic {
         }
 
         @Override
+        public DiscountCampaign.DiscountType getDiscountType() {
+            return discountCampaign.getDiscountType();
+        }
+
+        @Override
+        public Integer getDiscountValue() {
+            return discountCampaign.getDiscountValue();
+        }
+
+        @Override
         public Date getStartDate() {
             return discountCampaign.getStartDate();
         }
@@ -66,11 +79,9 @@ public interface DiscountCampaignPublic {
         }
 
         @Override
-        public List<DiscountPublic> getDiscounts() {
-            if (discountCampaign.getDiscounts() == null) {
-                return new ArrayList<>();
-            }
-            return discountCampaign.getDiscounts().stream().map(DiscountPublic::of).toList();
+        public List<ProductPublic> getProducts() {
+            return discountCampaign.getProducts().stream()
+                    .map(ProductPublic::of).toList();
         }
     }
 

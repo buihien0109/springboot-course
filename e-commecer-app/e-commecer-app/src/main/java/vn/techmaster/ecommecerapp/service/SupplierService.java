@@ -40,7 +40,6 @@ public class SupplierService {
                     s.setAddress(supplier.getAddress());
                     s.setEmail(supplier.getEmail());
                     s.setPhone(supplier.getPhone());
-                    s.setThumbnail(supplier.getThumbnail());
                     return supplierRepository.save(s);
                 })
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id: " + supplier.getSupplierId()));

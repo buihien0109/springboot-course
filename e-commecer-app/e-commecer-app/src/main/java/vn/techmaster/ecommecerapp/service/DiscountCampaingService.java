@@ -5,18 +5,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
+import vn.techmaster.ecommecerapp.entity.Product;
 import vn.techmaster.ecommecerapp.model.projection.DiscountCampaignPublic;
-import vn.techmaster.ecommecerapp.model.request.UpsertDiscountCampaignRequest;
+import vn.techmaster.ecommecerapp.model.request.CreateDiscountCampaignRequest;
+import vn.techmaster.ecommecerapp.model.request.UpdateDiscountCampaingRequest;
 import vn.techmaster.ecommecerapp.repository.DiscountCampaignRepository;
-import vn.techmaster.ecommecerapp.repository.DiscountRepository;
+import vn.techmaster.ecommecerapp.repository.ProductRepository;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DiscountCampaingService {
+    private final ProductRepository productRepository;
     private final DiscountCampaignRepository discountCampaignRepository;
     private final Slugify slugify;
 
@@ -30,22 +33,14 @@ public class DiscountCampaingService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy discount campaign với id = " + id));
     }
 
-    public DiscountCampaignPublic createDiscountCampaign(UpsertDiscountCampaignRequest request) {
-        // convert start date and end date from string with pattern "MM-dd-yyyy" to Date
-//        Date startDate = new Date();
-//        Date endDate = new Date();
-//try {
-//            startDate = new java.text.SimpleDateFormat("MM-dd-yyyy").parse(request.getStartDate());
-//            endDate = new java.text.SimpleDateFormat("MM-dd-yyyy").parse(request.getEndDate());
-//        } catch (Exception e) {
-//            log.error("Error when convert date: " + e.getMessage());
-//        }
-
+    public DiscountCampaignPublic createDiscountCampaign(CreateDiscountCampaignRequest request) {
         // create discount campaign
         DiscountCampaign discountCampaign = new DiscountCampaign();
         discountCampaign.setName(request.getName());
         discountCampaign.setSlug(slugify.slugify(request.getName()));
         discountCampaign.setDescription(request.getDescription());
+        discountCampaign.setDiscountType(request.getDiscountType());
+        discountCampaign.setDiscountValue(request.getDiscountValue());
         discountCampaign.setStartDate(request.getStartDate());
         discountCampaign.setEndDate(request.getEndDate());
         discountCampaign.setStatus(request.getStatus());
@@ -54,16 +49,27 @@ public class DiscountCampaingService {
         return DiscountCampaignPublic.of(discountCampaign);
     }
 
-    public DiscountCampaignPublic updateDiscountCampaign(Long id, UpsertDiscountCampaignRequest request) {
+    public DiscountCampaignPublic updateDiscountCampaign(Long id, UpdateDiscountCampaingRequest request) {
         DiscountCampaign discountCampaign = discountCampaignRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy discount campaign với id = " + id));
 
         discountCampaign.setName(request.getName());
         discountCampaign.setSlug(slugify.slugify(request.getName()));
         discountCampaign.setDescription(request.getDescription());
+        discountCampaign.setDiscountType(request.getDiscountType());
+        discountCampaign.setDiscountValue(request.getDiscountValue());
         discountCampaign.setStartDate(request.getStartDate());
         discountCampaign.setEndDate(request.getEndDate());
         discountCampaign.setStatus(request.getStatus());
+
+        // get all product ids in request
+        Set<Product> products = productRepository.findByProductIdIn(request.getProductIds());
+
+        // set discount campaign for all product
+        products.forEach(product -> product.addDiscount(discountCampaign));
+
+        // set discount campaign for all product
+        discountCampaign.setProducts(products);
 
         discountCampaignRepository.save(discountCampaign);
         return DiscountCampaignPublic.of(discountCampaign);
@@ -74,6 +80,4 @@ public class DiscountCampaingService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy discount campaign với id = " + id));
         discountCampaignRepository.delete(discountCampaign);
     }
-
-
 }

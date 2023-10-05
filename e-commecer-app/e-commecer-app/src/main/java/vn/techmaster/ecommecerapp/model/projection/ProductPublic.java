@@ -3,7 +3,6 @@ package vn.techmaster.ecommecerapp.model.projection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.techmaster.ecommecerapp.entity.Discount;
 import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
 import vn.techmaster.ecommecerapp.entity.Product;
 import vn.techmaster.ecommecerapp.entity.ProductImage;
@@ -94,17 +93,17 @@ public interface ProductPublic {
         @Override
         public Integer getDiscountPrice() {
             // check if product has discount and discount campaign is active
-            Set<Discount> discounts = product.getDiscounts();
+            Set<DiscountCampaign> discounts = product.getDiscounts();
 
             if (!discounts.isEmpty()) {
-                for (Discount discount : discounts) {
-                    DiscountCampaign discountCampaign = discount.getDiscountCampaign();
-                    if (discountCampaign.getStatus() == DiscountCampaign.Status.ACTIVE) {
-                        // check if discount is valid
-                        if (discount.getDiscountType() == Discount.DiscountType.PERCENT) {
+                for (DiscountCampaign discount : discounts) {
+                    if (discount.getStatus() == DiscountCampaign.Status.ACTIVE) {
+                        if (discount.getDiscountType() == DiscountCampaign.DiscountType.PERCENT) {
                             return product.getPrice() * (100 - discount.getDiscountValue()) / 100;
-                        } else if (discount.getDiscountType() == Discount.DiscountType.AMOUNT) {
+                        } else if (discount.getDiscountType() == DiscountCampaign.DiscountType.AMOUNT) {
                             return product.getPrice() - discount.getDiscountValue();
+                        } else if (discount.getDiscountType() == DiscountCampaign.DiscountType.SAME_PRICE) {
+                            return discount.getDiscountValue();
                         }
                     }
                 }

@@ -3,7 +3,8 @@ package vn.techmaster.ecommecerapp.rest.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.techmaster.ecommecerapp.model.request.UpsertDiscountCampaignRequest;
+import vn.techmaster.ecommecerapp.model.request.CreateDiscountCampaignRequest;
+import vn.techmaster.ecommecerapp.model.request.UpdateDiscountCampaingRequest;
 import vn.techmaster.ecommecerapp.service.DiscountCampaingService;
 
 @RestController
@@ -13,12 +14,12 @@ public class DiscountCampaingResources {
     private final DiscountCampaingService discountCampaingService;
 
     @PostMapping
-    public ResponseEntity<?> createDiscountCampaign(@RequestBody UpsertDiscountCampaignRequest request) {
+    public ResponseEntity<?> createDiscountCampaign(@RequestBody CreateDiscountCampaignRequest request) {
         return ResponseEntity.ok().body(discountCampaingService.createDiscountCampaign(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateDiscountCampaign(@RequestBody UpsertDiscountCampaignRequest request, @PathVariable Long id) {
+    public ResponseEntity<?> updateDiscountCampaign(@RequestBody UpdateDiscountCampaingRequest request, @PathVariable Long id) {
         return ResponseEntity.ok().body(discountCampaingService.updateDiscountCampaign(id,request));
     }
 

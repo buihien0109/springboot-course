@@ -54,7 +54,12 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "discount_id"))
     @Fetch(FetchMode.SUBSELECT)
-    private Set<Discount> discounts = new LinkedHashSet<>();
+    private Set<DiscountCampaign> discounts = new LinkedHashSet<>();
+
+    public void addDiscount(DiscountCampaign discountCampaign) {
+        discounts.add(discountCampaign);
+        discountCampaign.getProducts().add(this);
+    }
 
     @Getter
     public enum Status {

@@ -115,13 +115,23 @@
                                                 <thead>
                                                 <tr>
                                                     <th>Mã đơn hàng</th>
-                                                    <th>Ngày đặt hàng</th>
+                                                    <th>Ngày giao hàng</th>
+                                                    <th>Người nhận</th>
+                                                    <th>Người gửi</th>
                                                     <th>Tổng tiền đơn hàng</th>
                                                 </tr>
                                                 </thead>
 
                                                 <tbody>
-
+                                                <tr th:each="transaction : ${transactions}">
+                                                    <td>
+                                                        <a th:href="@{/admin/transactions/{id}/detail (id=${transaction.id})}" th:text="${transaction.id}"></a>
+                                                    </td>
+                                                    <td th:text="${#dates.format(transaction.transactionDate, 'dd/MM/yyyy')}">Ngày giao hàng</td>
+                                                    <td th:text="${transaction.receiverName}">Người nhận</td>
+                                                    <td th:text="${transaction.senderName}">Người gửi</td>
+                                                    <td th:text="${transaction.totalAmount}">Tổng tiền đơn hàng</td>
+                                                </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -141,7 +151,9 @@
 
     <script th:inline="javascript">
         const supplier = [[${supplier}]];
+        const transactions = [[${transactions}]];
         console.log(supplier)
+        console.log(transactions)
 
         // Truy cập vào các thành phần
         const nameEl = document.getElementById("name");

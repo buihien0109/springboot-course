@@ -6,6 +6,9 @@
     <title>Chi tiết khuyến mại</title>
 
     <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet"
+              th:href="@{/admin-assets/admin-lte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
     </th:block>
@@ -50,7 +53,7 @@
             </div>
 
             <div class="row">
-                <div class="col-6">
+                <div class="col-4">
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
@@ -65,6 +68,22 @@
                                         <label>Mô tả</label>
                                         <textarea class="form-control" id="description" rows="5"
                                                   th:text="${discountCampaign.description}"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Hình thức giảm</label>
+                                        <select id="type" class="form-control">
+                                            <option th:each="type : ${typeList}"
+                                                    th:value="${type}"
+                                                    th:selected="${type == discountCampaign.discountType}"
+                                                    th:text="${type.getValue()}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Giá trị giảm</label>
+                                        <input type="text" class="form-control" id="value"
+                                               th:value="${discountCampaign.discountValue}"/>
                                     </div>
 
                                     <div class="form-group">
@@ -94,6 +113,60 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 class="mb-4">Lựa chọn sản phẩm áp dụng</h5>
+                                    <div class="mb-3">
+                                        <button class="btn btn-primary">Tất cả sản phẩm</button>
+                                        <button class="btn btn-warning">Chọn theo danh mục</button>
+                                        <button class="btn btn-danger">Xóa lựa chọn</button>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="form-group select2-purple">
+                                            <select class="form-control select2bs4"
+                                                    data-placeholder="Chọn sản phẩm"
+                                                    id="product">
+                                                <option>Sản phẩm 1</option>
+                                                <option>Sản phẩm 2</option>
+                                                <option>Sản phẩm 3</option>
+                                                <option>Sản phẩm 4</option>
+                                                <option>Sản phẩm 5</option>
+                                                <option>Sản phẩm 6</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th style="width: 5%">
+                                                    <input type="checkbox">
+                                                </th>
+                                                <th style="width: 55%">Tên sản phẩm</th>
+                                                <th style="width: 20%">Giá</th>
+                                                <th style="width: 20%">Giá khuyến mại</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td><input type="checkbox"></td>
+                                                <td>Tên sản phẩm</td>
+                                                <td>100000</td>
+                                                <td>70000</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -102,6 +175,7 @@
 <th:block id="js">
     <script th:src="@{/admin-assets/admin-lte/plugins/moment/moment.min.js}"></script>
     <script th:src="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.js}"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
     <script th:inline="javascript">
         const discountCampaign = [[${discountCampaign}]];
         console.log(discountCampaign);
@@ -111,11 +185,18 @@
             endDate: moment(discountCampaign.endDate, "YYYY-MM-DD"),   // Set your desired end date
         })
 
+        $('#product').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Chọn sản phẩm'
+        })
+
         // handle create discount campaign when click button using vanilla javascript and axios
         const btnUpdate = document.getElementById('btn-update')
         btnUpdate.addEventListener('click', () => {
             const name = document.getElementById('name').value
             const description = document.getElementById('description').value
+            const type = document.getElementById('type').value
+            const value = document.getElementById('value').value
             const status = document.getElementById('status').value
             const date = document.getElementById('date').value
 
@@ -127,6 +208,8 @@
             const data = {
                 name: name,
                 description: description,
+                discountType: type,
+                discountValue: value,
                 status: status,
                 startDate: new Date(startDate),
                 endDate: new Date(endDate)

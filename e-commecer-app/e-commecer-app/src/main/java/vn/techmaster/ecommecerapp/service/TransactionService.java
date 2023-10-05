@@ -74,4 +74,11 @@ public class TransactionService {
 
         return TransactionPublic.of(transaction);
     }
+
+    public List<TransactionPublic> getTransactionsBySupplierId(Long supplierId) {
+        Supplier supplier = supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id: " + supplierId));
+        List<Transaction> transactions = transactionRepository.findBySupplier_SupplierIdOrderByTransactionDateDesc(supplierId);
+        return transactions.stream().map(TransactionPublic::of).toList();
+    }
 }

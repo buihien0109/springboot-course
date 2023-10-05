@@ -46,4 +46,60 @@ public class CouponService {
     public List<Coupon> getAllCoupons() {
         return couponRepository.findAll();
     }
+
+    public Coupon createCoupon(Coupon request) {
+        // check coupon is exist by code
+        if (couponRepository.existsByCode(request.getCode())) {
+            throw new BadRequestException("Mã coupon không được trùng nhau");
+        }
+
+        // TODO: check coupon is valid date
+//        Date now = new Date();
+//        if (now.before(request.getValidFrom()) || now.after(request.getValidTo())) {
+//            throw new BadRequestException("Thời gian không hợp lệ");
+//        }
+
+        Coupon coupon = new Coupon();
+        coupon.setCode(request.getCode());
+        coupon.setDiscount(request.getDiscount());
+        coupon.setValidFrom(request.getValidFrom());
+        coupon.setValidTo(request.getValidTo());
+
+        return couponRepository.save(coupon);
+    }
+
+    public Coupon updateCoupon(Long id, Coupon request) {
+        // find coupon by id
+        Coupon coupon = couponRepository.findById(id)
+                .orElseThrow(() -> new ResouceNotFoundException("Coupon không tồn tại"));
+
+        // check coupon is exist by code and different with current coupon
+        if (couponRepository.existsByCode(request.getCode()) && !coupon.getCode().equals(request.getCode())) {
+            throw new BadRequestException("Mã coupon không được trùng nhau");
+        }
+
+        // TODO: check coupon is valid date
+//        Date now = new Date();
+//        if (now.before(request.getValidFrom()) || now.after(request.getValidTo())) {
+//            throw new BadRequestException("Thời gian không hợp lệ");
+//        }
+
+        // update coupon
+        coupon.setCode(request.getCode());
+        coupon.setDiscount(request.getDiscount());
+        coupon.setValidFrom(request.getValidFrom());
+        coupon.setValidTo(request.getValidTo());
+
+        // save coupon
+        return couponRepository.save(coupon);
+    }
+
+    public void deleteCoupon(Long id) {
+        // find coupon by id
+        Coupon coupon = couponRepository.findById(id)
+                .orElseThrow(() -> new ResouceNotFoundException("Coupon không tồn tại"));
+
+        // delete coupon
+        couponRepository.delete(coupon);
+    }
 }
