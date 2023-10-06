@@ -58,29 +58,31 @@
                                     <div class="form-group">
                                         <p class="text-muted font-italic">Mật khẩu mặc định : <span class="font-weight-bold">123</span></p>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Họ tên</label>
-                                        <input type="text" class="form-control" id="username"/>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Email</label>
-                                        <input type="text" class="form-control" id="email"/>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Số điện thoại</label>
-                                        <input type="text" class="form-control" id="phone"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Quyền</label>
-                                        <div class="select2-purple">
-                                            <select class="select2 form-control" multiple="multiple" id="roles">
-                                                <option th:each="role : ${roles}" th:value="${role.roleId}"
-                                                        th:text="${role.name}"></option>
-                                            </select>
+                                    <form id="form-create-user">
+                                        <div class="form-group">
+                                            <label>Họ tên</label>
+                                            <input type="text" class="form-control" id="username" name="username"/>
                                         </div>
-                                    </div>
+
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input type="text" class="form-control" id="email" name="email"/>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Số điện thoại</label>
+                                            <input type="text" class="form-control" id="phone" name="phone"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Quyền</label>
+                                            <div class="select2-purple">
+                                                <select class="select2 form-control" multiple="multiple" id="roles" name="roles">
+                                                    <option th:each="role : ${roles}" th:value="${role.roleId}"
+                                                            th:text="${role.name}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -93,47 +95,11 @@
 
 <th:block id="js">
     <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
-
     <script th:inline="javascript">
         const roles = [[${roles}]];
         console.log(roles);
-
-        //Initialize Select2 Elements
-        $(".select2").select2({
-            placeholder: "Chọn role",
-        });
-
-        // Truy cập vào các thành phần
-        const userName = document.getElementById("username");
-        const userEmail = document.getElementById("email");
-        const userPhone = document.getElementById("phone");
-        const userRoles = $("#roles");
-        const btnCreate = document.getElementById("btn-create")
-
-        // Tạo khóa học
-        btnCreate.addEventListener("click", async () => {
-            const data = {
-                username: userName.value,
-                email: userEmail.value,
-                phone: userPhone.value,
-                roleIds: userRoles.val().map(e => Number(e))
-            }
-
-            try {
-                let res = await axios.post("/api/v1/admin/users", data)
-
-                if (res.data) {
-                    toastr.success("Tạo user thành công");
-                    setTimeout(() => {
-                        window.location.href = `/admin/users/${res.data.userId}/detail`
-                    }, 1500)
-                }
-            } catch (e) {
-                toastr.error(e.response.data.message);
-                console.log(e);
-            }
-        })
     </script>
+    <script th:src="@{/admin-assets/assets/js/user/create.js}"></script>
 </th:block>
 
 </body>

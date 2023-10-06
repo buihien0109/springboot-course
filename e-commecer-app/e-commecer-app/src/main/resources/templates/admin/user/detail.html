@@ -75,33 +75,35 @@
                                      aria-labelledby="custom-content-below-home-tab">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="form-group mt-4">
-                                                <label>Họ tên</label>
-                                                <input type="text" class="form-control" id="username"
-                                                       th:value="${user.username}"/>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Email</label>
-                                                <input type="text" class="form-control" id="email"
-                                                       th:value="${user.email}" disabled/>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label>Số điện thoại</label>
-                                                <input type="text" class="form-control" id="phone"
-                                                       th:value="${user.phone}"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Quyền</label>
-                                                <div class="select2-purple">
-                                                    <select class="select2 form-control" multiple="multiple" id="roles">
-                                                        <option th:each="role : ${roles}"
-                                                                th:value="${role.roleId}"
-                                                                th:text="${role.name}"></option>
-                                                    </select>
+                                            <form id="form-update-user">
+                                                <div class="form-group mt-4">
+                                                    <label>Họ tên</label>
+                                                    <input type="text" class="form-control" id="username"
+                                                           th:value="${user.username}" name="username"/>
                                                 </div>
-                                            </div>
+
+                                                <div class="form-group">
+                                                    <label>Email</label>
+                                                    <input type="text" class="form-control" id="email"
+                                                           th:value="${user.email}" disabled/>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Số điện thoại</label>
+                                                    <input type="text" class="form-control" id="phone"
+                                                           th:value="${user.phone}" name="phone"/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Quyền</label>
+                                                    <div class="select2-purple">
+                                                        <select class="select2 form-control" multiple="multiple" id="roles" name="roles">
+                                                            <option th:each="role : ${roles}"
+                                                                    th:value="${role.roleId}"
+                                                                    th:text="${role.name}"></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group mt-4">
@@ -187,79 +189,8 @@
         const orders = [[${orders}]];
         const user = [[${user}]];
         console.log({roles, orders, user});
-
-        //Initialize Select2 Elements
-        $(".select2").select2({
-            placeholder: "Chọn role",
-        });
-        $("#roles").val(user.roles.map(e => e.roleId)).trigger("change");
-
-        // Truy cập vào các thành phần
-        const userName = document.getElementById("username");
-        const userPhone = document.getElementById("phone");
-        const userRoles = $("#roles");
-        const btnUpdate = document.getElementById("btn-update")
-
-        // Tạo khóa học
-        btnUpdate.addEventListener("click", async () => {
-            const data = {
-                username: userName.value,
-                phone: userPhone.value,
-                roleIds: userRoles.val().map(e => Number(e))
-            }
-            console.log(data);
-
-            try {
-                let res = await axios.put(`/api/v1/admin/users/${user.userId}`, data)
-
-                if (res.data) {
-                    toastr.success("Cập nhật thành công");
-                }
-            } catch (e) {
-                toastr.error(e.response.data.message);
-                console.log(e);
-            }
-        })
-
-        // add event listener to avatar input change
-        const avatarInput = document.getElementById('avatar');
-        const avatarPreview = document.getElementById('avatar-preview');
-        avatarInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-
-            // create form data with key file and value is file in input
-            const formData = new FormData();
-            formData.append('file', file);
-
-            // Send post request to url /api/v1/users/update-avatar, then check request status and set src for avatar preview
-            axios.post(`/api/v1/admin/users/${user.userId}/update-avatar`, formData)
-                .then(res => {
-                    if (res.status === 200) {
-                        avatarPreview.src = res.data;
-                        toastr.success('Cập nhật avatar thành công');
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                    toastr.error('Cập nhật avatar thất bại');
-                });
-        });
-
-        // Reset password
-        const btnResetPassword = document.getElementById('btn-reset-password');
-        btnResetPassword.addEventListener('click', async () => {
-            const isConfirm = confirm('Bạn có chắc chắn muốn reset mật khẩu?');
-            if (!isConfirm) return;
-            try {
-                let res = await axios.put(`/api/v1/admin/users/${user.userId}/reset-password`);
-                if (res.status === 200) {
-                    toastr.success(`Reset mật khẩu thành công. Mật khẩu mới là: ${res.data}`);
-                }
-            } catch (e) {
-                toastr.error('Reset mật khẩu thất bại');
-            }
-        })
     </script>
+    <script th:src="@{/admin-assets/assets/js/user/detail.js}"></script>
 </th:block>
 
 </body>
