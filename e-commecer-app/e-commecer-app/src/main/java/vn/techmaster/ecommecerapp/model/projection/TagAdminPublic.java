@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.model.projection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Tag;
 
@@ -14,6 +15,7 @@ public interface TagAdminPublic {
 
     @RequiredArgsConstructor
     class TagAdminPublicImpl implements TagAdminPublic {
+        @JsonIgnore
         private final Tag tag;
 
         @Override

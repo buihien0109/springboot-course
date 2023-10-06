@@ -262,8 +262,8 @@
                         <td>${index + 1}</td>
                         <td>${product.productName}</td>
                         <td>${product.quantity}</td>
-                        <td>${product.purchasePrice}</td>
-                        <td>${product.quantity * product.purchasePrice}</td>
+                        <td>${formatCurrency(product.purchasePrice)}</td>
+                        <td>${formatCurrency(product.quantity * product.purchasePrice)}</td>
                         <td>
                              <button type="button" class="btn btn-primary btn-sm" onclick="openModalUpdateProduct(${index})">
                                 <i class="fas fa-pen"></i>
@@ -281,7 +281,7 @@
             const totalAmountHtml = `
                     <tr>
                         <td colspan="4" class="text-right">Tổng tiền</td>
-                        <td colspan="1">${totalAmount}</td>
+                        <td colspan="1">${formatCurrency(totalAmount)}</td>
                     </tr>
                 `;
             productSelected.innerHTML += totalAmountHtml;

@@ -91,6 +91,19 @@
             }
         }
 
+        // render discount value by discount type
+        const renderDiscountValue = (discountType, discountValue) => {
+            switch (discountType) {
+                case "PERCENT":
+                    return `${discountValue}%`;
+                case "AMOUNT":
+                case"SAME_PRICE":
+                    return `${formatCurrency(discountValue)}đ`;
+                default:
+                    return `Unknown`;
+            }
+        }
+
         // Render tag
         const tableContent = document.querySelector("table tbody")
         const renderDiscountCampaings = (discountCampaingList) => {
@@ -106,7 +119,7 @@
                     </td>
                     <td>${generateStatus(discountCampaing.status)}</td>
                     <td>${discountCampaing.discountType}</td>
-                    <td>${discountCampaing.discountValue}</td>
+                    <td>${renderDiscountValue(discountCampaing.discountType, discountCampaing.discountValue)}</td>
                     <td>${formatDate(discountCampaing.startDate)} - ${formatDate(discountCampaing.endDate)}</td>
                     <td>${discountCampaing.products.length}</td>
                 </tr>

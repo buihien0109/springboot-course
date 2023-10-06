@@ -89,7 +89,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Mô tả ngắn</label>
-                                                <textarea id="description" class="form-control" rows="8"
+                                                <textarea id="description" class="form-control" rows="12"
                                                           th:text="${product.description}"></textarea>
                                             </div>
                                         </div>
@@ -123,6 +123,16 @@
                                                     <option hidden="hidden">Chọn danh mục con</option>
                                                 </select>
                                             </div>
+                                            <div class="form-group">
+                                                <label>Nhà cung cấp</label>
+                                                <select id="supplier" class="form-control">
+                                                    <option hidden="hidden">Chọn danh mục cha</option>
+                                                    <option th:each="supplier : ${supplierList}"
+                                                            th:value="${supplier.supplierId}"
+                                                            th:selected="${product.supplier.supplierId == supplier.supplierId}"
+                                                            th:text="${supplier.name}"></option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -132,9 +142,8 @@
                                         <div class="col-12">
                                             <label>Ảnh đại diện</label>
                                             <div class="d-flex align-items-center">
-                                                <div th:if="${product.images.mainImage != null}"
-                                                     class="product-image-item product-main-image-item mr-4">
-                                                    <img th:src="${product.images.mainImage.imageUrl}"
+                                                <div class="product-image-item product-main-image-item mr-4">
+                                                    <img th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : 'https://placehold.co/600x400'}"
                                                          alt="Ảnh đại diện"
                                                          class="img-fluid">
                                                 </div>
@@ -158,7 +167,7 @@
                                                      id="list-product-sub-image-item">
                                                     <div th:if="not ${#lists.isEmpty(product.images.subImages)}"
                                                          th:each="image : ${product.images.subImages}"
-                                                         class="product-image-item product-sub-image-item mr-4"
+                                                         class="product-image-item product-sub-image-item mr-4 mb-4"
                                                          th:data-image-sub-id="${image.imageId}">
                                                         <img th:src="${image.imageUrl}" alt="Ảnh mô tả"
                                                              class="img-fluid">
@@ -166,14 +175,14 @@
                                                               th:onclick="|deleteSubImage(${image.imageId})|"><i
                                                                 class="fas fa-times-circle"></i></span>
                                                     </div>
-                                                </div>
-                                                <div class="product-image-item">
-                                                    <label for="input-upload-sub-image">
-                                                        <span>Upload ảnh mô tả</span>
-                                                        <img src="/img/image-placeholder.png" alt="Ảnh upload"
-                                                             class="img-fluid">
-                                                    </label>
-                                                    <input type="file" class="d-none" id="input-upload-sub-image">
+                                                    <div class="product-image-item product-image-item-upload-sub-image mr-4 mb-4">
+                                                        <label for="input-upload-sub-image">
+                                                            <span>Upload ảnh mô tả</span>
+                                                            <img src="/img/image-placeholder.png" alt="Ảnh upload"
+                                                                 class="img-fluid">
+                                                        </label>
+                                                        <input type="file" class="d-none" id="input-upload-sub-image">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -310,8 +319,9 @@
         const statusList = [[${statusList}]];
         const categoryList = [[${categoryList}]];
         const reviewList = [[${reviewList}]];
+        const supplierList = [[${supplierList}]];
 
-        console.log({product, statusList, categoryList, reviewList});
+        console.log({product, statusList, categoryList, reviewList, supplierList});
     </script>
     <script th:src="@{/admin-assets/assets/js/product/product-info.js}"></script>
     <script th:src="@{/admin-assets/assets/js/product/product-image.js}"></script>

@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.model.projection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Blog;
 import vn.techmaster.ecommecerapp.entity.Tag;
@@ -36,6 +37,7 @@ public interface BlogPublic {
 
     @RequiredArgsConstructor
     class BlogPublicImpl implements BlogPublic {
+        @JsonIgnore
         private final Blog blog;
 
         @Override

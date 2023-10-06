@@ -72,28 +72,30 @@
                                      aria-labelledby="custom-content-below-home-tab">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="form-group mt-4">
-                                                <label>Tên nhà cung cấp</label>
-                                                <input type="text" class="form-control" id="name"
-                                                       th:value="${supplier.name}"/>
-                                            </div>
+                                            <form id="form-update-supplier">
+                                                <div class="form-group mt-4">
+                                                    <label>Tên nhà cung cấp</label>
+                                                    <input type="text" class="form-control" id="name" name="name"
+                                                           th:value="${supplier.name}"/>
+                                                </div>
 
-                                            <div class="form-group">
-                                                <label>Email</label>
-                                                <input type="text" class="form-control" id="email"
-                                                       th:value="${supplier.email}"/>
-                                            </div>
+                                                <div class="form-group">
+                                                    <label>Email</label>
+                                                    <input type="text" class="form-control" id="email" name="email"
+                                                           th:value="${supplier.email}"/>
+                                                </div>
 
-                                            <div class="form-group">
-                                                <label>Số điện thoại</label>
-                                                <input type="text" class="form-control" id="phone"
-                                                       th:value="${supplier.phone}"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Địa chỉ</label>
-                                                <input type="text" class="form-control" id="address"
-                                                       th:value="${supplier.address}"/>
-                                            </div>
+                                                <div class="form-group">
+                                                    <label>Số điện thoại</label>
+                                                    <input type="text" class="form-control" id="phone" name="phone"
+                                                           th:value="${supplier.phone}"/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Địa chỉ</label>
+                                                    <input type="text" class="form-control" id="address" name="address"
+                                                           th:value="${supplier.address}"/>
+                                                </div>
+                                            </form>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group mt-4">
@@ -125,12 +127,17 @@
                                                 <tbody>
                                                 <tr th:each="transaction : ${transactions}">
                                                     <td>
-                                                        <a th:href="@{/admin/transactions/{id}/detail (id=${transaction.id})}" th:text="${transaction.id}"></a>
+                                                        <a th:href="@{/admin/transactions/{id}/detail (id=${transaction.id})}"
+                                                           th:text="${transaction.id}"></a>
                                                     </td>
-                                                    <td th:text="${#dates.format(transaction.transactionDate, 'dd/MM/yyyy')}">Ngày giao hàng</td>
+                                                    <td th:text="${#dates.format(transaction.transactionDate, 'dd/MM/yyyy')}">
+                                                        Ngày giao hàng
+                                                    </td>
                                                     <td th:text="${transaction.receiverName}">Người nhận</td>
                                                     <td th:text="${transaction.senderName}">Người gửi</td>
-                                                    <td th:text="${transaction.totalAmount}">Tổng tiền đơn hàng</td>
+                                                    <td th:text="${transaction.totalAmount}" class="currency">Tổng tiền
+                                                        đơn hàng
+                                                    </td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -148,68 +155,12 @@
 
 <th:block id="js">
     <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
-
     <script th:inline="javascript">
         const supplier = [[${supplier}]];
         const transactions = [[${transactions}]];
-        console.log(supplier)
-        console.log(transactions)
-
-        // Truy cập vào các thành phần
-        const nameEl = document.getElementById("name");
-        const emailEl = document.getElementById("email");
-        const phoneEl = document.getElementById("phone");
-        const addressEl = document.getElementById("address");
-        const btnCreate = document.getElementById("btn-update")
-
-        btnCreate.addEventListener("click", async () => {
-            const data = {
-                name: nameEl.value,
-                email: emailEl.value,
-                phone: phoneEl.value,
-                address: addressEl.value
-            }
-            console.log(data)
-
-            try {
-                let res = await axios.put(`/api/v1/admin/suppliers/${supplier.supplierId}`, data)
-
-                if (res.status === 200) {
-                    toastr.success("Cập nhật nhà cung cấp thành công");
-                } else {
-                    toastr.error("Cập nhật nhà cung cấp thất bại");
-                }
-            } catch (e) {
-                toastr.error(e.response.data.message);
-                console.log(e);
-            }
-        })
-        // add event listener to avatar input change
-        const thumbnailInput = document.getElementById('avatar');
-        const thumbnailPreview = document.getElementById('avatar-preview');
-        thumbnailInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-
-            // create form data with key file and value is file in input
-            const formData = new FormData();
-            formData.append('file', file);
-
-            // Send post request to url /api/v1/users/update-avatar, then check request status and set src for avatar preview
-            axios.post(`/api/v1/admin/suppliers/${supplier.supplierId}/update-thumbnail`, formData)
-                .then(res => {
-                    if (res.status === 200) {
-                        thumbnailPreview.src = res.data;
-                        toastr.success('Cập nhật thumbnail thành công');
-                    } else {
-                        toastr.error('Cập nhật thumbnail thất bại');
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                    toastr.error(err.response.data.message);
-                });
-        });
+        console.log({supplier, transactions})
     </script>
+    <script th:src="@{/admin-assets/assets/js/supplier/detail.js}"></script>
 </th:block>
 
 </body>

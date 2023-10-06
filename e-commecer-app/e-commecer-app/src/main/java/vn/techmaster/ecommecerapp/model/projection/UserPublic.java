@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.model.projection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Role;
 import vn.techmaster.ecommecerapp.entity.User;
@@ -22,6 +23,7 @@ public interface UserPublic {
 
     @RequiredArgsConstructor
     class UserPublicImpl implements UserPublic {
+        @JsonIgnore
         private final User user;
 
         @Override

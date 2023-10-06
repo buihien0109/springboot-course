@@ -94,7 +94,7 @@
                         <td>${formatDate(transaction.transactionDate)}</td>
                         <td>${transaction.receiverName}</td>
                         <td>${transaction.senderName}</td>
-                        <td>${transaction.totalAmount}</td>
+                        <td>${formatCurrency(transaction.totalAmount)}</td>
                     </tr>
                 `
             })

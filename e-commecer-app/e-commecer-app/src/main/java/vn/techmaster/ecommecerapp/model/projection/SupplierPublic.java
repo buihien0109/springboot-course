@@ -6,10 +6,15 @@ import vn.techmaster.ecommecerapp.entity.Supplier;
 
 public interface SupplierPublic {
     Long getSupplierId();
+
     String getName();
+
     String getAddress();
+
     String getEmail();
+
     String getPhone();
+
     String getThumbnail();
 
     @RequiredArgsConstructor

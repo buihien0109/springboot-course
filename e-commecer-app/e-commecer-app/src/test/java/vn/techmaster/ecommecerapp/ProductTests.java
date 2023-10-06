@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import vn.techmaster.ecommecerapp.entity.Category;
-import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.entity.ProductAttribute;
-import vn.techmaster.ecommecerapp.entity.ProductImage;
+import vn.techmaster.ecommecerapp.entity.*;
 import vn.techmaster.ecommecerapp.repository.CategoryRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
+import vn.techmaster.ecommecerapp.repository.SupplierRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Random;
 
 @SpringBootTest
 public class ProductTests {
@@ -25,6 +25,8 @@ public class ProductTests {
     private ProductRepository productRepository;
     @Autowired
     private Slugify slugify;
+    @Autowired
+    private SupplierRepository supplierRepository;
 
     @Test
     void save_products() {
@@ -138,6 +140,18 @@ public class ProductTests {
         // update all slug of products
         for (Product product : productRepository.findAll()) {
             product.setSlug(slugify.slugify(product.getName()));
+            productRepository.save(product);
+        }
+    }
+
+    @Test
+    void update_supplier() {
+        Random random = new Random();
+        List<Supplier> suppliers = supplierRepository.findAll();
+
+        // for each product, random a supplier
+        for (Product product : productRepository.findAll()) {
+            product.setSupplier(suppliers.get(random.nextInt(suppliers.size())));
             productRepository.save(product);
         }
     }

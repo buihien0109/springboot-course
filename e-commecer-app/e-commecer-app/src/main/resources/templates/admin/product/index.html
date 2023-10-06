@@ -51,6 +51,7 @@
                                     <th>Số lượng</th>
                                     <th>Trạng thái</th>
                                     <th>Danh mục</th>
+                                    <th>Nhà cung cấp</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -85,12 +86,13 @@
                             <a href="/admin/products/${product.productId}/detail">${product.name}</a>
                         </td>
                         <td>
-                            ${product.price}
+                            ${formatCurrency(product.price)}
                         </td>
                         <td>${product.stockQuantity}</td>
                         <td>${productStatus(product.status)}</td>
-                        <td>
-                            <a href="/admin/categories/${product.category.categoryId}/detail">${product.category.name}</a>
+                        <td>${product.category.name}</td>
+                         <td>
+                            <a href="/admin/suppliers/${product.supplier.supplierId}/detail">${product.supplier.name}</a>
                         </td>
                     </tr>
                 `;
@@ -113,11 +115,13 @@
         const productStatus = status => {
             switch (status) {
                 case 'AVAILABLE':
-                    return '<span class="badge badge-success">CÒN HÀNG</span></>';
+                    return '<span class="badge badge-success">Còn hàng</span></>';
                 case 'UNAVAILABLE':
-                    return '<span class="badge badge-danger">ĐÃ HẾT</span>';
+                    return '<span class="badge badge-danger">Hết hàng</span>';
                 case 'CEASE':
-                    return '<span class="badge badge-warning">NGỪNG KINH DOANH</span>';
+                    return '<span class="badge badge-warning">Ngừng kinh doanh</span>';
+                case 'NOT_YET_SOLD':
+                    return '<span class="badge badge-secondary">Chưa mở bán</span>';
                 default:
                     return 'Không xác định';
             }

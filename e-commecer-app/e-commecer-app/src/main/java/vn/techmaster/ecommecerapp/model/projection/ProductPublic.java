@@ -33,6 +33,8 @@ public interface ProductPublic {
 
     Integer getDiscountPrice();
 
+    SupplierPublic getSupplier();
+
     @RequiredArgsConstructor
     @Slf4j
     class ProductPublicImpl implements ProductPublic {
@@ -109,6 +111,14 @@ public interface ProductPublic {
                 }
             }
             return null;
+        }
+
+        @Override
+        public SupplierPublic getSupplier() {
+            if (product.getSupplier() == null) {
+                return null;
+            }
+            return SupplierPublic.of(product.getSupplier());
         }
     }
 

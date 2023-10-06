@@ -72,6 +72,11 @@ public class CategoryService {
         return categories.stream().map(CategoryPublic::of).toList();
     }
 
+    public List<CategoryPublic> findAllSubCategory() {
+        List<Category> categories = categoryRepository.findByParentCategoryIsNotNull();
+        return categories.stream().map(CategoryPublic::of).toList();
+    }
+
     // find all sub category by parent category slug
     public List<CategoryPublic> findAllByParentCategorySlug(String slug) {
         List<Category> categories = categoryRepository.findByParentCategory_SlugIgnoreCase(slug);

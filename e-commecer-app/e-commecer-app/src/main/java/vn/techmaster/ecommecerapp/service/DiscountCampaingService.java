@@ -4,6 +4,7 @@ import com.github.slugify.Slugify;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
 import vn.techmaster.ecommecerapp.entity.Product;
 import vn.techmaster.ecommecerapp.model.projection.DiscountCampaignPublic;
@@ -28,9 +29,10 @@ public class DiscountCampaingService {
         return discountCampaigns.stream().map(DiscountCampaignPublic::of).toList();
     }
 
-    public DiscountCampaign getDiscountCampaignById(Long id) {
-        return discountCampaignRepository.findById(id)
+    public DiscountCampaignPublic getDiscountCampaignById(Long id) {
+        DiscountCampaign discountCampaign = discountCampaignRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy discount campaign với id = " + id));
+        return DiscountCampaignPublic.of(discountCampaign);
     }
 
     public DiscountCampaignPublic createDiscountCampaign(CreateDiscountCampaignRequest request) {
@@ -49,6 +51,7 @@ public class DiscountCampaingService {
         return DiscountCampaignPublic.of(discountCampaign);
     }
 
+    @Transactional
     public DiscountCampaignPublic updateDiscountCampaign(Long id, UpdateDiscountCampaingRequest request) {
         DiscountCampaign discountCampaign = discountCampaignRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy discount campaign với id = " + id));
@@ -62,14 +65,19 @@ public class DiscountCampaingService {
         discountCampaign.setEndDate(request.getEndDate());
         discountCampaign.setStatus(request.getStatus());
 
+        // TODO : Chưa xóa được product trong discount campaign
+        // remove all product in discount campaign
+        discountCampaign.getProducts().forEach(discountCampaign::removeProduct);
+
         // get all product ids in request
-        Set<Product> products = productRepository.findByProductIdIn(request.getProductIds());
+        if(!request.getProductIds().isEmpty()) {
+            Set<Product> products = productRepository.findByProductIdIn(request.getProductIds());
+            // set discount campaign for all product
+            products.forEach(product -> product.addDiscount(discountCampaign));
 
-        // set discount campaign for all product
-        products.forEach(product -> product.addDiscount(discountCampaign));
-
-        // set discount campaign for all product
-        discountCampaign.setProducts(products);
+            // set discount campaign for all product
+            discountCampaign.setProducts(products);
+        }
 
         discountCampaignRepository.save(discountCampaign);
         return DiscountCampaignPublic.of(discountCampaign);

@@ -9,10 +9,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,6 +39,11 @@ public class DiscountCampaign {
     @ManyToMany(mappedBy = "discounts")
     @Fetch(FetchMode.SUBSELECT)
     private Set<Product> products = new LinkedHashSet<>();
+
+    public void removeProduct(Product product) {
+        products.remove(product);
+        product.getDiscounts().remove(this);
+    }
 
     @Getter
     public enum Status {

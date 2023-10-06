@@ -92,3 +92,10 @@ const formatDate = dateString => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
 }
+
+const formatCurrency = (number) => {
+    if (number) {
+        return number.toString().replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");+ 'đ';
+    }
+    return number;
+}

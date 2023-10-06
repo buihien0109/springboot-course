@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.model.projection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Comment;
 
@@ -18,6 +19,7 @@ public interface CommentPublic {
 
     @RequiredArgsConstructor
     class CommentPublicImpl implements CommentPublic {
+        @JsonIgnore
         private final Comment comment;
 
         @Override

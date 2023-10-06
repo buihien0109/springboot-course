@@ -20,6 +20,7 @@ public interface PagePublic<T> {
     boolean isFirst();
 
     boolean isLast();
+
     @RequiredArgsConstructor
     class PagePublicImpl<T> implements PagePublic<T> {
         @JsonIgnore

@@ -17,10 +17,7 @@ import vn.techmaster.ecommecerapp.model.projection.ProductPublic;
 import vn.techmaster.ecommecerapp.model.request.CreateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpsertProductAttributeRequest;
-import vn.techmaster.ecommecerapp.repository.CategoryRepository;
-import vn.techmaster.ecommecerapp.repository.ProductAttributeRepository;
-import vn.techmaster.ecommecerapp.repository.ProductImageRepository;
-import vn.techmaster.ecommecerapp.repository.ProductRepository;
+import vn.techmaster.ecommecerapp.repository.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +27,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+    private final SupplierRepository supplierRepository;
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final CategoryRepository categoryRepository;
@@ -41,6 +39,12 @@ public class ProductService {
     public List<ProductPublic> findAll() {
         List<Product> products = productRepository.findAll();
         return products.stream().map(ProductPublic::of).toList();
+    }
+
+    public List<ProductPublic> getAllProductsByAdmin() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(ProductPublic::of).toList();
     }
 
     public ProductPublic findById(Long id) {
@@ -179,12 +183,17 @@ public class ProductService {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy danh mục với id " + request.getCategoryId()));
 
+        // check supplier id is existed
+        Supplier supplier = supplierRepository.findById(request.getSupplierId())
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id " + request.getSupplierId()));
+
         product.setName(request.getName());
         product.setSlug(slugify.slugify(request.getName()));
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setStatus(request.getStatus());
         product.setCategory(category);
+        product.setSupplier(supplier);
 
         // update attribute for request
         request.getAttributes().forEach(attributeRequest -> {

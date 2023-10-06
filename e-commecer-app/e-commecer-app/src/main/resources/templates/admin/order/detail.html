@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Chi tiết đơn hàng</title>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/orders">Đơn hàng</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Chi tiết đơn hàng
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/orders" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="mb-3">Thông tin người đặt</h5>
+                            <div class="form-group">
+                                <label>Họ tên</label>
+                                <input type="text" class="form-control" id="name"
+                                       th:value="${order.username}"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="text" class="form-control" id="email"
+                                       th:value="${order.email}"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="text" class="form-control" id="phone"
+                                       th:value="${order.phone}"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Địa chỉ giao hàng</label>
+                                <textarea class="form-control" id="address"
+                                          th:text="|${order.address}, ${order.ward}, ${order.district}, ${order.province}|" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Ghi chú đơn hàng</label>
+                                <textarea class="form-control" id="note"
+                                          th:text="${order.note}" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="mb-3">Chi tiết đơn hàng</h5>
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Giá tiền</th>
+                                    <th>Số lượng</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const order = [[${order}]];
+        console.log({order})
+
+        // render products from products to body of table
+        const tableBody = document.querySelector('table tbody');
+        const renderProducts = () => {
+            let html = '';
+            order.orderItems.forEach(ot => {
+                html += `
+                    <tr>
+                        <td>
+                            <a href="/admin/products/${ot.product.productId}/detail">${ot.product.name}</a>
+                        </td>
+                        <td>
+                            ${formatCurrency(ot.price)}
+                        </td>
+                        <td>${ot.quantity}</td>
+                        <td>${formatCurrency(ot.quantity * ot.price)}</td>
+                    </tr>
+                `;
+            })
+            tableBody.innerHTML = html;
+
+            // render subtotal append to table
+            const subtotal = document.createElement('tr');
+            subtotal.innerHTML = `
+                <td colspan="3" class="text-right">Tạm tính</td>
+                <td>${formatCurrency(order.temporaryAmount)}</td>
+            `;
+            tableBody.appendChild(subtotal);
+
+            // render discount append to table
+            const discount = document.createElement('tr');
+            discount.innerHTML = `
+                <td colspan="3" class="text-right">Giảm giá (<span>${order.couponDiscount ?? 0}%</span>)</td>
+                <td>${formatCurrency(order.discountAmount)}</td>
+            `;
+            tableBody.appendChild(discount);
+
+            // render total price append to table
+            const totalPrice = document.createElement('tr');
+            totalPrice.innerHTML = `
+                <td colspan="3" class="text-right">Tổng tiền</td>
+                <td>${formatCurrency(order.totalAmount)}</td>
+            `;
+            tableBody.appendChild(totalPrice);
+        }
+
+        renderProducts();
+    </script>
+</th:block>
+</body>
+
+</html>

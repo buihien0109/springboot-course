@@ -20,9 +20,9 @@ public class OrderController {
         return "admin/order/index";
     }
 
-    @GetMapping("/{id}/detail")
-    public String getOrderDetailPage(@PathVariable Long id, Model model) {
-        model.addAttribute("order", orderService.getOrderById(id));
+    @GetMapping("/{orderNumber}/detail")
+    public String getOrderDetailPage(@PathVariable String orderNumber, Model model) {
+        model.addAttribute("order", orderService.getOrderByOrderNumber(orderNumber));
         return "admin/order/detail";
     }
 }

@@ -38,9 +38,9 @@ inputUploadSubImage.addEventListener('change', function (e) {
     axios.post(`/api/v1/admin/products/${product.productId}/images/upload-sub-image`, formData)
         .then(res => {
             if (res.status === 200) {
-                const listProductSubImage = document.getElementById('list-product-sub-image-item');
-                listProductSubImage.insertAdjacentHTML('beforeend', `
-                    <div class="product-image-item product-sub-image-item mr-4" data-image-sub-id="${res.data.imageId}">
+                const productImageItemUploadSubImage = document.querySelector('.product-image-item-upload-sub-image');
+                productImageItemUploadSubImage.insertAdjacentHTML('beforebegin', `
+                    <div class="product-image-item product-sub-image-item mr-4 mb-4" data-image-sub-id="${res.data.imageId}">
                         <img src="${res.data.imageUrl}" alt="Ảnh mô tả" class="img-fluid">
                         <span class="btn-action btn-action-delete" onclick="deleteSubImage(${res.data.imageId})"><i class="fas fa-times-circle"></i></span>
                     </div>

@@ -272,6 +272,7 @@
         const showBlogList = (id) => {
             axios.get(`/api/v1/admin/tags/${id}/blogs`)
                 .then(res => {
+                    console.log(res)
                     const blogList = res.data;
                     let html = "";
                     blogList.forEach((blog, index) => {

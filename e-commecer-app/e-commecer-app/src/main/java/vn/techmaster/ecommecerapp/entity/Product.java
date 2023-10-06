@@ -61,6 +61,15 @@ public class Product {
         discountCampaign.getProducts().add(this);
     }
 
+    public void removeDiscount(DiscountCampaign discountCampaign) {
+        discounts.remove(discountCampaign);
+        discountCampaign.getProducts().remove(this);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "supplier_id")
+    private Supplier supplier;
+
     @Getter
     public enum Status {
         NOT_YET_SOLD("Chưa mở bán"),

@@ -47,11 +47,12 @@ btnUpdate.addEventListener(("click"), () => {
     const description = document.getElementById('description').value;
     const status = document.getElementById('status').value;
     const categoryId = Number(document.getElementById('sub-category').value);
+    const supplierId = Number(document.getElementById('supplier').value);
     const attributes = product.attributes;
 
     // create product object
     const data = {
-        name, price, description, status, categoryId, attributes
+        name, price, description, status, categoryId, supplierId, attributes
     }
 
     axios.put(`/api/v1/admin/products/${product.productId}`, data)

@@ -55,24 +55,26 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Tên nhà cung cấp</label>
-                                        <input type="text" class="form-control" id="name"/>
-                                    </div>
+                                    <form id="form-create-supplier">
+                                        <div class="form-group">
+                                            <label>Tên nhà cung cấp</label>
+                                            <input type="text" class="form-control" id="name" name="name"/>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Email</label>
-                                        <input type="text" class="form-control" id="email"/>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input type="text" class="form-control" id="email" name="email"/>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Số điện thoại</label>
-                                        <input type="text" class="form-control" id="phone"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Địa chỉ</label>
-                                        <input type="text" class="form-control" id="address"/>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Số điện thoại</label>
+                                            <input type="text" class="form-control" id="phone" name="phone"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Địa chỉ</label>
+                                            <input type="text" class="form-control" id="address" name="address"/>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -85,40 +87,7 @@
 
 <th:block id="js">
     <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
-
-    <script th:inline="javascript">
-        // Truy cập vào các thành phần
-        const nameEl = document.getElementById("name");
-        const emailEl = document.getElementById("email");
-        const phoneEl = document.getElementById("phone");
-        const addressEl = document.getElementById("address");
-        const btnCreate = document.getElementById("btn-create")
-
-        btnCreate.addEventListener("click", async () => {
-            const data = {
-                name: nameEl.value,
-                email: emailEl.value,
-                phone: phoneEl.value,
-                address: addressEl.value
-            }
-
-            try {
-                let res = await axios.post("/api/v1/admin/suppliers", data)
-
-                if (res.status === 200) {
-                    toastr.success("Tạo nhà cung cấp thành công");
-                    setTimeout(() => {
-                        window.location.href = `/admin/suppliers/${res.data.supplierId}/detail`
-                    }, 1500)
-                } else {
-                    toastr.error("Tạo nhà cung cấp thất bại");
-                }
-            } catch (e) {
-                toastr.error(e.response.data.message);
-                console.log(e);
-            }
-        })
-    </script>
+    <script th:src="@{/admin-assets/assets/js/supplier/create.js}"></script>
 </th:block>
 
 </body>

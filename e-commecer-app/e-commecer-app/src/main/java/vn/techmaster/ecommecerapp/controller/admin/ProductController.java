@@ -10,6 +10,7 @@ import vn.techmaster.ecommecerapp.entity.Product;
 import vn.techmaster.ecommecerapp.service.CategoryService;
 import vn.techmaster.ecommecerapp.service.ProductService;
 import vn.techmaster.ecommecerapp.service.ReviewService;
+import vn.techmaster.ecommecerapp.service.SupplierService;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -18,6 +19,7 @@ public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final ReviewService reviewService;
+    private final SupplierService supplierService;
 
     @GetMapping
     public String getProductPage(Model model) {
@@ -38,6 +40,7 @@ public class ProductController {
         model.addAttribute("statusList", Product.Status.values());
         model.addAttribute("categoryList", categoryService.findAllByParentCategoryIsNull());
         model.addAttribute("reviewList", reviewService.getAllReviewsByProductIdByAdmin(id));
+        model.addAttribute("supplierList", supplierService.getAllSuppliers());
 
         return "admin/product/detail";
     }
