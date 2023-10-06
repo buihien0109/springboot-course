@@ -183,17 +183,19 @@ public class ProductService {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy danh mục với id " + request.getCategoryId()));
 
-        // check supplier id is existed
-        Supplier supplier = supplierRepository.findById(request.getSupplierId())
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id " + request.getSupplierId()));
-
         product.setName(request.getName());
         product.setSlug(slugify.slugify(request.getName()));
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setStatus(request.getStatus());
         product.setCategory(category);
-        product.setSupplier(supplier);
+
+        if(request.getSupplierId() != null) {
+            // check supplier id is existed
+            Supplier supplier = supplierRepository.findById(request.getSupplierId())
+                    .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id " + request.getSupplierId()));
+            product.setSupplier(supplier);
+        }
 
         // update attribute for request
         request.getAttributes().forEach(attributeRequest -> {

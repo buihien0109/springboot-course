@@ -6,7 +6,7 @@
     <title>Chi tiết sản phẩm</title>
 
     <th:block id="css">
-        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}" />
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}"/>
     </th:block>
 </head>
 
@@ -80,61 +80,63 @@
                             <div class="tab-content" id="custom-content-below-tabContent">
                                 <div class="tab-pane fade active show" id="product-info" role="tabpanel"
                                      aria-labelledby="custom-content-below-home-tab">
-                                    <div class="row mt-4">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label>Tên sản phẩm</label>
-                                                <input type="text" class="form-control" id="name"
-                                                       th:value="${product.name}"/>
+                                    <form id="form-update-product">
+                                        <div class="row mt-4">
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label>Tên sản phẩm</label>
+                                                    <input type="text" class="form-control" id="name" name="name"
+                                                           th:value="${product.name}"/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Mô tả ngắn</label>
+                                                    <textarea id="description" class="form-control" rows="12"
+                                                              name="description"
+                                                              th:text="${product.description}"></textarea>
+                                                </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label>Mô tả ngắn</label>
-                                                <textarea id="description" class="form-control" rows="12"
-                                                          th:text="${product.description}"></textarea>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Giá sản phẩm</label>
+                                                    <input type="text" class="form-control" id="price" name="price"
+                                                           th:value="${product.price}"/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Trạng thái</label>
+                                                    <select id="status" class="form-control" name="status">
+                                                        <option th:each="status : ${statusList}" th:value="${status}"
+                                                                th:selected="${product.status == status}"
+                                                                th:text="${status.getDisplayValue()}"></option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Danh mục cha</label>
+                                                    <select id="parent-category" class="form-control" name="parent">
+                                                        <option hidden="hidden">Chọn danh mục cha</option>
+                                                        <option th:each="category : ${categoryList}"
+                                                                th:value="${category.getMainCategory().categoryId}"
+                                                                th:text="${category.getMainCategory().name}"></option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Danh mục con</label>
+                                                    <select id="sub-category" class="form-control" name="sub">
+                                                        <option hidden="hidden">Chọn danh mục con</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Nhà cung cấp</label>
+                                                    <select id="supplier" class="form-control" name="supplier">
+                                                        <option hidden="hidden">Chọn nhà cung cấp</option>
+                                                        <option th:each="supplier : ${supplierList}"
+                                                                th:value="${supplier.supplierId}"
+                                                                th:selected="${product.supplier != null && product.supplier.supplierId == supplier.supplierId}"
+                                                                th:text="${supplier.name}"></option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Giá sản phẩm</label>
-                                                <input type="text" class="form-control" id="price"
-                                                       th:value="${product.price}"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Trạng thái</label>
-                                                <select id="status" class="form-control">
-                                                    <option th:each="status : ${statusList}" th:value="${status}"
-                                                            th:selected="${product.status == status}"
-                                                            th:text="${status.getDisplayValue()}"></option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Danh mục cha</label>
-                                                <select id="parent-category" class="form-control">
-                                                    <option hidden="hidden">Chọn danh mục cha</option>
-                                                    <option th:each="category : ${categoryList}"
-                                                            th:value="${category.getMainCategory().categoryId}"
-                                                            th:text="${category.getMainCategory().name}"></option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Danh mục con</label>
-                                                <select id="sub-category" class="form-control">
-                                                    <option hidden="hidden">Chọn danh mục con</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Nhà cung cấp</label>
-                                                <select id="supplier" class="form-control">
-                                                    <option hidden="hidden">Chọn danh mục cha</option>
-                                                    <option th:each="supplier : ${supplierList}"
-                                                            th:value="${supplier.supplierId}"
-                                                            th:selected="${product.supplier.supplierId == supplier.supplierId}"
-                                                            th:text="${supplier.name}"></option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    </form>
                                 </div>
                                 <div class="tab-pane fade" id="product-image" role="tabpanel"
                                      aria-labelledby="custom-content-below-profile-tab">
@@ -238,7 +240,8 @@
 
                                                 </tbody>
                                             </table>
-                                            <div class="d-flex justify-content-center mt-3" id="review-pagination"></div>
+                                            <div class="d-flex justify-content-center mt-3"
+                                                 id="review-pagination"></div>
 
                                         </div>
                                     </div>
@@ -287,18 +290,24 @@
                 <div class="modal-body">
                     <div class="review-product-rating">
                         <div class="text-center">
-                            <span class="review-product-rating-item" data-rating="1" data-message="Không thích"><i class="fa fa-star"></i></span>
-                            <span class="review-product-rating-item" data-rating="2" data-message="Tạm được"><i class="fa fa-star"></i></span>
-                            <span class="review-product-rating-item" data-rating="3" data-message="Bình thường"><i class="fa fa-star"></i></span>
-                            <span class="review-product-rating-item" data-rating="4" data-message="Hài lòng"><i class="fa fa-star"></i></span>
-                            <span class="review-product-rating-item" data-rating="5" data-message="Tuyệt vời"><i class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="1" data-message="Không thích"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="2" data-message="Tạm được"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="3" data-message="Bình thường"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="4" data-message="Hài lòng"><i
+                                    class="fa fa-star"></i></span>
+                            <span class="review-product-rating-item" data-rating="5" data-message="Tuyệt vời"><i
+                                    class="fa fa-star"></i></span>
                         </div>
                         <div class="text-center">
                             <p class="review-product-rating-result"></p>
                         </div>
                     </div>
                     <div class="review-product-content">
-                        <textarea id="review-content" placeholder="Nhập review" class="form-control" rows="5"></textarea>
+                        <textarea id="review-content" placeholder="Nhập review" class="form-control"
+                                  rows="5"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">

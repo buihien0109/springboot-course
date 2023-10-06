@@ -15,7 +15,11 @@ const renderProducts = (productList) => {
                         <td>${productStatus(product.status)}</td>
                         <td>${product.category.name}</td>
                          <td>
-                            <a href="/admin/suppliers/${product.supplier.supplierId}/detail">${product.supplier.name}</a>
+                            ${
+                                product.supplier
+                                    ? `<a href="/admin/suppliers/${product.supplier.supplierId}/detail">${product.supplier.name}</a>`
+                                    : 'Unknown'
+                            }
                         </td>
                     </tr>
                 `;
