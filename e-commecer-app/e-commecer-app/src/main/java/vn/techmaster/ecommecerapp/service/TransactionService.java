@@ -10,6 +10,7 @@ import vn.techmaster.ecommecerapp.entity.TransactionItem;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.TransactionPublic;
 import vn.techmaster.ecommecerapp.model.request.CreateTransactionRequest;
+import vn.techmaster.ecommecerapp.model.request.UpdateTransactionRequest;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 import vn.techmaster.ecommecerapp.repository.SupplierRepository;
 import vn.techmaster.ecommecerapp.repository.TransactionRepository;
@@ -80,5 +81,25 @@ public class TransactionService {
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id: " + supplierId));
         List<Transaction> transactions = transactionRepository.findBySupplier_SupplierIdOrderByTransactionDateDesc(supplierId);
         return transactions.stream().map(TransactionPublic::of).toList();
+    }
+
+    public TransactionPublic updateTransaction(Long id, UpdateTransactionRequest request) {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy giao dịch với id: " + id));
+
+        // check if supplier exists
+        Supplier supplier = supplierRepository.findById(request.getSupplierId())
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id: " + request.getSupplierId()));
+
+        // update transaction
+        transaction.setSenderName(request.getSenderName());
+        transaction.setReceiverName(request.getReceiverName());
+        transaction.setTransactionDate(request.getTransactionDate());
+        transaction.setSupplier(supplier);
+
+        // save transaction
+        transactionRepository.save(transaction);
+
+        return TransactionPublic.of(transaction);
     }
 }

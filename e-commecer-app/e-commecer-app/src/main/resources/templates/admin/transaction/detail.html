@@ -58,39 +58,46 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Tên người gửi</label>
-                                        <input type="text" class="form-control" id="sender-name" th:value="${transaction.senderName}"/>
-                                    </div>
+                                    <form id="form-update-transaction">
+                                        <div class="form-group">
+                                            <label>Tên người gửi</label>
+                                            <input type="text" class="form-control" id="sender-name"
+                                                   th:value="${transaction.senderName}" name="senderName"/>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Tên người nhận</label>
-                                        <input type="text" class="form-control" id="receiver-name" th:value="${transaction.receiverName}"/>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Tên người nhận</label>
+                                            <input type="text" class="form-control" id="receiver-name"
+                                                   th:value="${transaction.receiverName}" name="receiverName"/>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Nhà cung cấp</label>
-                                        <select class="form-control select2bs4" style="width: 100%;" id="supplier">
-                                            <option></option>
-                                            <option th:each="supplier : ${suppliers}"
-                                                    th:value="${supplier.supplierId}"
-                                                    th:selected="${supplier.supplierId == transaction.supplier.supplierId}"
-                                                    th:text="${supplier.name}"
-                                            ></option>
-                                        </select>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Nhà cung cấp</label>
+                                            <select class="form-control select2bs4" style="width: 100%;" id="supplier"
+                                                    name="supplier">
+                                                <option></option>
+                                                <option th:each="supplier : ${suppliers}"
+                                                        th:value="${supplier.supplierId}"
+                                                        th:selected="${supplier.supplierId == transaction.supplier.supplierId}"
+                                                        th:text="${supplier.name}"
+                                                ></option>
+                                            </select>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Thời gian</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
+                                        <div class="form-group">
+                                            <label>Thời gian</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
                                                     <i class="far fa-calendar-alt"></i>
                                                 </span>
+                                                </div>
+                                                <input type="text" class="form-control float-right" id="date"
+                                                       th:value="${#dates.format(transaction.transactionDate, 'DD/MM/yyyy')}"
+                                                       name="date">
                                             </div>
-                                            <input type="text" class="form-control float-right" id="date" th:value="${#dates.format(transaction.transactionDate, 'DD/MM/yyyy')}">
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -101,6 +108,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
+                                    <p class="text-muted">Tổng số sản phẩm : <span id="total-product">0</span></p>
                                     <table class="table table-bordered table-hover">
                                         <thead>
                                         <tr>
@@ -139,24 +147,26 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label>Chọn sản phẩm</label>
-                        <select class="form-control select2bs4" style="width: 100%;" id="product">
-                            <option></option>
-                            <option th:each="product : ${products}"
-                                    th:value="${product.productId}"
-                                    th:text="${product.name}"
-                            ></option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Số lượng nhập</label>
-                        <input type="text" class="form-control" id="quantity"/>
-                    </div>
-                    <div class="form-group">
-                        <label>Giá nhập</label>
-                        <input type="text" class="form-control" id="purchase-price"/>
-                    </div>
+                    <form id="form-product">
+                        <div class="form-group">
+                            <label>Chọn sản phẩm</label>
+                            <select class="form-control select2bs4" style="width: 100%;" id="product" name="product">
+                                <option></option>
+                                <option th:each="product : ${products}"
+                                        th:value="${product.productId}"
+                                        th:text="${product.name}"
+                                ></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Số lượng nhập</label>
+                            <input type="text" class="form-control" id="quantity" name="quantity"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Giá nhập</label>
+                            <input type="text" class="form-control" id="purchase-price" name="purchasePrice"/>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer justify-content-end">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
@@ -173,310 +183,9 @@
     <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
     <script th:inline="javascript">
         const transaction = [[${transaction}]];
-        let products = transaction.transactionItems.map(item => {
-            return {
-                productId: item.product.productId,
-                productName: item.product.name,
-                quantity: item.quantity,
-                purchasePrice: item.purchasePrice
-            }
-        });
-        console.log({transaction, products});
-
-        //Initialize Select2 Elements
-        $('#product').select2({
-            theme: 'bootstrap4',
-            placeholder: 'Chọn sản phẩm'
-        })
-
-        $('#supplier').select2({
-            theme: 'bootstrap4',
-            placeholder: 'Chọn nhà cung cấp'
-        })
-
-        //Date picker
-        $('#date').daterangepicker({
-            singleDatePicker: true,
-            locale: {
-                format: 'DD/MM/yyyy'
-            }
-        })
-
-        let idUpdate = null;
-
-        function openModalCreateProduct() {
-            $('#modal-product').modal('show');
-
-            // change title
-            const modalTitle = document.querySelector('#modal-product .modal-title');
-            modalTitle.innerHTML = 'Thêm sản phẩm';
-        }
-
-        function openModalUpdateProduct(id) {
-            $('#modal-product').modal('show');
-
-            // change title
-            const modalTitle = document.querySelector('#modal-product .modal-title');
-            modalTitle.innerHTML = 'Cập nhật sản phẩm';
-
-            // fill data
-            const product = products.find((product, index) => index === id);
-            const quantity = document.getElementById('quantity');
-            const purchasePrice = document.getElementById('purchase-price');
-
-            $('#product').val(product.productId);
-            $('#product').trigger('change');
-            quantity.value = product.quantity;
-            purchasePrice.value = product.purchasePrice;
-
-            // disable product select
-            $('#product').prop('disabled', true);
-
-            idUpdate = id;
-        }
-
-        // add event modal hidden
-        $('#modal-product').on('hidden.bs.modal', function (e) {
-            // clear input
-            const productSelected = document.getElementById('product');
-            const quantity = document.getElementById('quantity');
-            const purchasePrice = document.getElementById('purchase-price');
-
-            $('#product').val("");
-            $('#product').trigger('change');
-            quantity.value = '';
-            purchasePrice.value = '';
-
-            // enable product select
-            $('#product').prop('disabled', false);
-
-            idUpdate = null;
-        })
-
-        const renderProducts = () => {
-            const productSelected = document.getElementById('product-selected');
-            productSelected.innerHTML = '';
-            products.forEach((product, index) => {
-                const productSelectedHtml = `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${product.productName}</td>
-                        <td>${product.quantity}</td>
-                        <td>${formatCurrency(product.purchasePrice)}</td>
-                        <td>${formatCurrency(product.quantity * product.purchasePrice)}</td>
-                        <td>
-                             <button type="button" class="btn btn-primary btn-sm" onclick="openModalUpdateProduct(${index})">
-                                <i class="fas fa-pen"></i>
-                            </button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(${product.productId})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-                productSelected.innerHTML += productSelectedHtml;
-            })
-            // render total amount at the end of table
-            const totalAmount = getTotalAmount();
-            const totalAmountHtml = `
-                    <tr>
-                        <td colspan="4" class="text-right">Tổng tiền</td>
-                        <td colspan="1">${formatCurrency(totalAmount)}</td>
-                    </tr>
-                `;
-            productSelected.innerHTML += totalAmountHtml;
-        }
-
-        const getTotalAmount = () => {
-            return products.reduce((total, product) => {
-                return total + product.quantity * product.purchasePrice;
-            }, 0);
-        }
-
-        const deleteProduct = (productId) => {
-            const isDelete = confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');
-            if (!isDelete) return;
-
-            // find transaction item by productId in transaction object
-            const transactionItem = transaction.transactionItems.find(item => item.product.productId === productId);
-            console.log(transactionItem)
-
-            // call api delete product using axios
-            axios.delete(`/api/v1/admin/transaction-items/${transactionItem.id}`)
-                .then(response => {
-                    toastr.success('Xóa sản phẩm thành công');
-                    // remove product in products array
-                    products = products.filter(product => product.productId !== productId);
-
-                    // remove transaction item in transaction object
-                    transaction.transactionItems = transaction.transactionItems.filter(item => item.product.productId !== productId);
-                    renderProducts();
-                })
-                .catch(error => {
-                    console.log(error)
-                    toastr.error(error.response.data.message);
-                })
-        }
-
-        const product = document.getElementById('product');
-        const quantity = document.getElementById('quantity');
-        const purchasePrice = document.getElementById('purchase-price');
-
-        // handle add product
-        const addProduct = () => {
-            const quantityValue = quantity.value;
-            const purchasePriceValue = Number(purchasePrice.value);
-            const productSelectedId = product.value;
-            const productSelectedName = product.options[product.selectedIndex].text;
-
-            // check product exist
-            const productExist = products.find(product => product.productId === productSelectedId);
-            if (productExist) {
-                toastr.error('Sản phẩm đã tồn tại');
-                return;
-            }
-
-            // call api create transaction item using axios
-            const data = {
-                transactionId: transaction.id,
-                productId: productSelectedId,
-                quantity: quantityValue,
-                purchasePrice: purchasePriceValue
-            }
-
-            axios.post('/api/v1/admin/transaction-items', data)
-                .then(response => {
-                    toastr.success('Thêm sản phẩm thành công');
-
-                    // add product to products array
-                    const productSelectedObject = {
-                        productId: productSelectedId,
-                        productName: productSelectedName,
-                        quantity: quantityValue,
-                        purchasePrice: purchasePriceValue
-                    }
-                    products.push(productSelectedObject);
-                    renderProducts();
-
-                    // clear input
-                    quantity.value = '';
-                    purchasePrice.value = '';
-
-                    // close modal
-                    $('#modal-product').modal('hide');
-                })
-                .catch(error => {
-                    console.log(error)
-                    toastr.error(error.response.data.message);
-                })
-        }
-
-        // handle update product
-        const updateProduct = () => {
-            // find product by idUpdate
-            const quantityValue = quantity.value;
-            const purchasePriceValue = Number(purchasePrice.value);
-            const productSelectedId = product.value;
-            const productSelectedName = product.options[product.selectedIndex].text;
-
-            // check product exist and different idUpdate
-            const productExist = products.find((product, index) => product.productId === productSelectedId && index !== idUpdate);
-            if (productExist) {
-                toastr.error('Sản phẩm đã tồn tại');
-                return;
-            }
-
-            // call api update transaction item using axios
-            const transactionItem = transaction.transactionItems.find((item, index) => index === idUpdate);
-            const data = {
-                transactionId: transaction.id,
-                productId: productSelectedId,
-                quantity: quantityValue,
-                purchasePrice: purchasePriceValue
-            }
-
-            axios.put(`/api/v1/admin/transaction-items/${transactionItem.id}`, data)
-                .then(response => {
-                    const productSelectedObject = {
-                        productId: productSelectedId,
-                        productName: productSelectedName,
-                        quantity: quantityValue,
-                        purchasePrice: purchasePriceValue
-                    }
-
-                    // find product by idUpdate and update
-                    for (let i = 0; i < products.length; i++) {
-                        if (i === idUpdate) {
-                            products[i] = productSelectedObject;
-                            break;
-                        }
-                    }
-
-                    renderProducts();
-
-                    // clear input
-                    quantity.value = '';
-                    purchasePrice.value = '';
-
-                    // reset idUpdate
-                    idUpdate = null;
-
-                    // close modal
-                    $('#modal-product').modal('hide');
-
-                    toastr.success('Cập nhật sản phẩm thành công');
-                })
-                .catch(error => {
-                    console.log(error)
-                    toastr.error(error.response.data.message);
-                })
-        }
-
-        const btnHandle = document.getElementById('btn-handle');
-        btnHandle.addEventListener("click", () => {
-            if (idUpdate === null) {
-                addProduct();
-            } else {
-                updateProduct();
-            }
-        })
-
-        // add event handle for create button and send data to server using axios
-        const btnUpdate = document.getElementById('btn-update');
-        const senderName = document.getElementById('sender-name');
-        const receiverName = document.getElementById('receiver-name');
-        const supplier = document.getElementById('supplier');
-        const date = document.getElementById('date');
-
-        btnUpdate.addEventListener("click", () => {
-            const senderNameValue = senderName.value;
-            const receiverNameValue = receiverName.value;
-            const supplierValue = supplier.value;
-            const dateValue = date.value;
-
-            const data = {
-                senderName: senderNameValue,
-                receiverName: receiverNameValue,
-                supplierId: Number(supplierValue),
-                transactionDate: new Date(dateValue),
-                transactionItems: products
-            }
-            console.log(data)
-
-            axios.post('/api/v1/admin/transactions', data)
-                .then(response => {
-                    toastr.success('Tạo phiếu nhập hàng thành công');
-                    setTimeout(() => {
-                        window.location.href = '/admin/transactions';
-                    }, 1000)
-                })
-                .catch(error => {
-                    toastr.error('Tạo phiếu nhập hàng thất bại');
-                })
-        })
-
-        renderProducts();
+        console.log(transaction);
     </script>
+    <script th:src="@{/admin-assets/assets/js/transaction/detail.js}"></script>
 </th:block>
 
 </body>
