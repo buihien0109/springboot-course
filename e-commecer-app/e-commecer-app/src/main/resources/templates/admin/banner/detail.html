@@ -65,24 +65,26 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label>Tên banner</label>
-                                        <input type="text" class="form-control" id="name" th:value="${banner.name}"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Redirect To Url</label>
-                                        <input type="text" class="form-control" id="link-redirect"
-                                               th:value="${banner.linkRedirect}"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Trạng thái</label>
-                                        <select id="status" class="form-control">
-                                            <option value="false" th:selected="${banner.status == false}">Vô hiệu hóa
-                                            </option>
-                                            <option value="true" th:selected="${banner.status == true}">Kích hoạt
-                                            </option>
-                                        </select>
-                                    </div>
+                                    <form id="form-update-banner">
+                                        <div class="form-group">
+                                            <label>Tên banner</label>
+                                            <input type="text" class="form-control" id="name" th:value="${banner.name}" name="name"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Redirect To Url</label>
+                                            <input type="text" class="form-control" id="link-redirect"
+                                                   th:value="${banner.linkRedirect}" name="linkRedirect"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Trạng thái</label>
+                                            <select id="status" class="form-control">
+                                                <option value="false" th:selected="${banner.status == false}">Vô hiệu hóa
+                                                </option>
+                                                <option value="true" th:selected="${banner.status == true}">Kích hoạt
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </form>
                                 </div>
 
                                 <div class="col-md-7">
@@ -145,59 +147,8 @@
     <script th:inline="javascript">
         const banner = [[${banner}]];
         console.log(banner);
-
-        // send request to server when click button create using axios
-        const btnUpdate = document.getElementById('btn-update');
-        btnUpdate.addEventListener('click', function () {
-            const name = document.getElementById('name').value;
-            const linkRedirect = document.getElementById('link-redirect').value;
-            const status = document.getElementById('status').value;
-            const url = document.getElementById('image').src;
-
-            const data = {
-                name: name,
-                linkRedirect: linkRedirect,
-                status: status === "true",
-                url: url
-            };
-
-            axios.put(`/api/v1/admin/banners/${banner.id}`, data)
-                .then(function (response) {
-                    if (response.status === 200) {
-                        toastr.success('Cập nhật banner thành công');
-                    } else {
-                        toastr.error('Cập nhật banner thất bại');
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    toastr.error(error.response.data.message);
-                });
-        });
-
-        // send request to server when click button delete using axios
-        const btnDelete = document.getElementById('btn-delete');
-        btnDelete.addEventListener('click', function () {
-            const isConfirm = confirm('Bạn có chắc chắn muốn xóa banner này?');
-            if (!isConfirm) return;
-            axios.delete(`/api/v1/admin/banners/${banner.id}`)
-                .then(function (response) {
-                    if (response.status === 200) {
-                        toastr.success('Xóa banner thành công');
-                        setTimeout(function () {
-                            window.location.href = '/admin/banners';
-                        }, 1500);
-                    } else {
-                        toastr.error('Xóa banner thất bại');
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    toastr.error(error.response.data.message);
-                });
-        });
-
     </script>
+    <script th:src="@{/admin-assets/assets/js/banner/detail.js}"></script>
 </th:block>
 
 </body>

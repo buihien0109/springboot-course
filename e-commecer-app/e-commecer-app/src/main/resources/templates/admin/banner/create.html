@@ -59,21 +59,23 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label>Tên banner</label>
-                                        <input type="text" class="form-control" id="name"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Redirect To Url</label>
-                                        <input type="text" class="form-control" id="link-redirect"/>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Trạng thái</label>
-                                        <select id="status" class="form-control">
-                                            <option value="false">Vô hiệu hóa</option>
-                                            <option value="true">Kích hoạt</option>
-                                        </select>
-                                    </div>
+                                    <form id="form-create-banner">
+                                        <div class="form-group">
+                                            <label>Tên banner</label>
+                                            <input type="text" class="form-control" id="name" name="name"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Redirect To Url</label>
+                                            <input type="text" class="form-control" id="link-redirect" name="linkRedirect"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Trạng thái</label>
+                                            <select id="status" class="form-control">
+                                                <option value="false">Vô hiệu hóa</option>
+                                                <option value="true">Kích hoạt</option>
+                                            </select>
+                                        </div>
+                                    </form>
                                 </div>
 
                                 <div class="col-md-7">
@@ -133,42 +135,7 @@
 
 <th:block id="js">
     <script th:src="@{/admin-assets/assets/js/image-managent.js}"></script>
-    <script th:inline="javascript">
-        // send request to server when click button create using axios
-        const btnCreate = document.getElementById('btn-create');
-        btnCreate.addEventListener('click', function () {
-            const name = document.getElementById('name').value;
-            const linkRedirect = document.getElementById('link-redirect').value;
-            const status = document.getElementById('status').value;
-            const url = document.getElementById('image').src;
-
-            const data = {
-                name: name,
-                linkRedirect: linkRedirect,
-                status: status === "true",
-                url: url
-            };
-
-            console.log(data)
-
-            axios.post('/api/v1/admin/banners', data)
-                .then(function (response) {
-                    if (response.status === 200) {
-                        toastr.success('Tạo banner thành công');
-                        setTimeout(function () {
-                            window.location.href = `/admin/banners/${response.data.id}/detail`;
-                        }, 1500);
-                    } else {
-                        toastr.error('Tạo banner thất bại');
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    toastr.error(error.response.data.message);
-                });
-        });
-
-    </script>
+    <script th:src="@{/admin-assets/assets/js/banner/create.js}"></script>
 </th:block>
 
 </body>

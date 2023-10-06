@@ -68,20 +68,22 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label>Tiêu đề</label>
-                                        <input type="text" class="form-control" id="title"/>
-                                    </div>
+                                    <form id="form-update-blog">
+                                        <div class="form-group">
+                                            <label>Tiêu đề</label>
+                                            <input type="text" class="form-control" id="title" name="title"/>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Nội dung</label>
-                                        <textarea id="content"></textarea>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Nội dung</label>
+                                            <textarea id="content" class="form-control" rows="3" name="content"></textarea>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Mô tả ngắn</label>
-                                        <textarea id="description" class="form-control" rows="3"></textarea>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Mô tả ngắn</label>
+                                            <textarea id="description" class="form-control" rows="3" name="description"></textarea>
+                                        </div>
+                                    </form>
                                 </div>
 
                                 <div class="col-md-4">
@@ -163,89 +165,14 @@
 <th:block id="js">
     <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
     <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
-
     <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
     <script th:src="@{/admin-assets/assets/js/image-managent.js}"></script>
-
     <script th:inline="javascript">
         const blog = [[${blog}]];
         const tags = [[${tags}]];
         console.log({blog, tags});
-
-        //Initialize Select2 Elements
-        $(".select2").select2({
-            placeholder: "Chọn danh mục",
-        });
-
-        // Initialize editor
-        const easyMDE = new EasyMDE({
-            element: document.getElementById("content"),
-            spellChecker: false,
-            maxHeight: "350px",
-            renderingConfig: {
-                codeSyntaxHighlighting: true,
-            },
-        });
-
-        // Initialize data
-        const initData = (data) => {
-            $("#title").val(data.title);
-            easyMDE.value(data.content);
-            $("#description").html(data.description);
-            $("#status").val(String(data.status));
-            $("#tag").val(data.tags.map(e => e.id)).trigger("change");
-            $("#image").attr("src", data.thumbnail ? data.thumbnail : "https://placehold.co/1000x600");
-        };
-        initData(blog);
-
-        // Handle event update blog and send request to server using axios
-        const btnUpdate = document.getElementById("btn-update");
-        btnUpdate.addEventListener("click", () => {
-            const title = $("#title").val();
-            const content = easyMDE.value();
-            const description = $("#description").val();
-            const status = $("#status").val();
-            const tagIds = $("#tag").val();
-            const thumbnail = $("#image").attr("src");
-
-            const data = {
-                title,
-                content,
-                description,
-                status : status === "true",
-                tagIds : tagIds.map(e => Number(e)),
-                thumbnail,
-            };
-            console.log(data)
-
-            axios.put(`/api/v1/admin/blogs/${blog.id}`, data)
-                .then(res => {
-                    toastr.success("Cập nhật thành công");
-                })
-                .catch(err => {
-                    console.log(err);
-                    toastr.error("Cập nhật thất bại");
-                });
-        });
-
-        // Handle event delete blog and send request to server using axios and confirm before delete using window.confirm
-        const btnDelete = document.getElementById("btn-delete");
-        btnDelete.addEventListener("click", () => {
-            if (window.confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
-                axios.delete(`/api/v1/admin/blogs/${blog.id}`)
-                    .then(res => {
-                        toastr.success("Xóa thành công");
-                        setTimeout(() => {
-                            window.location.href = "/admin/blogs/own-blogs";
-                        }, 1500);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        toastr.error("Xóa thất bại");
-                    });
-            }
-        });
     </script>
+    <script th:src="@{/admin-assets/assets/js/blog/detail.js}"></script>
 </th:block>
 
 </body>

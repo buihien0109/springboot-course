@@ -8,7 +8,6 @@
     <th:block id="css">
         <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css"/>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css"/>
-
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
     </th:block>
@@ -58,20 +57,22 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label>Tiêu đề</label>
-                                        <input type="text" class="form-control" id="title"/>
-                                    </div>
+                                    <form id="form-create-blog">
+                                        <div class="form-group">
+                                            <label>Tiêu đề</label>
+                                            <input type="text" class="form-control" id="title" name="title"/>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Nội dung</label>
-                                        <textarea id="content"></textarea>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Nội dung</label>
+                                            <textarea id="content" class="form-control" rows="3" name="content"></textarea>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Mô tả ngắn</label>
-                                        <textarea id="description" class="form-control" rows="3"></textarea>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Mô tả ngắn</label>
+                                            <textarea id="description" class="form-control" rows="3" name="description"></textarea>
+                                        </div>
+                                    </form>
                                 </div>
 
                                 <div class="col-md-4">
@@ -107,58 +108,9 @@
 
 <th:block id="js">
     <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
-
     <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
-
-    <script th:inline="javascript">
-        //Initialize Select2 Elements
-        $(".select2").select2({
-            placeholder: "Chọn danh mục",
-        });
-
-        // Initialize editor
-        const easyMDE = new EasyMDE({
-            element: document.getElementById("content"),
-            spellChecker: false,
-            maxHeight: "350px",
-            renderingConfig: {
-                codeSyntaxHighlighting: true,
-            },
-        });
-
-        // Truy cập
-        const titleEl = document.getElementById("title");
-        const descriptionEl = document.getElementById("description");
-        const statusEl = document.getElementById("status");
-        const tagEl = $("#tag");
-        const btnCreate = document.getElementById("btn-create");
-
-        // create blog using axios and promise
-        btnCreate.addEventListener("click", () => {
-            const data = {
-                title: titleEl.value,
-                content: easyMDE.value(),
-                description: descriptionEl.value,
-                status: statusEl.value === "true",
-                tagIds: tagEl.val().map(id => Number(id))
-            };
-            console.log(data)
-
-            axios.post("/api/v1/admin/blogs", data)
-                .then((res) => {
-                    toastr.success("Tạo bài viết thành công");
-                    setTimeout(() => {
-                        window.location.href = `/admin/blogs/${res.data.id}/detail`
-                    }, 1500);
-                })
-                .catch((err) => {
-                    console.log(err);
-                    toastr.error(err.response.data.message);
-                });
-        });
-    </script>
+    <script th:src="@{/admin-assets/assets/js/blog/create.js}"></script>
 </th:block>
 
 </body>
