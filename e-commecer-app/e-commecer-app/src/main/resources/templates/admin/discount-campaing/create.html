@@ -55,48 +55,50 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Tên khuyến mại</label>
-                                        <input type="text" class="form-control" id="name"/>
-                                    </div>
+                                    <form id="form-create-discount-campaing">
+                                        <div class="form-group">
+                                            <label>Tên khuyến mại</label>
+                                            <input type="text" class="form-control" id="name" name="name"/>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Mô tả</label>
-                                        <textarea class="form-control" id="description" rows="5"></textarea>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Mô tả</label>
+                                            <textarea class="form-control" id="description" rows="5" name="description"></textarea>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Hình thức giảm</label>
-                                        <select id="type" class="form-control">
-                                            <option th:each="type : ${typeList}" th:value="${type}"
-                                                    th:text="${type.getValue()}"></option>
-                                        </select>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Hình thức giảm</label>
+                                            <select id="type" class="form-control" name="type">
+                                                <option th:each="type : ${typeList}" th:value="${type}"
+                                                        th:text="${type.getValue()}"></option>
+                                            </select>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Giá trị giảm</label>
-                                        <input type="text" class="form-control" id="value"/>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Giá trị giảm</label>
+                                            <input type="text" class="form-control" id="value" name="value"/>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Trạng thái</label>
-                                        <select id="status" class="form-control">
-                                            <option th:each="status : ${statusList}" th:value="${status}"
-                                                    th:text="${status.getValue()}"></option>
-                                        </select>
-                                    </div>
+                                        <div class="form-group">
+                                            <label>Trạng thái</label>
+                                            <select id="status" class="form-control" name="status">
+                                                <option th:each="status : ${statusList}" th:value="${status}"
+                                                        th:text="${status.getValue()}"></option>
+                                            </select>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label>Thời gian áp dụng</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
+                                        <div class="form-group">
+                                            <label>Thời gian áp dụng</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
                                                     <i class="far fa-calendar-alt"></i>
                                                 </span>
+                                                </div>
+                                                <input type="text" class="form-control float-right" id="date" name="date">
                                             </div>
-                                            <input type="text" class="form-control float-right" id="date">
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -110,54 +112,7 @@
 <th:block id="js">
     <script th:src="@{/admin-assets/admin-lte/plugins/moment/moment.min.js}"></script>
     <script th:src="@{/admin-assets/admin-lte/plugins/daterangepicker/daterangepicker.js}"></script>
-    <script th:inline="javascript">
-        $('#date').daterangepicker()
-
-        // handle create discount campaign when click button using vanilla javascript and axios
-        const btnCreate = document.getElementById('btn-create')
-        btnCreate.addEventListener('click', () => {
-            const name = document.getElementById('name').value
-            const description = document.getElementById('description').value
-            const type = document.getElementById('type').value
-            const value = document.getElementById('value').value
-            const status = document.getElementById('status').value
-            const date = document.getElementById('date').value
-
-            // get date from daterangepicker
-            const dateArr = date.split(' - ')
-            const startDate = dateArr[0]
-            const endDate = dateArr[1]
-
-            const data = {
-                name: name,
-                description: description,
-                discountType: type,
-                discountValue: value,
-                status: status,
-                startDate: new Date(startDate),
-                endDate: new Date(endDate)
-            }
-            console.log(data)
-
-            axios.post('/api/v1/admin/discount-campaigns', data)
-                .then(res => {
-                    if (res.status === 200) {
-                        toastr.success('Tạo khuyến mại thành công')
-                        setTimeout(() => {
-                            window.location.href = `/admin/discount-campaigns/${res.data.campaignId}/detail`
-                        }, 1500)
-                    } else {
-                        toastr.error('Tạo khuyến mại thất bại')
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                    toastr.error(err.response.data.message)
-                })
-        })
-
-
-    </script>
+    <script th:src="@{/admin-assets/assets/js/discount-campaing/create.js}"></script>
 </th:block>
 
 </body>
