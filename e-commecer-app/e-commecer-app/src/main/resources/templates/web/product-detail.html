@@ -493,7 +493,7 @@
             reviews.forEach(review => {
                 avgRating += review.rating;
             })
-            avgRating = Math.round(avgRating / reviews.length);
+            avgRating = reviews.length > 0 ? Math.round(avgRating / reviews.length) : 0
 
             // render star based on rating number
             const ratingHtmlEl = document.querySelector(".overview-avg .rating");
