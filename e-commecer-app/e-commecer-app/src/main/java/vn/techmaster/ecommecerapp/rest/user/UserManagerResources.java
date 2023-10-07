@@ -1,4 +1,4 @@
-package vn.techmaster.ecommecerapp.rest.web;
+package vn.techmaster.ecommecerapp.rest.user;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

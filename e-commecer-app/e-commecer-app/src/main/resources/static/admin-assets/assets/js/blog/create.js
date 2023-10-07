@@ -14,15 +14,15 @@ const easyMDE = new EasyMDE({
 });
 
 // TODO : Chưa validate được nội dung của EasyMDE
-$.validator.addMethod(
-    "easymdeContent",
-    function (value, element) {
-        // Check if the EasyMDE content is not empty
-        // Lấy giá trị của textarea tương ứng với EasyMDE
-        let textareaValue = easyMDE.value();
+easyMDE.codemirror.on("change", () => {
+    document.getElementById("content").innerHTML = easyMDE.value();
+});
 
-        // Kiểm tra xem nội dung của textarea có rỗng không
-        return textareaValue.trim() !== '';
+$.validator.addMethod(
+    "validateEasyMDE",
+    function (value, element) {
+        let text = easyMDE.value();
+        return text !== "";
     },
     "Nội dung không được để trống"
 );
@@ -32,9 +32,8 @@ $('#form-create-blog').validate({
         title: {
             required: true
         },
-        content: {
-            required: true,
-            easymdeContent: true
+        editor: {
+            validateEasyMDE: true
         },
         description: {
             required: true
@@ -44,9 +43,8 @@ $('#form-create-blog').validate({
         title: {
             required: "Tiêu đề không được để trống"
         },
-        content: {
-            required: "Nội dung không được để trống",
-            easymdeContent: "Nội dung không được để trống"
+        editor: {
+            validateEasyMDE: "Nội dung không được để trống"
         },
         description: {
             required: "Mô tả không được để trống"
@@ -59,7 +57,6 @@ $('#form-create-blog').validate({
     },
     highlight: function (element, errorClass, validClass) {
         $(element).addClass('is-invalid');
-        console.log(element)
     },
     unhighlight: function (element, errorClass, validClass) {
         $(element).removeClass('is-invalid');

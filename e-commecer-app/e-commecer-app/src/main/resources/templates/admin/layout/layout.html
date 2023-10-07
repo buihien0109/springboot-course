@@ -11,14 +11,11 @@
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"/>
     <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/fontawesome-free/css/all.css}"/>
-    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"/>
     <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/adminlte.min.css}"/>
     <link rel="stylesheet"
           th:href="@{/admin-assets/admin-lte/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}"/>
     <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/toastr/toastr.min.css}"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.css"
-          integrity="sha512-K1k7jSn9RDKEcn/ugqVVvWYu0bcS3q1w6m/5pQSnrj0bCfIqF6Wk49lkmckSb4wglvTP9V17LtS0q0XxYccXbg=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/pagination/pagination.min.css}"/>
     <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}"/>
     <th:block th:replace="${css} ?: ~{}"></th:block>
 </head>
@@ -41,11 +38,8 @@
 <script th:src="@{/admin-assets/admin-lte/plugins/jquery-validation/jquery.validate.min.js}"></script>
 <script th:src="@{/admin-assets/admin-lte/plugins/jquery-validation/additional-methods.min.js}"></script>
 <script th:src="@{/admin-assets/admin-lte/plugins/toastr/toastr.min.js}"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.js"
-        integrity="sha512-GzbaI5EsNzdEUq6/2XLYpr1y9CUZRIVsUeWTAFgULtQa5jZ3Nug8i0nZKM6jp9NffBCZhymPPQFcF0DK+JkRpw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-scr
+<script th:src="@{/admin-assets/admin-lte/plugins/axios/axios.min.js}"></script>
+<script th:src="@{/admin-assets/admin-lte/plugins/pagination/pagination.min.js}"></script>
 <script th:src="@{/admin-assets/admin-lte/dist/js/adminlte.js}"></script>
 <script th:src="@{/admin-assets/assets/js/main.js}"></script>
 
