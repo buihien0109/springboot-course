@@ -32,22 +32,23 @@
                 <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
                     <div class="login-container">
                         <div id="custom-login-form">
-                            <form id="customer-login">
+                            <form id="customer-login-form">
                                 <div class="login-form-container">
                                     <div class="login-text">
                                         <h2 class="mb-2">Đăng nhập</h2>
                                         <p>Vui lòng điền thông tin vào form bên dưới.</p>
                                     </div>
                                     <div class="login-form">
-                                        <div class="login-form-input">
-                                            <input type="email" id="email" class="input-full" placeholder="Email"
-                                                   autocomplete="off" required>
+                                        <div class="login-form-input form-group">
+                                            <input type="email" id="email" class="input-full form-control" placeholder="Email"
+                                                   autocomplete="off" name="email">
                                         </div>
 
-                                        <div class="login-form-input">
-                                            <input type="password" id="password" class="input-full"
-                                                   placeholder="Mật khẩu" autocomplete="off" required>
-                                            <span class="icon-toggle-password"><i class="fa fa-eye" aria-hidden="true"></i></span>
+                                        <div class="login-form-input form-group">
+                                            <input type="password" id="password" class="input-full form-control"
+                                                   placeholder="Mật khẩu" autocomplete="off" name="password">
+                                            <span class="icon-toggle-password"><i class="fa fa-eye"
+                                                                                  aria-hidden="true"></i></span>
                                         </div>
 
                                         <div class="login-toggle-btn">
@@ -88,11 +89,47 @@
             });
         });
 
+        // validation form
+        $('#customer-login-form').validate({
+            rules: {
+                email: {
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true
+                }
+            },
+            messages: {
+                email: {
+                    required: "Email không được để trống",
+                    email: "Email không đúng định dạng"
+                },
+                password: {
+                    required: "Mật khẩu không được để trống",
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
         // handle login form submit using axios
-        // TODO : Add Valition
-        const loginForm = document.getElementById('customer-login');
+        const loginForm = document.getElementById('customer-login-form');
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            if (!$('#customer-login-form').valid()) {
+                return;
+            }
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const data = {

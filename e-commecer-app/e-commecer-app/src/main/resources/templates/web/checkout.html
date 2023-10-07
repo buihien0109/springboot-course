@@ -32,67 +32,75 @@
                 <h4>Thông tin giao hàng</h4>
                 <div class="row">
                     <div class="col-lg-6 col-md-6">
-                        <div class="checkout__input">
-                            <input type="text" th:value="${isLogin ? currentUser.username : ''}" placeholder="Họ tên"
-                                   required id="username">
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="checkout__input">
-                                    <input type="text" th:value="${isLogin ? currentUser.phone : ''}"
-                                           placeholder="Số điện thoại" required id="phone">
+                        <form id="form-checkout">
+                            <div class="checkout__input form-group">
+                                <input class="form-control"
+                                       type="text" th:value="${isLogin ? currentUser.username : ''}"
+                                       placeholder="Họ tên"
+                                       id="username" name="name">
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="checkout__input form-group">
+                                        <input class="form-control" type="text"
+                                               th:value="${isLogin ? currentUser.phone : ''}"
+                                               placeholder="Số điện thoại" id="phone" name="phone">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input form-group">
+                                        <input class="form-control" type="text"
+                                               th:value="${isLogin ? currentUser.email : ''}"
+                                               placeholder="Email" id="email" name="email">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-8">
-                                <div class="checkout__input">
-                                    <input type="text" th:value="${isLogin ? currentUser.email : ''}"
-                                           placeholder="Email" required id="email">
+                            <div class="checkout__input form-group">
+                                <select id="province" name="province" class="form-control"></select>
+                            </div>
+                            <div class="checkout__input form-group">
+                                <select id="district" name="district" class="form-control"></select>
+                            </div>
+                            <div class="checkout__input form-group">
+                                <select id="ward" name="ward" class="form-control"></select>
+                            </div>
+                            <div class="checkout__input form-group">
+                                <input type="text" class="form-control" placeholder="Địa chỉ giao hàng" id="address"
+                                       name="address">
+                            </div>
+                            <div class="checkout__input form-group">
+                                <input type="text" class="form-control" placeholder="Ghi chú đơn hàng..." id="note"
+                                       name="note">
+                            </div>
+                            <div class="checkout__input">
+                                <h4>Phương thức vận chuyển</h4>
+                                <div id="shipping-method">
+                                    <div class="d-flex align-items-center">
+                                        <input type="radio" id="delivery" class="mr-1" value="STANDARD" checked
+                                               name="shipping-method">
+                                        <label for="delivery" class="mb-0">Giao hàng tận nơi</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="checkout__input">
-                            <select id="province"></select>
-                        </div>
-                        <div class="checkout__input">
-                            <select id="district"></select>
-                        </div>
-                        <div class="checkout__input">
-                            <select id="ward"></select>
-                        </div>
-                        <div class="checkout__input">
-                            <input type="text" placeholder="Địa chỉ giao hàng" id="address">
-                        </div>
-                        <div class="checkout__input">
-                            <input type="text" placeholder="Ghi chú đơn hàng..." id="note">
-                        </div>
-                        <div class="checkout__input">
-                            <h4>Phương thức vận chuyển</h4>
-                            <div id="shipping-method">
+                            <div class="checkout__input">
+                                <h4>Phương thức thanh toán</h4>
+                                <div id="payment-method">
+                                    <div class="d-flex align-items-center">
+                                        <input type="radio" id="payment-upon-delivery" class="mr-1" value="COD" checked
+                                               name="payment-method">
+                                        <label for="payment-upon-delivery" class="mb-0">Thanh toán khi giao hàng
+                                            (COD)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="checkout__input">
+                                <h4>Mã giảm giá</h4>
                                 <div class="d-flex align-items-center">
-                                    <input type="radio" id="delivery" class="mr-1" value="STANDARD" checked
-                                           name="shipping-method">
-                                    <label for="delivery" class="mb-0">Giao hàng tận nơi</label>
+                                    <input type="text" placeholder="Nhập mã giảm giá (nếu có)" id="coupon-input">
+                                    <button class="site-btn btn-apply-coupon">ÁP DỤNG</button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="checkout__input">
-                            <h4>Phương thức thanh toán</h4>
-                            <div id="payment-method">
-                                <div class="d-flex align-items-center">
-                                    <input type="radio" id="payment-upon-delivery" class="mr-1" value="COD" checked
-                                           name="payment-method">
-                                    <label for="payment-upon-delivery" class="mb-0">Thanh toán khi giao hàng
-                                        (COD)</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="checkout__input">
-                            <h4>Mã giảm giá</h4>
-                            <div class="d-flex align-items-center">
-                                <input type="text" placeholder="Nhập mã giảm giá (nếu có)" id="coupon-input">
-                                <button class="site-btn btn-apply-coupon">ÁP DỤNG</button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                     <div class="col-lg-6 col-md-6">
                         <div class="checkout__order">
@@ -103,7 +111,8 @@
                                     <th:block th:text="|${cartItem.product.name} x ${cartItem.quantity}|">Vegetable’s
                                         Package
                                     </th:block>
-                                    <span class="currency" th:text="${cartItem.product.discountPrice != null ? cartItem.product.discountPrice * cartItem.quantity : cartItem.product.price * cartItem.quantity}">$75.99</span>
+                                    <span class="currency"
+                                          th:text="${cartItem.product.discountPrice != null ? cartItem.product.discountPrice * cartItem.quantity : cartItem.product.price * cartItem.quantity}">$75.99</span>
                                 </li>
                             </ul>
                             <div class="checkout__order__subtotal">Thành tiền <span
@@ -134,9 +143,9 @@
 
         const renderProvince = (provinces) => {
             console.log(provinces)
-            provinceSelect.innerHTML = '<option hidden="hidden">-- Chọn Tỉnh/Thành phố</option>';
-            districtSelect.innerHTML = '<option hidden="hidden">-- Chọn Quận/Huyện</option>';
-            wardSelect.innerHTML = '<option hidden="hidden">-- Chọn Xã/Phường</option>';
+            provinceSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Tỉnh/Thành phố</option>';
+            districtSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Quận/Huyện</option>';
+            wardSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Xã/Phường</option>';
 
             provinces.forEach(province => {
                 const {ProvinceID, ProvinceName} = province;
@@ -149,7 +158,7 @@
         }
 
         const renderDistrict = (districts) => {
-            districtSelect.innerHTML = '<option hidden="hidden">-- Chọn Quận/Huyện</option>';
+            districtSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Quận/Huyện</option>';
             districts.forEach(district => {
                 const {DistrictID, DistrictName} = district;
                 const option = document.createElement('option');
@@ -161,7 +170,7 @@
         }
 
         const renderWard = (wards) => {
-            wardSelect.innerHTML = '<option hidden="hidden">-- Chọn Xã/Phường</option>';
+            wardSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Xã/Phường</option>';
             wards.forEach(ward => {
                 const {WardCode, WardName} = ward;
                 const option = document.createElement('option');
@@ -299,9 +308,78 @@
             }
         })
 
+        // validate form checkout
+        $('#form-checkout').validate({
+            rules: {
+                name: {
+                    required: true
+                },
+                phone: {
+                    required: true,
+                    pattern: /^(0\d{9}|(\+84|84)[1-9]\d{8})$/
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                province: {
+                    required: true
+                },
+                district: {
+                    required: true
+                },
+                ward: {
+                    required: true
+                },
+                address: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "Họ tên không được để trống",
+                },
+                phone: {
+                    required: "Số điện thoại không được để trống",
+                    pattern: "Số điện thoại không đúng định dạng"
+                },
+                email: {
+                    required: "Email không được để trống",
+                    email: "Email không đúng định dạng"
+                },
+                province: {
+                    required: "Tỉnh/Thành phố không được để trống",
+                },
+                district: {
+                    required: "Quận/Huyện không được để trống",
+                },
+                ward: {
+                    required: "Xã/Phường không được để trống",
+                },
+                address: {
+                    required: "Địa chỉ không được để trống",
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
         // handle submit order
         const btnSubmitOrder = document.getElementById('btn-submit-order');
         btnSubmitOrder.addEventListener("click", () => {
+            if (!$('#form-checkout').valid()) {
+                return;
+            }
+
             const username = document.getElementById('username').value;
             const phone = document.getElementById('phone').value;
             const email = document.getElementById('email').value;
@@ -364,7 +442,7 @@
                 })
                 .catch(error => {
                     console.log(error);
-                    toastr.error('Đặt hàng thất bại');
+                    toastr.error(error.response.data.message);
                 })
         })
 

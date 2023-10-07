@@ -25,8 +25,8 @@
                             <tr>
                                 <th>Order ID</th>
                                 <th>Danh sách sản phẩm</th>
-                                <th>Tổng tiền đơn hàng</th>
-                                <th>Ngày đặt hàng</th>
+                                <th>Tổng tiền</th>
+                                <th>Ngày đặt</th>
                                 <th>Trạng thái</th>
                             </tr>
                             </thead>
@@ -34,12 +34,14 @@
                             <tbody>
                             <tr th:each="order : ${orders}">
                                 <td>
-                                    <a th:href="@{/khach-hang/don-hang/{id}(id=${order.orderNumber})}" th:text="${order.orderNumber}"></a>
+                                    <a th:href="@{/khach-hang/don-hang/{id}(id=${order.orderNumber})}"
+                                       th:text="${order.orderNumber}" class="text-primary"></a>
                                 </td>
                                 <td>
                                     <ul>
                                         <li th:each="orderItem : ${order.orderItems}">
-                                            <a th:href="@{/san-pham/{id}(id=${orderItem.product.productId})}" th:text="${orderItem.product.name}"></a>
+                                            <a th:href="@{/san-pham/{id}(id=${orderItem.product.productId})}"
+                                               th:text="${orderItem.product.name}"></a>
                                             <span th:text="|(x ${orderItem.quantity})|"></span>
                                         </li>
                                     </ul>
@@ -47,9 +49,15 @@
                                 <td class="currency" th:text="${order.getTotalAmount()}"></td>
                                 <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy')}"></td>
                                 <th:block>
-                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).COMPLETE}" class="text-success">Hoàn thành</td>
-                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).RETURNED}" class="text-secondary">Trả hàng</td>
-                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).CANCELED}" class="text-danger">Hủy đơn</td>
+                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).COMPLETE}"
+                                        class="text-success">Hoàn thành
+                                    </td>
+                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).RETURNED}"
+                                        class="text-secondary">Trả hàng
+                                    </td>
+                                    <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).CANCELED}"
+                                        class="text-danger">Hủy đơn
+                                    </td>
                                 </th:block>
                             </tr>
                             </tbody>

@@ -57,18 +57,20 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="checkout__input">
-                        <select id="province"></select>
-                    </div>
-                    <div class="checkout__input">
-                        <select id="district"></select>
-                    </div>
-                    <div class="checkout__input">
-                        <select id="ward"></select>
-                    </div>
-                    <div class="checkout__input">
-                        <input type="text" placeholder="Địa chỉ giao hàng" id="address">
-                    </div>
+                    <form id="form-address">
+                        <div class="checkout__input form-group">
+                            <select id="province" class="form-control" name="province"></select>
+                        </div>
+                        <div class="checkout__input form-group">
+                            <select id="district" class="form-control" name="district"></select>
+                        </div>
+                        <div class="checkout__input form-group">
+                            <select id="ward" class="form-control" name="ward"></select>
+                        </div>
+                        <div class="checkout__input form-group">
+                            <input type="text" placeholder="Địa chỉ giao hàng" id="address" class="form-control" name="address">
+                        </div>
+                    </form>
                     <div class="checkout__input">
                         <div class="d-flex align-items-center">
                             <input type="checkbox" id="set-address-default">
@@ -176,9 +178,9 @@
         const wardSelect = document.getElementById('ward');
 
         const renderProvince = (provinces) => {
-            provinceSelect.innerHTML = '<option hidden="hidden">-- Chọn Tỉnh/Thành phố</option>';
-            districtSelect.innerHTML = '<option hidden="hidden">-- Chọn Quận/Huyện</option>';
-            wardSelect.innerHTML = '<option hidden="hidden">-- Chọn Xã/Phường</option>';
+            provinceSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Tỉnh/Thành phố</option>';
+            districtSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Quận/Huyện</option>';
+            wardSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Xã/Phường</option>';
 
             provinces.forEach(province => {
                 const {ProvinceID, ProvinceName} = province;
@@ -191,7 +193,7 @@
         }
 
         const renderDistrict = (districts) => {
-            districtSelect.innerHTML = '<option hidden="hidden">-- Chọn Quận/Huyện</option>';
+            districtSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Quận/Huyện</option>';
             districts.forEach(district => {
                 const {DistrictID, DistrictName} = district;
                 const option = document.createElement('option');
@@ -203,7 +205,7 @@
         }
 
         const renderWard = (wards) => {
-            wardSelect.innerHTML = '<option hidden="hidden">-- Chọn Xã/Phường</option>';
+            wardSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Xã/Phường</option>';
             wards.forEach(ward => {
                 const {WardCode, WardName} = ward;
                 const option = document.createElement('option');
@@ -387,6 +389,10 @@
                 }
             }
 
+            // enable disabled select, wardSelect when update
+            districtSelect.disabled = false;
+            wardSelect.disabled = false;
+
             isUpdate = true;
             idUpdate = id;
         }
@@ -445,7 +451,52 @@
                 })
         }
 
+        // validation form
+        $('#form-address').validate({
+            rules: {
+                province: {
+                    required: true
+                },
+                district: {
+                    required: true
+                },
+                ward: {
+                    required: true
+                },
+                address: {
+                    required: true
+                }
+            },
+            messages: {
+                province: {
+                    required: "Tỉnh/Thành phố không được để trống",
+                },
+                district: {
+                    required: "Quận/Huyện không được để trống",
+                },
+                ward: {
+                    required: "Xã/Phường không được để trống",
+                },
+                address: {
+                    required: "Địa chỉ không được để trống",
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
         function handleAddress() {
+            if (!$('#form-address').valid()) return;
+
             if (isUpdate) {
                 updateAddress();
             } else {

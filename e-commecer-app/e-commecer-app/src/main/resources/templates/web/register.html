@@ -32,30 +32,35 @@
                 <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
                     <div class="register-container">
                         <div id="custom-register-form">
-                            <form id="customer-register">
+                            <form id="customer-register-form">
                                 <div class="register-form-container">
                                     <div class="register-text">
                                         <h2 class="mb-2">Đăng ký</h2>
                                         <p>Vui lòng điền thông tin vào form bên dưới.</p>
                                     </div>
                                     <div class="register-form">
-                                        <div class="login-form-input">
-                                            <input type="text" id="username" class="input-full" placeholder="Tên người dùng"
-                                                   autocomplete="off" required>
+                                        <div class="login-form-input form-group">
+                                            <input type="text" id="username" class="input-full form-control"
+                                                   placeholder="Tên người dùng"
+                                                   autocomplete="off" name="name">
                                         </div>
-                                        <div class="login-form-input">
-                                            <input type="email" id="email" class="input-full" placeholder="Email"
-                                                   autocomplete="off" required>
+                                        <div class="login-form-input form-group">
+                                            <input type="email" id="email" class="input-full form-control"
+                                                   placeholder="Email"
+                                                   autocomplete="off" name="email">
                                         </div>
-                                        <div class="login-form-input">
-                                            <input type="password" id="password" class="input-full"
-                                                   placeholder="Mật khẩu" autocomplete="off" required>
-                                            <span class="icon-toggle-password"><i class="fa fa-eye" aria-hidden="true"></i></span>
+                                        <div class="login-form-input form-group">
+                                            <input type="password" id="password" class="input-full form-control"
+                                                   placeholder="Mật khẩu" autocomplete="off" name="password">
+                                            <span class="icon-toggle-password"><i class="fa fa-eye"
+                                                                                  aria-hidden="true"></i></span>
                                         </div>
-                                        <div class="login-form-input">
-                                            <input type="password" id="confirm-password" class="input-full"
-                                                   placeholder="Nhập lại mật khẩu" autocomplete="off" required>
-                                            <span class="icon-toggle-password"><i class="fa fa-eye" aria-hidden="true"></i></span>
+                                        <div class="login-form-input form-group">
+                                            <input type="password" id="confirm-password" class="input-full form-control"
+                                                   placeholder="Nhập lại mật khẩu" autocomplete="off"
+                                                   name="confirmPassword">
+                                            <span class="icon-toggle-password"><i class="fa fa-eye"
+                                                                                  aria-hidden="true"></i></span>
                                         </div>
                                         <div class="register-toggle-btn">
                                             <div class="form-action-button">
@@ -95,11 +100,62 @@
             });
         });
 
+        // validation form
+        $('#customer-register-form').validate({
+            rules: {
+                name: {
+                    required: true
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true
+                },
+                confirmPassword: {
+                    required: true,
+                    equalTo: "#password"
+                }
+            },
+            messages: {
+                name: {
+                    required: "Tên người dùng không được để trống",
+                },
+                email: {
+                    required: "Email không được để trống",
+                    email: "Email không đúng định dạng"
+                },
+                password: {
+                    required: "Mật khẩu không được để trống",
+                },
+                confirmPassword: {
+                    required: "Nhập lại mật khẩu không được để trống",
+                    equalTo: "Nhập lại mật khẩu không khớp"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
         // handle register form submit using axios
-        // TODO : Add Validation
-        const registerForm = document.getElementById('customer-register');
+        const registerForm = document.getElementById('customer-register-form');
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
+
+            if (!$('#customer-register-form').valid()) {
+                return;
+            }
+
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
