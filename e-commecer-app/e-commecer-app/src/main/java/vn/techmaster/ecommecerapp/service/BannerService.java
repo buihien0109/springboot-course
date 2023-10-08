@@ -26,6 +26,11 @@ public class BannerService {
         return banners.stream().map(BannerPublic::of).toList();
     }
 
+    public List<BannerPublic> getAllBannersPublic() {
+        List<Banner> banners = bannerRepository.findByStatusTrueOrderByDisplayOrderAsc();
+        return banners.stream().map(BannerPublic::of).toList();
+    }
+
     public BannerPublic getBannerById(Integer id) {
         return bannerRepository.findById(id).map(BannerPublic::of)
                 .orElseThrow(() -> new RuntimeException("Cannot find banner by id: " + id));

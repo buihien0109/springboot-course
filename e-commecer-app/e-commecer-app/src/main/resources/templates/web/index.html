@@ -12,16 +12,15 @@
     <div class="banner">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div class="banner__pic">
-                        <img src="/img/banner/banner-1.jpg" alt="">
+                <th:block th:with="bannerSelected = ${banners.subList(0, 2)}">
+                    <div class="col-lg-6 col-md-12" th:each="banner : ${bannerSelected}">
+                        <div class="banner__pic">
+                            <a th:href="${banner.linkRedirect}" class="d-block">
+                                <img th:src="${banner.url}" th:alt="${banner.name}" class="img-fluid">
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div class="banner__pic">
-                        <img src="/img/banner/banner-2.jpg" alt="">
-                    </div>
-                </div>
+                </th:block>
             </div>
         </div>
     </div>
@@ -84,6 +83,8 @@
     <script th:inline="javascript">
         const data = [[${data}]];
         console.log(data);
+        const banners = [[${banners}]];
+        console.log(banners);
     </script>
     <script src="/js/web/index.js"></script>
 </th:block>

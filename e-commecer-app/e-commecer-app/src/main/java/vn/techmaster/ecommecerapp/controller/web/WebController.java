@@ -21,10 +21,13 @@ public class WebController {
     private final TagService tagService;
     private final OrderService orderService;
     private final ReviewService reviewService;
+    private final BannerService bannerService;
+
 
     @GetMapping("/")
     public String getHome(Model model) {
         model.addAttribute("data", productService.findAllProductCombineCategoryAndDiscount(1, 8));
+        model.addAttribute("banners", bannerService.getAllBannersPublic());
         return "web/index";
     }
 
@@ -122,5 +125,10 @@ public class WebController {
         model.addAttribute("orderNumber", orderNumber);
         model.addAttribute("order", orderService.getOrderByOrderNumber(orderNumber));
         return "web/order-detail";
+    }
+
+    @GetMapping("/mail")
+    public String getMail() {
+        return "web/mail-template/confirmation-account";
     }
 }
