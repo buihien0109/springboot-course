@@ -7,25 +7,24 @@ import vn.techmaster.ecommecerapp.model.request.OrderRequest;
 import vn.techmaster.ecommecerapp.service.OrderService;
 
 @RestController
-@RequestMapping("/api/v1/orders")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class OrderResources {
     private final OrderService orderService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/public/orders/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
-    @PostMapping
+    @PostMapping("/public/orders")
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest) {
         return ResponseEntity.ok(orderService.createOrder(orderRequest));
     }
 
-    @PutMapping("/{id}/cancel")
+    @PutMapping("/users/orders/{id}/cancel")
     public ResponseEntity<?> cancelOrder(@PathVariable Long id) {
         orderService.cancelOrder(id);
         return ResponseEntity.ok().body("Hủy đơn hàng thành công");
     }
-
 }

@@ -9,7 +9,7 @@ import vn.techmaster.ecommecerapp.model.request.UpdateCartItemRequest;
 import vn.techmaster.ecommecerapp.service.CartItemService;
 
 @RestController
-@RequestMapping("/api/v1/cart-items")
+@RequestMapping("/api/v1/public/cart-items")
 @RequiredArgsConstructor
 public class CartItemResources {
     private final CartItemService cartItemService;

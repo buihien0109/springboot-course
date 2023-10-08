@@ -37,7 +37,7 @@ const renderAddress = () => {
 
 // handle set default address, call api using axios with valina js
 function setDefaultAddress(id) {
-    axios.put(`/api/v1/user-address/${id}/set-default`)
+    axios.put(`/api/v1/users/address/${id}/set-default`)
         .then(res => {
             if (res.status === 200) {
                 addressList.forEach(address => {
@@ -59,7 +59,7 @@ function setDefaultAddress(id) {
 function deleteAddress(id) {
     const isDelete = confirm('Bạn có chắc chắn muốn xóa địa chỉ này?');
     if (!isDelete) return;
-    axios.delete(`/api/v1/user-address/${id}`)
+    axios.delete(`/api/v1/users/address/${id}`)
         .then(res => {
             if (res.status === 200) {
                 addressList.forEach((address, index) => {
@@ -125,7 +125,7 @@ const renderWard = (wards) => {
 
 const getProvinces = async () => {
     try {
-        const response = await axios.get('/api/v1/address/provinces');
+        const response = await axios.get('/api/v1/public/address/provinces');
         if (response.status === 200) {
             const {data} = response.data;
             renderProvince(data);
@@ -148,7 +148,7 @@ provinceSelect.addEventListener('change', (event) => {
 
 const getDistricts = async (provinceId) => {
     try {
-        const response = await axios.get(`/api/v1/address/districts?province_id=${provinceId}`);
+        const response = await axios.get(`/api/v1/public/address/districts?province_id=${provinceId}`);
         if (response.status === 200) {
             const {data} = response.data;
             renderDistrict(data);
@@ -167,7 +167,7 @@ districtSelect.addEventListener('change', (event) => {
 
 const getWards = async (districtId) => {
     try {
-        const response = await axios.get(`/api/v1/address/wards?district_id=${districtId}`);
+        const response = await axios.get(`/api/v1/public/address/wards?district_id=${districtId}`);
         if (response.status === 200) {
             const {data} = response.data;
             renderWard(data);
@@ -212,7 +212,7 @@ function createAddress() {
         isDefault: isDefault
     }
 
-    axios.post('/api/v1/user-address', data)
+    axios.post('/api/v1/users/address', data)
         .then(res => {
             if (res.status === 200) {
                 if (res.data.isDefault) {
@@ -325,7 +325,7 @@ function updateAddress() {
         isDefault: isDefault
     }
 
-    axios.put(`/api/v1/user-address/${idUpdate}`, data)
+    axios.put(`/api/v1/users/address/${idUpdate}`, data)
         .then(res => {
             if (res.status === 200) {
                 if (res.data.isDefault) {

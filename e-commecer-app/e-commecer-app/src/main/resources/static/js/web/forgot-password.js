@@ -38,7 +38,7 @@ resetForm.addEventListener('submit', function (e) {
     const data = {
         email: email
     };
-    axios.post('/api/v1/auth/reset-password', data)
+    axios.post('/api/v1/public/auth/reset-password', data)
         .then(function (response) {
             console.log(response);
             toastr.success('Vui lòng kiểm tra email để lấy lại mật khẩu');

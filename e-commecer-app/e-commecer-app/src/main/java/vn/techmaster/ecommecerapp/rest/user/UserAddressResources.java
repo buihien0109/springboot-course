@@ -7,7 +7,7 @@ import vn.techmaster.ecommecerapp.model.request.UpsertUserAddressRequest;
 import vn.techmaster.ecommecerapp.service.UserAddressService;
 
 @RestController
-@RequestMapping("/api/v1/user-address")
+@RequestMapping("/api/v1/users/address")
 @RequiredArgsConstructor
 public class UserAddressResources {
     private final UserAddressService userAddressService;

@@ -71,7 +71,7 @@ const incrementQuantity = (cartItemId) => {
     }
 
     // call api to update cart item using axios
-    axios.put(`/api/v1/cart-items/${cartItemId}`, {
+    axios.put(`/api/v1/public/cart-items/${cartItemId}`, {
         quantity: 1
     })
         .then(res => {
@@ -98,7 +98,7 @@ const decrementQuantity = (cartItemId) => {
     }
 
     // call api to update cart item using axios
-    axios.put(`/api/v1/cart-items/${cartItemId}`, {
+    axios.put(`/api/v1/public/cart-items/${cartItemId}`, {
         quantity: -1
     })
         .then(res => {
@@ -126,7 +126,7 @@ const deleteCartItem = (cartItemId) => {
     }
 
     // call api to delete cart item using axios
-    axios.delete(`/api/v1/cart-items/${cartItemId}`)
+    axios.delete(`/api/v1/public/cart-items/${cartItemId}`)
         .then(res => {
             console.log(res);
             if (res.status === 200) {

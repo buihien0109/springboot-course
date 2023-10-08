@@ -12,7 +12,7 @@ import vn.techmaster.ecommecerapp.service.CouponService;
 public class CouponResources {
     private final CouponService couponService;
 
-    @GetMapping("/coupons/check")
+    @GetMapping("/public/coupons/check")
     public ResponseEntity<?> checkCoupon(@RequestParam String couponCode) {
         return ResponseEntity.ok(couponService.checkCouponValid(couponCode));
     }

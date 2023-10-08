@@ -16,6 +16,8 @@ import vn.techmaster.ecommecerapp.service.CartService;
 import vn.techmaster.ecommecerapp.service.CategoryService;
 import vn.techmaster.ecommecerapp.service.WishListService;
 
+import java.util.Objects;
+
 @Configuration
 @Slf4j
 @RequiredArgsConstructor
@@ -32,16 +34,19 @@ public class GlobalDataInit {
             public void addInterceptors(InterceptorRegistry registry) {
                 registry.addInterceptor(new HandlerInterceptor() {
                     @Override
-                    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-                                           ModelAndView modelAndView) throws Exception {
-                        if (modelAndView != null) {
-                            log.info("Add global data to thymeleaf");
+                    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+                        if (modelAndView != null && !Objects.requireNonNull(modelAndView.getViewName()).startsWith("admin")) {
+                            log.info("View name: {}", modelAndView.getViewName());
+                            log.info("Add global data to web/user");
                             User user = SecurityUtils.getCurrentUserLogin();
                             modelAndView.addObject("categories", categoryService.findAllByParentCategoryIsNull());
                             modelAndView.addObject("cart", user != null ? cartService.getCartForLoggedInUser() : cartService.getCartForGuestUser());
                             modelAndView.addObject("wishList", user != null ? wishListService.getAllWishListForLoggedInUser() : wishListService.getAllWishListForGuestUser());
                             modelAndView.addObject("currentUser", user);
                             modelAndView.addObject("isLogin", user != null);
+                        } else if (modelAndView != null && Objects.requireNonNull(modelAndView.getViewName()).startsWith("admin")) {
+                            log.info("View name: {}", modelAndView.getViewName());
+                            log.info("Add global data to admin");
                         }
                     }
                 });

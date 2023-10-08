@@ -4,7 +4,7 @@ function loadMoreProduct(categorySlug) {
     const dataItem = data.find(d => d.slug === categorySlug);
 
     // call api
-    axios.get(`/api/v1/products/load-more?categorySlug=${categorySlug}&page=${dataItem.currentPage + 1}`).then(res => {
+    axios.get(`/api/v1/public/products/load-more?categorySlug=${categorySlug}&page=${dataItem.currentPage + 1}`).then(res => {
         console.log(res);
         if (res.status === 200) {
             // update data

@@ -337,7 +337,7 @@ const createReview = () => {
     }
 
     // Send request to server using axios
-    axios.post("/api/v1/reviews", review)
+    axios.post("/api/v1/public/reviews", review)
         .then(res => {
             // add review to reviews array
             reviews.unshift(res.data);
@@ -365,7 +365,7 @@ const deleteReview = id => {
         return;
     }
     // Send request to server using axios
-    axios.delete(`/api/v1/reviews/${id}`)
+    axios.delete(`/api/v1/public/reviews/${id}`)
         .then(res => {
             // delete review in reviews array
             const index = reviews.findIndex(review => review.reviewId === id);
@@ -390,7 +390,7 @@ const updateReview = id => {
     }
 
     // Send request to server using axios
-    axios.put(`/api/v1/reviews/${id}`, review)
+    axios.put(`/api/v1/public/reviews/${id}`, review)
         .then(res => {
             // update review in reviews array
             const index = reviews.findIndex(review => review.reviewId === id);

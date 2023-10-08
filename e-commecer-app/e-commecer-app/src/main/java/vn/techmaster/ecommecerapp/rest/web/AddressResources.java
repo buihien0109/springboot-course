@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.techmaster.ecommecerapp.service.AddressService;
 
 @RestController
-@RequestMapping("/api/v1/address")
+@RequestMapping("/api/v1/public/address")
 @RequiredArgsConstructor
 public class AddressResources {
     private final AddressService addressService;

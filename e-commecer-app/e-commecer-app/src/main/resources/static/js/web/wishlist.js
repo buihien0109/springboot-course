@@ -5,7 +5,7 @@ function removeFromWishList(wishListId) {
         return;
     }
 
-    axios.delete(`/api/v1/wishlist/${wishListId}`)
+    axios.delete(`/api/v1/public/wishlist/${wishListId}`)
         .then(function (response) {
             console.log(response);
             if (response.status === 200) {

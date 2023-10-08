@@ -3,10 +3,7 @@ package vn.techmaster.ecommecerapp.rest.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.techmaster.ecommecerapp.model.request.UpdateCartItemRequest;
 import vn.techmaster.ecommecerapp.model.request.UpsertTransactionItemRequest;
-import vn.techmaster.ecommecerapp.repository.TransactionItemRepository;
-import vn.techmaster.ecommecerapp.repository.TransactionRepository;
 import vn.techmaster.ecommecerapp.service.TransactionItemService;
 
 @RestController

@@ -8,7 +8,7 @@ import vn.techmaster.ecommecerapp.model.request.AddToCartRequest;
 import vn.techmaster.ecommecerapp.service.CartService;
 
 @RestController
-@RequestMapping("/api/v1/cart")
+@RequestMapping("/api/v1/public/cart")
 @RequiredArgsConstructor
 public class CartResources {
     private final CartService cartService;

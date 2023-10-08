@@ -14,7 +14,7 @@ togglePasswordBtns.forEach((btn, index) => {
 });
 
 // validation form
-$('#customer-login-form').validate({
+$('#form-login-admin').validate({
     rules: {
         email: {
             required: true,
@@ -47,10 +47,10 @@ $('#customer-login-form').validate({
 });
 
 // handle login form submit using axios
-const loginForm = document.getElementById('customer-login-form');
+const loginForm = document.getElementById('form-login-admin');
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (!$('#customer-login-form').valid()) {
+    if (!$('#form-login-admin').valid()) {
         return;
     }
 
@@ -61,12 +61,12 @@ loginForm.addEventListener('submit', (e) => {
         password
     };
     console.log({data});
-    axios.post('/api/v1/public/auth/login', data)
+    axios.post('/api/v1/admin/auth/login', data)
         .then((res) => {
             if (res.status === 200) {
                 toastr.success("Đăng nhập thành công");
                 setTimeout(() => {
-                    window.location.href = '/';
+                    window.location.href = '/admin/dashboard';
                 }, 1500);
             } else {
                 toastr.error("Đăng nhập thất bại");

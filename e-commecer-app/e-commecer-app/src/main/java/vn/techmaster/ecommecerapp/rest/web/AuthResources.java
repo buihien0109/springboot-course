@@ -13,21 +13,27 @@ import vn.techmaster.ecommecerapp.model.request.RegisterRequest;
 import vn.techmaster.ecommecerapp.service.AuthService;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AuthResources {
     private final AuthService authService;
 
-    @PostMapping("/login")
+    @PostMapping("/public/auth/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpSession session) {
         authService.login(request, session);
-        return ResponseEntity.ok("Login success");
+        return ResponseEntity.ok("Đăng nhập thành công");
     }
 
     // create post method for register
-    @PostMapping("/register")
+    @PostMapping("/public/auth/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request);
-        return ResponseEntity.ok("Register success");
+        return ResponseEntity.ok("Đăng ký thành công");
+    }
+
+    @PostMapping("/admin/auth/login")
+    public ResponseEntity<?> loginAdmin(@Valid @RequestBody LoginRequest request, HttpSession session) {
+        authService.loginAdmin(request, session);
+        return ResponseEntity.ok("Đăng nhập thành công");
     }
 }

@@ -15,7 +15,7 @@ import vn.techmaster.ecommecerapp.service.ProductService;
 public class ProductResources {
     private final ProductService productService;
 
-    @GetMapping("/products/load-more")
+    @GetMapping("/public/products/load-more")
     public ResponseEntity<?> loadMore(
             @RequestParam(required = false, defaultValue = "") String categorySlug,
             @RequestParam(required = false, defaultValue = "1") Integer page,

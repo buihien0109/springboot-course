@@ -28,18 +28,6 @@ const activeMenu = () => {
 }
 activeMenu();
 
-// const menuParentEls = document.querySelectorAll("#main-menu > li");
-// menuParentEls.forEach(menuParent => {
-//     menuParent.addEventListener("click", () => {
-//         const currentMenuParent = document.querySelector("#main-menu > li.menu-is-opening.menu-open");
-//         console.log(currentMenuParent)
-//         if(currentMenuParent) {
-//             currentMenuParent.classList.remove("menu-is-opening", "menu-open");
-//         }
-//         menuParent.classList.add("menu-is-opening", "menu-open");
-//     })
-// });
-
 // show error message
 const showError = (message) => {
     // check if error is string or object
@@ -98,4 +86,19 @@ const formatCurrency = (number) => {
         return number.toString().replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");+ 'đ';
     }
     return number;
+}
+
+// handle logout
+function logout() {
+    axios.post('/logout').then(res => {
+        if (res.status === 200) {
+            toastr.success("Đăng xuất thành công");
+            setTimeout(() => {
+                window.location.href = '/admin/login';
+            },1500)
+        }
+    }).catch(err => {
+        console.log(err);
+        showError(err.response.data.message);
+    })
 }

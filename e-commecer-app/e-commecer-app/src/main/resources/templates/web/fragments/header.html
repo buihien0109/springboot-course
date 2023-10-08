@@ -41,6 +41,9 @@
                                         <img class="user-avatar" th:src="${#authentication.principal.getAvatar()}" alt="">
 
                                         <ul class="menu">
+                                            <li class="menu-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                                                <a href="/admin/dashboard"><span><i class="fa fa-user-secret" aria-hidden="true"></i></span> Trang quản trị</a>
+                                            </li>
                                             <li class="menu-item">
                                                 <a href="/khach-hang/tai-khoan"><span><i class="fa fa-user" aria-hidden="true"></i></span> Tài khoản</a>
                                             </li>
@@ -48,10 +51,10 @@
                                                 <a href="/khach-hang/quan-ly-don-hang"><span><i class="fa fa-file-o" aria-hidden="true"></i></span> Quản lý đơn hàng</a>
                                             </li>
                                             <li class="menu-item">
-                                                <a href="/khach-hang/dia-chi"><span><i class="fa fa-map-marker" aria-hidden="true"></i></span> Sổ địa chỉ</a>
+                                                <a href="/khach-hang/dia-chi"><span><i class="fa fa-address-book-o" aria-hidden="true"></i></span> Sổ địa chỉ</a>
                                             </li>
                                             <li class="menu-item">
-                                                <a href="/khach-hang/lich-su-giao-dich"><span><i class="fa fa-ship" aria-hidden="true"></i></span> Lịch sử giao dịch</a>
+                                                <a href="/khach-hang/lich-su-giao-dich"><span><i class="fa fa-history" aria-hidden="true"></i></span> Lịch sử giao dịch</a>
                                             </li>
                                             <li class="menu-item">
                                                 <a href="javascript:void(0)" class="logout-btn" onclick="logout()"><span><i class="fa fa-sign-out" aria-hidden="true"></i></span> Đăng xuất</a>

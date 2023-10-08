@@ -80,7 +80,7 @@ registerForm.addEventListener('submit', (e) => {
         confirmPassword
     };
     console.log(data)
-    axios.post('/api/v1/auth/register', data)
+    axios.post('/api/v1/public/auth/register', data)
         .then((res) => {
             if (res.status === 200) {
                 toastr.success('Đăng ký thành công');

@@ -9,7 +9,7 @@ function convertDate(dateString) {
 
 // handle cancel order, add event listener to button, then call API to cancel order using axios
 function cancelOrder(orderId) {
-    axios.put(`/api/v1/orders/${orderId}/cancel`)
+    axios.put(`/api/v1/users/orders/${orderId}/cancel`)
         .then(function (response) {
             console.log(response);
             if (response.status === 200) {

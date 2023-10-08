@@ -13,17 +13,17 @@ import vn.techmaster.ecommecerapp.service.ReviewService;
 public class ReviewResources {
     private final ReviewService reviewService;
 
-    @PostMapping("/reviews")
+    @PostMapping("/public/reviews")
     public ResponseEntity<?> createReview(@RequestBody UpsertReviewRequest request) {
         return ResponseEntity.ok(reviewService.createReview(request));
     }
 
-    @PutMapping("/reviews/{id}")
+    @PutMapping("/public/reviews/{id}")
     public ResponseEntity<?> updateReview(@RequestBody UpsertReviewRequest request, @PathVariable Long id) {
         return ResponseEntity.ok(reviewService.updateReview(request, id));
     }
 
-    @DeleteMapping("/reviews/{id}")
+    @DeleteMapping("/public/reviews/{id}")
     public ResponseEntity<?> deleteReview(@PathVariable Long id) {
         reviewService.deleteReview(id);
         return ResponseEntity.ok().body("Xóa thành công");

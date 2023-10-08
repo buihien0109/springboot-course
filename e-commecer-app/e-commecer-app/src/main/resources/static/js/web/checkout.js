@@ -48,7 +48,7 @@ const renderWard = (wards) => {
 
 const getProvinces = async () => {
     try {
-        const response = await axios.get('/api/v1/address/provinces');
+        const response = await axios.get('/api/v1/public/address/provinces');
         if (response.status === 200) {
             const {data} = response.data;
             renderProvince(data);
@@ -72,7 +72,7 @@ provinceSelect.addEventListener('change', (event) => {
 
 const getDistricts = async (provinceId) => {
     try {
-        const response = await axios.get(`/api/v1/address/districts?province_id=${provinceId}`);
+        const response = await axios.get(`/api/v1/public/address/districts?province_id=${provinceId}`);
         if (response.status === 200) {
             const {data} = response.data;
             renderDistrict(data);
@@ -91,7 +91,7 @@ districtSelect.addEventListener('change', (event) => {
 
 const getWards = async (districtId) => {
     try {
-        const response = await axios.get(`/api/v1/address/wards?district_id=${districtId}`);
+        const response = await axios.get(`/api/v1/public/address/wards?district_id=${districtId}`);
         if (response.status === 200) {
             const {data} = response.data;
             renderWard(data);
@@ -152,7 +152,7 @@ btnApplyCoupon.addEventListener('click', async () => {
         return;
     }
     try {
-        const response = await axios.get(`/api/v1/coupons/check?couponCode=${couponCodeInput}`);
+        const response = await axios.get(`/api/v1/public/coupons/check?couponCode=${couponCodeInput}`);
         if (response.status === 200) {
             const {data} = response;
             couponCode = data.couponCode;
@@ -293,7 +293,7 @@ btnSubmitOrder.addEventListener("click", () => {
     }
     console.log({order})
 
-    axios.post('/api/v1/orders', order)
+    axios.post('/api/v1/public/orders', order)
         .then(response => {
             if (response.status === 200) {
                 toastr.success('Đặt hàng thành công');

@@ -8,7 +8,7 @@ import vn.techmaster.ecommecerapp.model.request.WishListRequest;
 import vn.techmaster.ecommecerapp.service.WishListService;
 
 @RestController
-@RequestMapping("/api/v1/wishlist")
+@RequestMapping("/api/v1/public/wishlist")
 @RequiredArgsConstructor
 public class WishListResources {
     private final WishListService wishListService;

@@ -22,7 +22,7 @@ toastr.options = {
 // add to cart
 const shoppingCartIcon = document.querySelector('.shopping-cart-icon span');
 const addToCart = (productId, quantity) => {
-    axios.post('/api/v1/cart/add', {
+    axios.post('/api/v1/public/cart/add', {
         productId: productId,
         quantity: quantity
     }).then(res => {
@@ -44,7 +44,7 @@ const addToCart = (productId, quantity) => {
 // add to wishlist
 const wishlistIcon = document.querySelector('.wishlist-icon span');
 const addToWishList = (productId) => {
-    axios.post('/api/v1/wishlist', {
+    axios.post('/api/v1/public/wishlist', {
         productId: productId
     }).then(res => {
         console.log(res);
