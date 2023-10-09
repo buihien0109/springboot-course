@@ -32,6 +32,8 @@ public class User {
 
     private String avatar;
 
+    private Boolean enabled;
+
     @ManyToMany(fetch = FetchType.EAGER) //EAGER: load hết dữ liệu của user và role
     @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "user_role",

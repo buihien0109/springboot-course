@@ -4,12 +4,10 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.techmaster.ecommecerapp.model.request.LoginRequest;
 import vn.techmaster.ecommecerapp.model.request.RegisterRequest;
+import vn.techmaster.ecommecerapp.model.request.ResetPasswordRequest;
 import vn.techmaster.ecommecerapp.service.AuthService;
 
 @RestController
@@ -28,7 +26,19 @@ public class AuthResources {
     @PostMapping("/public/auth/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request);
-        return ResponseEntity.ok("Đăng ký thành công");
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/public/auth/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String email) {
+        authService.resetPassword(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/public/auth/change-password")
+    public ResponseEntity<?> confirmResetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.changePassword(request);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/admin/auth/login")

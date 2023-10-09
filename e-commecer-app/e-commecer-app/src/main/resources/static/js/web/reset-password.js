@@ -14,15 +14,8 @@ togglePasswordBtns.forEach((btn, index) => {
 });
 
 // validation form
-$('#customer-register-form').validate({
+$('#customer-reset-password-form').validate({
     rules: {
-        name: {
-            required: true
-        },
-        email: {
-            required: true,
-            email: true
-        },
         password: {
             required: true
         },
@@ -32,13 +25,6 @@ $('#customer-register-form').validate({
         }
     },
     messages: {
-        name: {
-            required: "Tên người dùng không được để trống",
-        },
-        email: {
-            required: "Email không được để trống",
-            email: "Email không đúng định dạng"
-        },
         password: {
             required: "Mật khẩu không được để trống",
         },
@@ -60,32 +46,33 @@ $('#customer-register-form').validate({
     }
 });
 
-// handle register form submit using axios
-const registerForm = document.getElementById('customer-register-form');
-registerForm.addEventListener('submit', (e) => {
+// handle change password form submit using axios
+const resetPasswordForm = document.getElementById('customer-reset-password-form');
+resetPasswordForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    if (!$('#customer-register-form').valid()) {
+    if (!$('#customer-reset-password-form').valid()) {
         return;
     }
 
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
-    const data = {
-        username,
-        email,
-        password,
+    const request = {
+        token: data.token,
+        newPassword: password,
         confirmPassword
     };
-    console.log(data)
-    axios.post('/api/v1/public/auth/register', data)
+    console.log(request)
+    axios.post('/api/v1/public/auth/change-password', request)
         .then((res) => {
             if (res.status === 200) {
-                toastr.success('Đăng ký thành công, một email xác nhận đã được gửi đến email của bạn. Vui lòng kiểm tra email để xác nhận tài khoản');
+                toastr.success('Thay đổi mật khẩu thành công');
+
+                setTimeout(() => {
+                    window.location.href = '/dang-nhap';
+                }, 1500);
             } else {
-                toastr.error('Đăng ký thất bại');
+                toastr.error('Thay đổi mật khẩu thất bại');
             }
         })
         .catch((err) => {

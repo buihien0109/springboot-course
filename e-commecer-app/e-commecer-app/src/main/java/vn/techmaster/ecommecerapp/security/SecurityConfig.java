@@ -33,7 +33,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/css/**", "/js/**", "/img/**", "/fonts/**", "/admin-assets/**").permitAll();
-            auth.requestMatchers("/", "/danh-muc/**", "/san-pham/**", "/gio-hang", "/yeu-thich", "/bai-viet", "/bai-viet/**", "/thanh-toan", "/dang-nhap", "/dang-ky", "/quen-mat-khau", "/xac-nhan-don-hang/**").permitAll();
+            auth.requestMatchers("/", "/danh-muc/**", "/san-pham/**", "/gio-hang", "/yeu-thich", "/bai-viet", "/bai-viet/**", "/thanh-toan", "/dang-nhap", "/dang-ky", "/quen-mat-khau", "/xac-nhan-don-hang/**", "/xac-thuc-tai-khoan", "/dat-lai-mat-khau").permitAll();
             auth.requestMatchers("/api/v1/public/**").permitAll();
             auth.requestMatchers("/admin/login", "/api/v1/admin/auth/login").permitAll();
             auth.requestMatchers(HttpMethod.GET, "/api/v1/files/{id}").permitAll();

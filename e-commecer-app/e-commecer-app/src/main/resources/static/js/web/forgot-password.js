@@ -26,7 +26,7 @@ $('#customer-reset-form').validate({
 });
 
 // handle reset form submit using axios using valina javascript
-const resetForm = document.getElementById('customer-reset');
+const resetForm = document.getElementById('customer-reset-form');
 resetForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -35,16 +35,16 @@ resetForm.addEventListener('submit', function (e) {
     }
 
     const email = document.getElementById('email').value;
-    const data = {
-        email: email
-    };
-    axios.post('/api/v1/public/auth/reset-password', data)
-        .then(function (response) {
-            console.log(response);
-            toastr.success('Vui lòng kiểm tra email để lấy lại mật khẩu');
+    axios.post(`/api/v1/public/auth/reset-password?email=${email}`)
+        .then((response) => {
+            if (response.status === 200) {
+                toastr.success('Một email đã được gửi đến email của bạn. Vui lòng kiểm tra email để đặt lại mật khẩu');
+            } else {
+                toastr.error('Đã có lỗi xảy ra. Vui lòng thử lại sau');
+            }
         })
-        .catch(function (error) {
+        .catch((error) => {
             console.log(error);
-            toastr.error('Email không tồn tại');
+            toastr.error(error.response.data.message);
         });
 });
