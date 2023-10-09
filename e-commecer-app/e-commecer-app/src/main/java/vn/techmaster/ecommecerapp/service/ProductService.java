@@ -66,7 +66,8 @@ public class ProductService {
 
     // get products list same category with product id and get by limit
     public List<ProductPublic> findAllProductByCategoryIdAndProductIdNot(Long categoryId, Long productId, int limit) {
-        List<Product> products = productRepository.findByCategory_CategoryIdAndProductIdNot(categoryId, productId);
+        List<Product> products = productRepository
+                .findByCategory_CategoryIdAndProductIdNotAndStatusIn(categoryId, productId, List.of(Product.Status.AVAILABLE));
         return products.stream().map(ProductPublic::of).limit(limit).toList();
     }
 
@@ -83,9 +84,20 @@ public class ProductService {
         Page<Product> pageData;
 
         if (sub != null && !sub.isEmpty()) {
-            pageData = productRepository.findByCategory_ParentCategory_SlugIgnoreCaseAndCategory_SlugIgnoreCase(slug, sub, PageRequest.of(page - 1, size));
+            pageData = productRepository
+                    .findByCategory_ParentCategory_SlugIgnoreCaseAndCategory_SlugIgnoreCaseAndStatusIn(
+                            slug,
+                            sub,
+                            List.of(Product.Status.AVAILABLE),
+                            PageRequest.of(page - 1, size)
+                    );
         } else {
-            pageData = productRepository.findByCategory_ParentCategory_SlugIgnoreCase(slug, PageRequest.of(page - 1, size));
+            pageData = productRepository
+                    .findByCategory_ParentCategory_SlugIgnoreCaseAndStatusIn(
+                            slug,
+                            List.of(Product.Status.AVAILABLE),
+                            PageRequest.of(page - 1, size)
+                    );
         }
 
         return pageData.map(ProductPublic::of);
@@ -93,8 +105,9 @@ public class ProductService {
 
     // get all product has discount valid date (not expies) and pagination with param page and size
     public Map<String, Object> findAllProductHasDiscountValidDate(Integer page, Integer size) {
-        Page<Product> pageData = productRepository.findByDiscounts_Status(
+        Page<Product> pageData = productRepository.findByDiscounts_StatusAndStatusIn(
                 DiscountCampaign.Status.ACTIVE,
+                List.of(Product.Status.AVAILABLE),
                 PageRequest.of(page - 1, size)
         );
         return Map.of(
@@ -112,8 +125,9 @@ public class ProductService {
         List<CategorySeparatePublic> categories = categoryService.findAllByParentCategoryIsNull();
         List<Map<String, Object>> data = new ArrayList<>();
         categories.forEach(category -> {
-            Page<Product> pageData = productRepository.findByCategory_ParentCategory_SlugIgnoreCase(
+            Page<Product> pageData = productRepository.findByCategory_ParentCategory_SlugIgnoreCaseAndStatusIn(
                     category.getMainCategory().getSlug(),
+                    List.of(Product.Status.AVAILABLE),
                     PageRequest.of(page - 1, size)
             );
             Map<String, Object> map = Map.of(
@@ -144,8 +158,9 @@ public class ProductService {
         if (categorySlug == null || categorySlug.isEmpty()) {
             return findAllProductHasDiscountValidDate(page, size);
         }
-        Page<Product> pageData = productRepository.findByCategory_ParentCategory_SlugIgnoreCase(
+        Page<Product> pageData = productRepository.findByCategory_ParentCategory_SlugIgnoreCaseAndStatusIn(
                 categorySlug,
+                List.of(Product.Status.AVAILABLE),
                 PageRequest.of(page - 1, size)
         );
         return Map.of(
@@ -190,7 +205,7 @@ public class ProductService {
         product.setStatus(request.getStatus());
         product.setCategory(category);
 
-        if(request.getSupplierId() != null) {
+        if (request.getSupplierId() != null) {
             // check supplier id is existed
             Supplier supplier = supplierRepository.findById(request.getSupplierId())
                     .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id " + request.getSupplierId()));

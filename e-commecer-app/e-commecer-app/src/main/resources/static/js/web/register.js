@@ -84,6 +84,9 @@ registerForm.addEventListener('submit', (e) => {
         .then((res) => {
             if (res.status === 200) {
                 toastr.success('Đăng ký thành công, một email xác nhận đã được gửi đến email của bạn. Vui lòng kiểm tra email để xác nhận tài khoản');
+                setTimeout(() => {
+                    window.location.href = '/dang-nhap';
+                }, 1500);
             } else {
                 toastr.error('Đăng ký thất bại');
             }

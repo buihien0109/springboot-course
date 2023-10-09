@@ -2024,6 +2024,14 @@ ol {
     font-size: 14px;
 }
 
+#modal-review .review-product-content input {
+    height: 40px;
+    border: 1px solid #ebebeb;
+    padding: 0 20px;
+    font-size: 14px;
+    border-radius: 0;
+}
+
 #modal-review .review-product-rating-item {
     font-size: 30px;
     color: #ebebeb;

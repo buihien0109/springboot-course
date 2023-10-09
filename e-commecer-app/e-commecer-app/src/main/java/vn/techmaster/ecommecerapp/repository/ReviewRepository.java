@@ -9,10 +9,10 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByProduct_ProductIdOrderByUpdatedAtDesc(Long productId);
 
+    List<Review> findByProduct_ProductIdAndStatusOrderByUpdatedAtDesc(Long productId, Review.Status status);
+
     @Query("select r from Review r where r.product.productId = ?1 order by r.createdAt DESC")
     List<Review> getAllReviewsByProductId(Long productId);
-
-
 
     List<Review> findByProduct_ProductId(Long productId);
 }

@@ -8,6 +8,7 @@ import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.ReviewPublic;
+import vn.techmaster.ecommecerapp.model.request.CreateReviewAnonymousRequest;
 import vn.techmaster.ecommecerapp.model.request.UpsertReviewRequest;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 import vn.techmaster.ecommecerapp.repository.ReviewRepository;
@@ -23,6 +24,17 @@ public class ReviewService {
 
     public List<ReviewPublic> getAllReviewsByProductId(Long productId) {
         List<Review> reviews = reviewRepository.findByProduct_ProductIdOrderByUpdatedAtDesc(productId);
+
+        // covert reviews to List<ReviewPublic> and sort items by updatedAt desc using stream
+        return reviews.stream()
+                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+                .map(ReviewPublic::of)
+                .toList();
+    }
+
+    public List<ReviewPublic> getAllReviewsAvailableByProductId(Long productId) {
+        List<Review> reviews = reviewRepository
+                .findByProduct_ProductIdAndStatusOrderByUpdatedAtDesc(productId, Review.Status.ACCEPTED);
 
         // covert reviews to List<ReviewPublic> and sort items by updatedAt desc using stream
         return reviews.stream()
@@ -57,12 +69,51 @@ public class ReviewService {
         review.setProduct(product);
         review.setRating(request.getRating());
         review.setComment(request.getComment());
+        review.setStatus(Review.Status.ACCEPTED);
 
         // save review
         reviewRepository.save(review);
 
         // return review
         return ReviewPublic.of(review);
+    }
+
+    public ReviewPublic createReviewAnonymous(CreateReviewAnonymousRequest request) {
+        // get product id from request
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm!"));
+
+        // create review
+        Review review = new Review();
+        review.setAuthorName(request.getAuthorName());
+        review.setAuthorEmail(request.getAuthorEmail());
+        review.setAuthorPhone(request.getAuthorPhone());
+        review.setAuthorAvatar(generateLinkAuthorAvatar(request.getAuthorName()));
+        review.setProduct(product);
+        review.setRating(request.getRating());
+        review.setComment(request.getComment());
+        review.setStatus(Review.Status.PENDING);
+
+        // save review
+        reviewRepository.save(review);
+
+        // return review
+        return ReviewPublic.of(review);
+    }
+
+    // get character first each of word from string, and to uppercase
+    public String getCharacter(String str) {
+        String[] words = str.split(" ");
+        StringBuilder result = new StringBuilder();
+        for (String word : words) {
+            result.append(word.charAt(0));
+        }
+        return result.toString().toUpperCase();
+    }
+
+    // generate link author avatar follow struct : https://placehold.co/200x200?text=[...]
+    public String generateLinkAuthorAvatar(String authorName) {
+        return "https://placehold.co/200x200?text=" + getCharacter(authorName);
     }
 
     public ReviewPublic updateReview(UpsertReviewRequest request, Long id) {

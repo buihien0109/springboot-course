@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{})}">
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #content}, ~{:: #js})}">
 
 <head>
     <title th:text="${blog.title}">Post Detail</title>
@@ -71,8 +71,10 @@
                     </div>
                 </div>
                 <div class="col-lg-8 col-md-7 order-md-1 order-1">
-                    <div class="blog__details__text" th:text="${blog.content}">
-
+                    <div class="blog__details__text">
+                        <md-block>
+                            <th:block th:text="${blog.content}"></th:block>
+                        </md-block>
                     </div>
                     <div class="blog__details__content">
                         <div class="row">
@@ -132,7 +134,12 @@
                             </ul>
                             <h5><a th:href="@{/bai-viet/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}"
                                    th:text="${blog.title}">6 ways to prepare breakfast for 30</a></h5>
-                            <p th:text="|${#strings.substring(blog.description, 0, 50)} ...|">Sed quia non
+                            <p th:if="${#strings.length(blog.description) >= 50}"
+                               th:text="|${#strings.substring(blog.description, 0, 50)} ...|">Sed quia non
+                                numquam modi tempora indunt ut labore et dolore magnam aliquam
+                                quaerat </p>
+                            <p th:if="${#strings.length(blog.description) < 50}" th:text="${blog.description}">
+                                Sed quia non
                                 numquam modi tempora indunt ut labore et dolore magnam aliquam
                                 quaerat </p>
                         </div>
@@ -142,6 +149,9 @@
         </div>
     </section>
     <!-- Related Blog Section End -->
+</th:block>
+<th:block id="js">
+    <script type="module" src="https://md-block.verou.me/md-block.js"></script>
 </th:block>
 </body>
 

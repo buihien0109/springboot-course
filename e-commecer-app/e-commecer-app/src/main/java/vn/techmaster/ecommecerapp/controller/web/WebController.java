@@ -56,7 +56,7 @@ public class WebController {
         ProductPublic product = productService.findById(id);
         model.addAttribute("product", product);
         model.addAttribute("relatedProducts", productService.findAllProductByCategoryIdAndProductIdNot(product.getCategory().getCategoryId(), id, 4));
-        model.addAttribute("reviews", reviewService.getAllReviewsByProductId(id));
+        model.addAttribute("reviews", reviewService.getAllReviewsAvailableByProductId(id));
         return "web/product-detail";
     }
 

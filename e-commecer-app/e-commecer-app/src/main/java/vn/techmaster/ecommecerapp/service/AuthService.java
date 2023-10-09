@@ -35,6 +35,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final MailService mailService;
+    private final CartService cartService;
+    private final WishListService wishListService;
 
     // create method for login
     public void login(LoginRequest request, HttpSession session) {
@@ -47,6 +49,12 @@ public class AuthService {
             Authentication authentication = authenticationManager.authenticate(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             session.setAttribute("MY_SESSION", authentication.getName());
+
+            // Synchronize the user's shopping cart with the shopping cart in cookies
+            cartService.syncCart();
+
+            // Synchonize the user's wishlist with the wishlist in cookies
+            wishListService.syncWishList();
         } catch (AuthenticationException e) {
             throw new BadRequestException(e.getMessage());
         }
@@ -70,6 +78,12 @@ public class AuthService {
             } else {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 session.setAttribute("MY_SESSION", authentication.getName());
+
+                // Synchronize the user's shopping cart with the shopping cart in cookies
+                cartService.syncCart();
+
+                // Synchonize the user's wishlist with the wishlist in cookies
+                wishListService.syncWishList();
             }
         } catch (AuthenticationException e) {
             // log type of exception

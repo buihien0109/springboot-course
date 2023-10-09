@@ -16,6 +16,7 @@ import vn.techmaster.ecommecerapp.repository.WishListRepository;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
 import vn.techmaster.ecommecerapp.utils.WishListUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -157,5 +158,33 @@ public class WishListService {
         // delete wish list from cookie
         wishListInCookies.removeIf(wishListItem -> wishListItem.getWishlistId().equals(wishListId));
         WishListUtils.setWishListsToCookie(httpServletResponse, wishListInCookies);
+    }
+
+    public void syncWishList() {
+        // get wish list from cookie
+        List<WishListInCookie> wishListInCookies = WishListUtils.getWishListsFromCookie(httpServletRequest);
+
+        // get user from SecurityContextHolder
+        User user = SecurityUtils.getCurrentUserLogin();
+
+        if (user != null) {
+            // check if product is already in wishlist. if has, dont do nothing. if not, create new wishlist
+            wishListInCookies.forEach(wishListItem -> {
+                if (wishListRepository.existsByUser_UserIdAndProduct_ProductId(user.getUserId(), wishListItem.getProductId())) {
+                    return;
+                }
+
+                Product product = productRepository.findById(wishListItem.getProductId())
+                        .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm"));
+
+                WishList wishList = new WishList();
+                wishList.setProduct(product);
+                wishList.setUser(user);
+                wishListRepository.save(wishList);
+            });
+
+            // delete wish list in cookie
+            WishListUtils.setWishListsToCookie(httpServletResponse, new ArrayList<>());
+        }
     }
 }

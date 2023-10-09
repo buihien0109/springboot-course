@@ -19,6 +19,7 @@ import vn.techmaster.ecommecerapp.repository.ProductRepository;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
 import vn.techmaster.ecommecerapp.utils.CartUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -175,5 +176,45 @@ public class CartService {
 
     public void saveCart(Cart cart) {
         cartRepository.save(cart);
+    }
+
+    public void syncCart() {
+        // get cart from cookie
+        List<CartItemInCookie> cartItemInCookies = CartUtils.getCartFromCookie(httpServletRequest);
+        log.info("cartItemInCookies: {}", cartItemInCookies);
+
+        // get user from SecurityContextHolder
+        User user = SecurityUtils.getCurrentUserLogin();
+
+        if (user != null) {
+            // check user has cart or not
+            // if user has cart, add product to cart
+            // if user has not cart, create new cart and add product to cart
+            Cart cart = cartRepository.findByUser_UserId(user.getUserId()).orElseGet(() -> {
+                Cart newCart = new Cart();
+                newCart.setUser(user);
+                return cartRepository.save(newCart);
+            });
+
+            // check if product is already in cart. if has, increase quantity. if not, add product to cart
+            cartItemInCookies.forEach(cartItemInCookie -> {
+                cart.getCartItems().stream()
+                        .filter(cartItem -> cartItem.getProduct().getProductId().equals(cartItemInCookie.getProductId())).findFirst().ifPresentOrElse(cartItem -> cartItem.setQuantity(cartItem.getQuantity() + cartItemInCookie.getQuantity()), () -> {
+                            Product product = productRepository.findById(cartItemInCookie.getProductId())
+                                    .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm"));
+                            CartItem cartItem = new CartItem();
+                            cartItem.setProduct(product);
+                            cartItem.setQuantity(cartItemInCookie.getQuantity());
+                            cart.addCartItem(cartItem);
+                        });
+            });
+
+            // update cart
+            cartRepository.save(cart);
+
+            // delete cart in cookie
+            CartUtils.setCartToCookie(httpServletResponse, new ArrayList<>());
+        }
+
     }
 }

@@ -41,7 +41,8 @@
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
                             <img class="product__details__pic__item--large"
-                                 th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'}" alt="">
+                                 th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'}"
+                                 alt="">
                         </div>
                         <div class="product__details__pic__slider owl-carousel">
                             <th:block th:if="not ${#lists.isEmpty(product.images.subImages)}">
@@ -74,22 +75,26 @@
                             Vestibulum ac diam sit amet quam
                             vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Vestibulum ac diam sit amet
                             quam vehicula elementum sed sit amet dui. Proin eget tortor risus.</p>
-                        <div class="product__details__quantity">
-                            <div class="quantity">
-                                <div class="pro-qty">
-                                    <span class="dec qtybtn">-</span>
-                                    <input type="text" value="1" readonly>
-                                    <span class="inc qtybtn">+</span>
+                        <th:block
+                                th:if="${product.status == T(vn.techmaster.ecommecerapp.entity.Product.Status).AVAILABLE}">
+                            <div class="product__details__quantity">
+                                <div class="quantity">
+                                    <div class="pro-qty">
+                                        <span class="dec qtybtn">-</span>
+                                        <input type="text" value="1" readonly>
+                                        <span class="inc qtybtn">+</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <button class="border-0 primary-btn btn-add-to-card">THÊM VÀO GIỎ HÀNG</button>
-                        <button class="border-0 heart-icon btn-add-to-wishlist"><span class="icon_heart_alt"></span>
-                        </button>
+                            <button class="border-0 primary-btn btn-add-to-card">THÊM VÀO GIỎ HÀNG</button>
+                            <button class="border-0 heart-icon btn-add-to-wishlist"><span class="icon_heart_alt"></span>
+                            </button>
+                        </th:block>
                         <ul>
-                            <li><b>Tình trạng</b> <span th:if="${product.stockQuantity == 0 ? 'Hết hàng' : 'Còn hàng'}">Còn hàng</span>
+                            <li><b>Tình trạng</b> <span th:text="${product.status.getDisplayValue()}">Còn hàng</span>
                             </li>
-                            <li th:if="${product.stockQuantity > 0}"><b>Số lượng</b> <span
+                            <li th:if="${product.status == T(vn.techmaster.ecommecerapp.entity.Product.Status).AVAILABLE}">
+                                <b>Số lượng</b> <span
                                     th:text="${product.stockQuantity}">1</span></li>
                         </ul>
                     </div>
@@ -136,7 +141,8 @@
                                                     <div class="rating mb-2">
 
                                                     </div>
-                                                    <p class="mb-0"><span class="review-count d-inline-block m-0"></span> đánh giá</p>
+                                                    <p class="mb-0"><span
+                                                            class="review-count d-inline-block m-0"></span> đánh giá</p>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -178,18 +184,19 @@
     </section>
 
     <!-- Modal -->
-    <div class="modal fade" id="modal-review" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-review" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Đánh giá sản phẩm</h5>
+                    <h5 class="modal-title">Đánh giá sản phẩm</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="review-product-info text-center">
-                        <img th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'}" alt="">
+                        <img th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'}"
+                             alt="">
                         <p th:text="${product.name}"></p>
                     </div>
                     <div class="review-product-rating">
@@ -210,7 +217,37 @@
                         </div>
                     </div>
                     <div class="review-product-content">
-                        <textarea id="review-content" placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm"></textarea>
+                        <form id="form-review">
+                            <div class="row" th:if="${isLogin == false}">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Họ tên" name="name"
+                                               id="author-name">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Email" name="email"
+                                               id="author-email">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Số điện thoại" name="phone"
+                                               id="author-phone">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                    <textarea id="review-content" placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm"
+                                              class="form-control" name="content"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
                     </div>
                     <div class="review-product-btn d-flex justify-content-center">
                         <button class="border-0 primary-btn mt-2" id="btn-send-review">Hoàn tất</button>
@@ -268,10 +305,15 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script th:inline="javascript">
         const product = [[${product}]];
+        const relatedProducts = [[${relatedProducts}]];
         const reviews = [[${reviews}]];
-        console.log({product, reviews});
+        console.log({product, relatedProducts, reviews});
     </script>
-    <script src="/js/web/product-detail.js"></script>
+    <script src="/js/web/product-detail/common.js"></script>
+    <script th:if="${product.status == T(vn.techmaster.ecommecerapp.entity.Product.Status).AVAILABLE}"
+            src="/js/web/product-detail/product-detail.js"></script>
+    <script th:if="${isLogin == true}" src="/js/web/product-detail/review.js"></script>
+    <script th:if="${isLogin == false}" src="/js/web/product-detail/review-anonymous.js"></script>
 </th:block>
 </body>
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.techmaster.ecommecerapp.entity.Review;
+import vn.techmaster.ecommecerapp.model.request.CreateReviewAnonymousRequest;
 import vn.techmaster.ecommecerapp.model.request.UpsertReviewRequest;
 import vn.techmaster.ecommecerapp.service.ReviewService;
 
@@ -16,6 +17,11 @@ public class ReviewResources {
     @PostMapping("/public/reviews")
     public ResponseEntity<?> createReview(@RequestBody UpsertReviewRequest request) {
         return ResponseEntity.ok(reviewService.createReview(request));
+    }
+
+    @PostMapping("/public/reviews/anonymous")
+    public ResponseEntity<?> createReviewAnonymous(@RequestBody CreateReviewAnonymousRequest request) {
+        return ResponseEntity.ok(reviewService.createReviewAnonymous(request));
     }
 
     @PutMapping("/public/reviews/{id}")
