@@ -3,6 +3,26 @@ $(".select2").select2({
     placeholder: "Chọn danh mục",
 });
 
+function uploadFileIDE(file, onSuccess, onError) {
+    console.log(file)
+    const formData = new FormData();
+    formData.append("file", file);
+
+    axios.post("/api/v1/files", formData).then((res) => {
+        if (res.status === 200) {
+            const imageUrl = `/api/v1/files/${res.data.id}`; // URL của hình ảnh đã tải lên
+            const cursorPosition = easyMDE.codemirror.getCursor(); // Lấy vị trí con trỏ
+            const imageMarkdown = '!'; // Tạo đoạn Markdown cho hình ảnh
+            easyMDE.codemirror.replaceRange(imageMarkdown, cursorPosition); // Chèn đoạn Markdown vào trình soạn thảo
+            onSuccess(imageUrl);
+        } else {
+            onError("Lỗi khi tải lên hình ảnh");
+        }
+    }).catch((err) => {
+        onError(err.response.data.message);
+    });
+}
+
 // Initialize editor
 const easyMDE = new EasyMDE({
     element: document.getElementById("content"),
@@ -11,6 +31,8 @@ const easyMDE = new EasyMDE({
     renderingConfig: {
         codeSyntaxHighlighting: true,
     },
+    uploadImage: true,
+    imageUploadFunction: uploadFileIDE
 });
 
 // TODO : Chưa validate được nội dung của EasyMDE
