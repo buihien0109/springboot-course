@@ -93,10 +93,10 @@
                                 <div class="blog__details__widget">
                                     <ul>
                                         <li>
-                                            <span>Categories:</span>
-                                            <span class="d-inline-block mr-1 font-weight-normal"
+                                            <span>Danh mục:</span>
+                                            <a th:href="@{/bai-viet (tag=${tag.slug})}" class="text-primary d-inline-block mr-1 font-weight-normal"
                                                   th:each="tag, state : ${blog.tags}"
-                                                  th:text="${state.last ? tag.name : tag.name + ', '}"></span></li>
+                                                  th:text="${state.last ? tag.name : tag.name + ', '}"></a></li>
                                     </ul>
                                 </div>
                             </div>
