@@ -63,6 +63,7 @@ let idUpdate = null;
 let userSelected = null;
 let userAddressSelected = null;
 let userAddressList = [];
+let couponSelected = null;
 const modalTitleEl = document.querySelector('#modal-product .modal-title');
 const quantityEl = document.getElementById('quantity');
 const productEl = document.getElementById('product');
@@ -101,10 +102,10 @@ $('#modal-product').on('hidden.bs.modal', function (e) {
 })
 
 const renderProducts = () => {
-    const productSelected = document.getElementById('product-selected');
-    productSelected.innerHTML = '';
+    const productTableContentEl = document.getElementById('product-table-content');
+    productTableContentEl.innerHTML = '';
     productsSelected.forEach((product, index) => {
-        const productSelectedHtml = `
+        const html = `
                 <tr>
                     <td>${index + 1}</td>
                     <td>${product.productName}</td>
@@ -122,7 +123,7 @@ const renderProducts = () => {
                     </td>
                 </tr>
             `;
-        productSelected.innerHTML += productSelectedHtml;
+        productTableContentEl.innerHTML += html;
     })
     // render total amount at the end of table
     const totalAmount = getTotalAmount();
@@ -132,11 +133,82 @@ const renderProducts = () => {
             <td colspan="1">${formatCurrency(totalAmount)}</td>
         </tr>
     `;
-    productSelected.innerHTML += totalAmountHtml;
+    productTableContentEl.innerHTML += totalAmountHtml;
 
     // update total product
     const totalProduct = document.getElementById('total-product');
     totalProduct.innerHTML = productsSelected.length.toString();
+
+    // if productsSelected is empty remove button coupon and modal coupon. otherwise, add button coupon and modal coupon
+    if(productsSelected.length === 0) {
+        hideCoupon();
+    } else {
+        showCoupon();
+    }
+}
+
+const couponInfoEl = document.getElementById('coupon-info');
+const hideCoupon = () => {
+    couponInfoEl.innerHTML = '';
+}
+
+const showCoupon = () => {
+    couponInfoEl.innerHTML = `
+        <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#modal-coupon">Thêm mã giảm giá</button>
+        <div class="modal fade" id="modal-coupon">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Chọn mã giảm giá</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>Coupon code</th>
+                                <th>Mức giảm</th>
+                                <th>Tổng tiền</th>
+                                <th>Tổng tiền sau khuyến mại</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                ${renderCoupon()}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+}
+
+const renderCoupon = () => {
+    let html = '';
+    couponList.forEach((coupon, index) => {
+        html += `
+            <tr>
+                <td>${coupon.code}</td>
+                <td>${coupon.discount}</td>
+                <td>${formatCurrency(getTotalAmount())}</td>
+                <td>${formatCurrency(Math.round(getTotalAmount() * (100 - coupon.discount) / 100))}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="chooseCoupon(${index})">
+                        Chọn
+                    </button>
+                </td>
+            </tr>
+        `
+    })
+    return html;
+}
+
+const chooseCoupon = (index) => {
+    couponSelected = couponList[index];
+    $('#modal-coupon').modal('hide');
 }
 
 const getTotalAmount = () => {
@@ -433,14 +505,14 @@ const displayUserSelected = (userSelected) => {
                     </div>
                     <div class="modal-body">
                         <table class="table table-bordered table-hover">
-                            <tbody>
+                            <thead>
                                 <tr>
                                     <th>STT</th>
                                     <th>Địa chỉ</th>
                                     <th>Mặc định</th>
                                     <th></th>
                                 </tr>
-                            </tbody>
+                            </thead>
                             <tbody>
                                 ${userAddressList.map((address, index) => {
                                     return `
@@ -553,5 +625,8 @@ const cancelUser = () => {
 
     userInformation.innerHTML = '';
 }
+
+// ----------------- handle add coupon -----------------
+
 
 // ----------------- handle create order -----------------

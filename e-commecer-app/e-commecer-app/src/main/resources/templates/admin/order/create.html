@@ -188,13 +188,16 @@
                                             <th></th>
                                         </tr>
                                         </thead>
-                                        <tbody id="product-selected">
+                                        <tbody id="product-table-content">
 
                                         </tbody>
                                     </table>
-                                    <div>
+                                    <div class="d-flex justify-content-between align-items-center">
                                         <button class="btn btn-primary" onclick="openModalCreateProduct()">Thêm sản phẩm
                                         </button>
+                                        <div id="coupon-info">
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -248,8 +251,8 @@
     <script th:inline="javascript">
         const productList = [[${products}]];
         const userList = [[${users}]];
-        console.log(productList);
-        console.log(userList);
+        const couponList = [[${coupons}]];
+        console.log({productList, userList, couponList});
     </script>
     <script th:src="@{/admin-assets/assets/js/order/create.js}"></script>
 </th:block>

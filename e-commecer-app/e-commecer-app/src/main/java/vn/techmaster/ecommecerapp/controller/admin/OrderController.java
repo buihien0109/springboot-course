@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import vn.techmaster.ecommecerapp.entity.OrderTable;
 import vn.techmaster.ecommecerapp.entity.Product;
+import vn.techmaster.ecommecerapp.service.CouponService;
 import vn.techmaster.ecommecerapp.service.OrderService;
 import vn.techmaster.ecommecerapp.service.ProductService;
 import vn.techmaster.ecommecerapp.service.UserService;
@@ -21,6 +22,7 @@ public class OrderController {
     private final OrderService orderService;
     private final ProductService productService;
     private final UserService userService;
+    private final CouponService couponService;
 
     @GetMapping
     public String getOrderPage(Model model) {
@@ -34,6 +36,7 @@ public class OrderController {
         model.addAttribute("paymentMethodList", OrderTable.PaymentMethod.values());
         model.addAttribute("shippingMethodList", OrderTable.ShippingMethod.values());
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("coupons", couponService.getAllCouponValid());
         return "admin/order/create";
     }
 

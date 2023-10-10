@@ -42,6 +42,11 @@ public class CouponService {
         return true;
     }
 
+    // Lấy tất cả coupon khả dụng
+    public List<Coupon> getAllCouponValid() {
+        return couponRepository.findAllByValidFromBeforeAndValidToAfter(new Date(), new Date());
+    }
+
 
     public List<Coupon> getAllCoupons() {
         return couponRepository.findAll();
