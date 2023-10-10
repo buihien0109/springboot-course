@@ -3,9 +3,8 @@ package vn.techmaster.ecommecerapp.model.projection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Blog;
-import vn.techmaster.ecommecerapp.entity.Tag;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public interface BlogPublic {
@@ -21,11 +20,11 @@ public interface BlogPublic {
 
     String getThumbnail();
 
-    LocalDateTime getCreatedAt(); // dd/MM/yyyy
+    Date getCreatedAt(); // dd/MM/yyyy
 
-    LocalDateTime getUpdatedAt(); // dd/MM/yyyy
+    Date getUpdatedAt(); // dd/MM/yyyy
 
-    LocalDateTime getPublishedAt(); // dd/MM/yyyy
+    Date getPublishedAt(); // dd/MM/yyyy
 
     Boolean getStatus();
 
@@ -71,17 +70,17 @@ public interface BlogPublic {
         }
 
         @Override
-        public LocalDateTime getCreatedAt() {
+        public Date getCreatedAt() {
             return this.blog.getCreatedAt();
         }
 
         @Override
-        public LocalDateTime getUpdatedAt() {
+        public Date getUpdatedAt() {
             return this.blog.getUpdatedAt();
         }
 
         @Override
-        public LocalDateTime getPublishedAt() {
+        public Date getPublishedAt() {
             return this.blog.getPublishedAt();
         }
 

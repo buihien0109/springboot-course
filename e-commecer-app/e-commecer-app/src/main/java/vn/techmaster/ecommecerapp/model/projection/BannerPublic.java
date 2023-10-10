@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Banner;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public interface BannerPublic {
     Integer getId();
@@ -19,9 +19,9 @@ public interface BannerPublic {
 
     Boolean getStatus();
 
-    LocalDateTime getCreatedAt();
+    Date getCreatedAt();
 
-    LocalDateTime getUpdatedAt();
+    Date getUpdatedAt();
 
     @RequiredArgsConstructor
     class BannerPublicImpl implements BannerPublic {
@@ -59,12 +59,12 @@ public interface BannerPublic {
         }
 
         @Override
-        public LocalDateTime getCreatedAt() {
+        public Date getCreatedAt() {
             return banner.getCreatedAt();
         }
 
         @Override
-        public LocalDateTime getUpdatedAt() {
+        public Date getUpdatedAt() {
             return banner.getUpdatedAt();
         }
     }

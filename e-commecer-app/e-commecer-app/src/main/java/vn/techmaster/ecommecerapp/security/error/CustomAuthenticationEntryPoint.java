@@ -13,6 +13,10 @@ import java.io.IOException;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        if (request.getRequestURI().startsWith("/api/v1/admin") || request.getRequestURI().startsWith("/admin")) {
+            response.sendRedirect("/admin/login");
+            return;
+        }
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
 }

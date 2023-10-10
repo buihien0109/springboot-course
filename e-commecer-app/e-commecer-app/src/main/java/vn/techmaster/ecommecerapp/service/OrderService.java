@@ -180,4 +180,32 @@ public class OrderService {
                 .map(OrderTablePublic::of)
                 .toList();
     }
+
+    public OrderTablePublic createOrderByAdmin(OrderRequest orderRequest) {
+        // check user id is exist
+        return null;
+    }
+
+    public OrderTablePublic updateOrderByAdmin(Long id, OrderRequest orderRequest) {
+        return null;
+    }
+
+    public void cancelOrderByAdmin(Long id) {
+        // find order by id
+        OrderTable orderTable = orderTableRepository.findById(id)
+                .orElseThrow(() -> new ResouceNotFoundException("Order not found"));
+
+        // update order status to CANCELED
+        orderTable.setStatus(OrderTable.Status.CANCELED);
+
+        // save order to database
+        orderTableRepository.save(orderTable);
+
+        // update product quantity
+        orderTable.getOrderItems().forEach(item -> {
+            Product product = item.getProduct();
+            product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
+            productRepository.save(product);
+        });
+    }
 }

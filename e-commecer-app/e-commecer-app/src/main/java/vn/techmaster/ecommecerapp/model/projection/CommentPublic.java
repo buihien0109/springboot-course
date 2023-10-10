@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Comment;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public interface CommentPublic {
     Integer getId();
 
     String getContent();
 
-    LocalDateTime getCreatedAt();
+    Date getCreatedAt();
 
-    LocalDateTime getUpdatedAt();
+    Date getUpdatedAt();
 
     AuthorCommentPublic getUser();
 
@@ -33,12 +33,12 @@ public interface CommentPublic {
         }
 
         @Override
-        public LocalDateTime getCreatedAt() {
+        public Date getCreatedAt() {
             return this.comment.getCreatedAt();
         }
 
         @Override
-        public LocalDateTime getUpdatedAt() {
+        public Date getUpdatedAt() {
             return this.comment.getUpdatedAt();
         }
 

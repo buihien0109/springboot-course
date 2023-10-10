@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+    List<Product> findByStatusIn(List<Product.Status> status);
+
     List<Product> findByCategory_CategoryId(Long categoryId);
 
     // get all product has discount active

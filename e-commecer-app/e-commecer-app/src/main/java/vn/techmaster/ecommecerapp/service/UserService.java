@@ -8,8 +8,10 @@ import vn.techmaster.ecommecerapp.constant.ConstantValue;
 import vn.techmaster.ecommecerapp.entity.FileServer;
 import vn.techmaster.ecommecerapp.entity.Role;
 import vn.techmaster.ecommecerapp.entity.User;
+import vn.techmaster.ecommecerapp.entity.UserAddress;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.projection.UserAddressPublic;
 import vn.techmaster.ecommecerapp.model.projection.UserPublic;
 import vn.techmaster.ecommecerapp.model.request.CreateUserRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdatePasswordRequest;
@@ -29,6 +31,7 @@ public class UserService {
     private final FileServerService fileServerService;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final UserAddressService userAddressService;
 
     // get all user return list userpublic
     public List<UserPublic> getAllUsers() {
@@ -140,5 +143,10 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(ConstantValue.PASSWORD_DEFAULT));
         userRepository.save(user);
         return ConstantValue.PASSWORD_DEFAULT;
+    }
+
+    public List<UserAddressPublic> getAllAddress(Long id) {
+        List<UserAddress> addressList = userAddressService.findAllAddressByUserId(id);
+        return addressList.stream().map(UserAddressPublic::of).toList();
     }
 }

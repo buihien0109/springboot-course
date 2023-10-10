@@ -1,11 +1,13 @@
 package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,29 +52,30 @@ public class OrderTable {
     private Integer couponDiscount;
 
     @Transient
-    private BigDecimal totalAmount;
+    private Integer totalAmount;
 
     @Transient
-    private BigDecimal temporaryAmount;
+    private Integer temporaryAmount;
 
     @Transient
-    private BigDecimal discountAmount;
+    private Integer discountAmount;
 
-    public BigDecimal getTotalAmount() {
-        return this.getTemporaryAmount().subtract(this.getDiscountAmount());
+    public Integer getTotalAmount() {
+        return this.getTemporaryAmount() - this.getDiscountAmount();
     }
 
-    public BigDecimal getTemporaryAmount() {
-        return this.getOrderItems().stream()
-                .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity()))).
-                reduce(BigDecimal.ZERO, BigDecimal::add);
+    public Integer getTemporaryAmount() {
+        return this.getOrderItems()
+                .stream()
+                .mapToInt(orderItem -> orderItem.getPrice() * orderItem.getQuantity())
+                .sum();
     }
 
-    public BigDecimal getDiscountAmount() {
-        if(this.getCouponCode() == null || this.getCouponCode().isBlank()) {
-            return BigDecimal.ZERO;
+    public Integer getDiscountAmount() {
+        if (this.getCouponCode() == null || this.getCouponCode().isBlank()) {
+            return 0;
         }
-        return this.getTemporaryAmount().multiply(new BigDecimal(this.getCouponDiscount())).divide(new BigDecimal(100));
+        return this.getTemporaryAmount() * this.getCouponDiscount() / 100;
     }
 
     @ManyToOne

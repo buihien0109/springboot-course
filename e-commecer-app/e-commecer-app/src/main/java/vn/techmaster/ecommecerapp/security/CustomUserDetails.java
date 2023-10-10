@@ -22,6 +22,10 @@ public class CustomUserDetails implements UserDetails {
         return this.user.getAvatar();
     }
 
+    public String getName() {
+        return this.user.getUsername();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.user.getRoles().stream()

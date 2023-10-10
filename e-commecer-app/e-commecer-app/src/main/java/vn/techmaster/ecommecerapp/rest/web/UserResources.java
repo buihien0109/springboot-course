@@ -40,4 +40,10 @@ public class UserResources {
     public ResponseEntity<?> resetPassword(@PathVariable Long id) {
         return ResponseEntity.ok(userService.resetPassword(id));
     }
+
+    // get all address of user
+    @GetMapping("/{id}/addresses")
+    public ResponseEntity<?> getAllAddress(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getAllAddress(id));
+    }
 }

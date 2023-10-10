@@ -47,6 +47,12 @@ public class ProductService {
                 .map(ProductPublic::of).toList();
     }
 
+    public List<ProductPublic> getAllProductsByStatus(List<Product.Status> statusList) {
+        List<Product> products = productRepository.findByStatusIn(statusList);
+        return products.stream()
+                .map(ProductPublic::of).toList();
+    }
+
     public ProductPublic findById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Cannot find product by id " + id));

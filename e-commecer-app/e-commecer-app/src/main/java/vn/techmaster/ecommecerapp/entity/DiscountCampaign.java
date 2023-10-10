@@ -36,7 +36,7 @@ public class DiscountCampaign {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToMany(mappedBy = "discounts")
+    @ManyToMany(mappedBy = "discounts", fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private Set<Product> products = new LinkedHashSet<>();
 

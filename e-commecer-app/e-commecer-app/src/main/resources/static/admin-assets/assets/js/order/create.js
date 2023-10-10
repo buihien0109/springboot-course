@@ -1,0 +1,557 @@
+const formatPrice = (price) => {
+    return parseInt(price.replace(/,/g, ""));
+}
+
+// ----------------- handle add product -----------------
+// init select2
+$('#product').select2({
+    theme: 'bootstrap4',
+    placeholder: 'Chọn sản phẩm'
+})
+
+$('#user').select2({
+    theme: 'bootstrap4',
+    placeholder: 'Chọn user'
+})
+
+// validate form
+$.validator.addMethod(
+    "validateFormat",
+    function (value, element) {
+        // check if value is number
+        return Number.isInteger(Number(formatPrice(value)))
+    },
+    "Không đúng định dạng"
+);
+
+$('#form-product').validate({
+    rules: {
+        product: {
+            required: true
+        },
+        quantity: {
+            required: true,
+            validateFormat: true,
+            min: 1,
+        }
+    },
+    messages: {
+        product: {
+            required: "Tên sản phẩm không được để trống"
+        },
+        quantity: {
+            required: "Số lượng không được để trống",
+            min: "Số lượng phải lớn hơn 0",
+            validateFormat: "Số lượng không đúng định dạng"
+        }
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+    }
+});
+
+let productsSelected = [];
+let idUpdate = null;
+let userSelected = null;
+let userAddressSelected = null;
+let userAddressList = [];
+const modalTitleEl = document.querySelector('#modal-product .modal-title');
+const quantityEl = document.getElementById('quantity');
+const productEl = document.getElementById('product');
+
+function openModalCreateProduct() {
+    $('#modal-product').modal('show');
+
+    // change title
+    modalTitleEl.innerHTML = 'Thêm sản phẩm';
+}
+
+function openModalUpdateProduct(id) {
+    $('#modal-product').modal('show');
+
+    // change title
+    modalTitleEl.innerHTML = 'Cập nhật sản phẩm';
+
+    // fill data
+    const product = productsSelected.find((product, index) => index === id);
+
+    // Trigger value product using select2
+    $('#product').val(product.productId);
+    $('#product').trigger('change');
+    quantityEl.value = product.quantity;
+
+    idUpdate = id;
+}
+
+// add event modal hidden
+$('#modal-product').on('hidden.bs.modal', function (e) {
+    $('#product').val("");
+    $('#product').trigger('change');
+    quantityEl.value = '';
+
+    idUpdate = null;
+})
+
+const renderProducts = () => {
+    const productSelected = document.getElementById('product-selected');
+    productSelected.innerHTML = '';
+    productsSelected.forEach((product, index) => {
+        const productSelectedHtml = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${product.productName}</td>
+                    <td>${product.quantity}</td>
+                    <td>${formatCurrency(product.price)}</td>
+                    <td>${product.discountPrice ? formatCurrency(product.discountPrice) : ''}</td>
+                    <td>${product.discountPrice ? formatCurrency(product.quantity * product.discountPrice) : formatCurrency(product.quantity * product.price)}</td>
+                    <td>
+                         <button type="button" class="btn btn-primary btn-sm" onclick="openModalUpdateProduct(${index})">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        productSelected.innerHTML += productSelectedHtml;
+    })
+    // render total amount at the end of table
+    const totalAmount = getTotalAmount();
+    const totalAmountHtml = `
+        <tr>
+            <td colspan="5" class="text-right">Tổng tiền</td>
+            <td colspan="1">${formatCurrency(totalAmount)}</td>
+        </tr>
+    `;
+    productSelected.innerHTML += totalAmountHtml;
+
+    // update total product
+    const totalProduct = document.getElementById('total-product');
+    totalProduct.innerHTML = productsSelected.length.toString();
+}
+
+const getTotalAmount = () => {
+    return productsSelected.reduce((total, product) => {
+        if (product.discountPrice != null) {
+            return total + product.quantity * product.discountPrice;
+        }
+        return total + product.quantity * product.price;
+    }, 0);
+}
+
+const deleteProduct = (index) => {
+    const isDelete = confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');
+    if (!isDelete) return;
+
+    productsSelected.splice(index, 1);
+    renderProducts();
+}
+
+// handle add product
+const addProduct = () => {
+    const quantityValue = Number(quantityEl.value);
+    const productSelectedId = Number(productEl.value);
+    const productSelectedName = productEl.options[productEl.selectedIndex].text;
+
+    // check product exist
+    const productExist = productsSelected.find(product => product.productId === productSelectedId);
+    if (productExist) {
+        toastr.error('Sản phẩm đã tồn tại');
+        return;
+    }
+    const productInfo = productList.find(product => product.productId === productSelectedId);
+
+    // check quantity
+    if (quantityValue > productInfo.stockQuantity) {
+        toastr.error('Số lượng sản phẩm không đủ');
+        return;
+    }
+
+    const productSelectedObject = {
+        productId: productSelectedId,
+        productName: productSelectedName,
+        quantity: quantityValue,
+        price: productInfo.price,
+        discountPrice: productInfo.discountPrice
+    }
+    productsSelected.push(productSelectedObject);
+    renderProducts();
+
+    // clear input
+    quantityEl.value = '';
+
+    // close modal
+    $('#modal-product').modal('hide');
+}
+
+// handle update product
+const updateProduct = () => {
+    const quantityValue = Number(quantityEl.value)
+    const productSelectedId = Number(productEl.value);
+    const productSelectedName = productEl.options[productEl.selectedIndex].text;
+
+    // check product exist and different idUpdate
+    const productExist = productsSelected.find((product, index) => product.productId === productSelectedId && index !== idUpdate);
+    if (productExist) {
+        toastr.error('Sản phẩm đã tồn tại');
+        return;
+    }
+
+    const productInfo = productList.find(product => product.productId === productSelectedId);
+
+    // check quantity
+    if (quantityValue > productInfo.stockQuantity) {
+        toastr.error('Số lượng sản phẩm không đủ');
+        return;
+    }
+
+    const productSelectedObject = {
+        productId: productSelectedId,
+        productName: productSelectedName,
+        quantity: quantityValue,
+        price: productInfo.price,
+        discountPrice: productInfo.discountPrice
+    }
+
+    // find product by idUpdate and update
+    for (let i = 0; i < productsSelected.length; i++) {
+        if (i === idUpdate) {
+            productsSelected[i] = productSelectedObject;
+            break;
+        }
+    }
+
+    renderProducts();
+
+    // clear input
+    quantityEl.value = '';
+
+    // reset idUpdate
+    idUpdate = null;
+
+    // close modal
+    $('#modal-product').modal('hide');
+}
+
+const btnHandle = document.getElementById('btn-handle');
+btnHandle.addEventListener("click", () => {
+    if (!$("#form-product").valid()) return;
+
+    if (idUpdate === null) {
+        addProduct();
+    } else {
+        updateProduct();
+    }
+})
+
+// ----------------- handle province -----------------
+// Hiển thị danh sách province vào select id="province"
+const provinceSelect = document.getElementById('province');
+const districtSelect = document.getElementById('district');
+const wardSelect = document.getElementById('ward');
+
+const renderProvince = (provinces) => {
+    provinceSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Tỉnh/Thành phố</option>';
+    districtSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Quận/Huyện</option>';
+    wardSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Xã/Phường</option>';
+
+    provinces.forEach(province => {
+        const {ProvinceID, ProvinceName} = province;
+        const option = document.createElement('option');
+        option.value = ProvinceID;
+        option.innerText = ProvinceName;
+        option.setAttribute('data-province-name', ProvinceName);
+        provinceSelect.appendChild(option);
+    });
+}
+
+const renderDistrict = (districts) => {
+    districtSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Quận/Huyện</option>';
+    districts.forEach(district => {
+        const {DistrictID, DistrictName} = district;
+        const option = document.createElement('option');
+        option.value = DistrictID;
+        option.innerText = DistrictName;
+        option.setAttribute('data-district-name', DistrictName);
+        districtSelect.appendChild(option);
+    });
+}
+
+const renderWard = (wards) => {
+    wardSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Xã/Phường</option>';
+    wards.forEach(ward => {
+        const {WardCode, WardName} = ward;
+        const option = document.createElement('option');
+        option.value = WardCode;
+        option.innerText = WardName;
+        option.setAttribute('data-ward-name', WardName);
+        wardSelect.appendChild(option);
+    });
+}
+
+const getProvinces = async () => {
+    try {
+        const response = await axios.get('/api/v1/public/address/provinces');
+        if (response.status === 200) {
+            const {data} = response.data;
+            renderProvince(data);
+            districtSelect.disabled = true;
+            wardSelect.disabled = true;
+        }
+    } catch (error) {
+        console.log(error);
+        toastr.error('Không thể lấy danh sách tỉnh/thành phố');
+    }
+}
+
+provinceSelect.addEventListener('change', (event) => {
+    const provinceCode = event.target.value;
+    getDistricts(provinceCode);
+    districtSelect.disabled = false;
+    wardSelect.disabled = true;
+    wardSelect.innerHTML = '<option hidden="hidden">-- Chọn Xã/Phường</option>';
+});
+
+const getDistricts = async (provinceId) => {
+    try {
+        const response = await axios.get(`/api/v1/public/address/districts?province_id=${provinceId}`);
+        if (response.status === 200) {
+            const {data} = response.data;
+            renderDistrict(data);
+        }
+    } catch (error) {
+        console.log(error);
+        toastr.error('Không thể lấy danh sách quận/huyện');
+    }
+}
+
+districtSelect.addEventListener('change', (event) => {
+    const districtId = event.target.value;
+    getWards(districtId);
+    wardSelect.disabled = false;
+});
+
+const getWards = async (districtId) => {
+    try {
+        const response = await axios.get(`/api/v1/public/address/wards?district_id=${districtId}`);
+        if (response.status === 200) {
+            const {data} = response.data;
+            renderWard(data);
+        }
+    } catch (error) {
+        console.log(error);
+        toastr.error('Không thể lấy danh sách xã/phường');
+    }
+}
+getProvinces();
+
+// ----------------- handle add user -----------------
+$('#form-user').validate({
+    rules: {
+        user: {
+            required: true
+        }
+    },
+    messages: {
+        user: {
+            required: "User không được để trống"
+        }
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+    }
+});
+
+const userInformation = document.getElementById('user-info');
+const userEl = document.getElementById('user');
+const btnChooseUser = document.getElementById('btn-choose-user');
+const nameEl = document.getElementById('name');
+const phoneEl = document.getElementById('phone');
+const emailEl = document.getElementById('email');
+const addressEl = document.getElementById('address');
+
+btnChooseUser.addEventListener('click', async () => {
+    if (!$("#form-user").valid()) return;
+
+    const userId = Number(userEl.value);
+    const user = userList.find(user => user.userId === Number(userId));
+    if (user) {
+        await getAddressOfUser(userId);
+        displayUserSelected(user);
+        fillDataUserSelected(user);
+
+        // update userSelected
+        userSelected = user;
+
+        // close modal
+        $('#modal-user').modal('hide');
+    }
+})
+
+const displayUserSelected = (userSelected) => {
+    userInformation.innerHTML = `
+        <div class="card">
+            <div class="card-body">
+                <h5 class="mb-4 text-muted">User đang chọn</h5>
+                <div class="d-flex">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <img src="${userSelected.avatar}" alt="" class="rounded-circle" width="100" height="100">
+                        <span class="d-inline-block badge badge-secondary mt-3">${userSelected.username}</span>
+                    </div>
+                    <div class="ml-4 d-flex flex-column justify-content-center align-items-center">
+                        <a href="javascript:void(0)" type="button" data-toggle="modal" data-target="#modal-address">Các địa chỉ nhận hàng của user</a>
+                        <button class="btn btn-danger mt-3" onclick="cancelUser()">Hủy chọn user</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal-address">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Chọn địa chỉ</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered table-hover">
+                            <tbody>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Mặc định</th>
+                                    <th></th>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                ${userAddressList.map((address, index) => {
+                                    return `
+                                        <tr>
+                                            <td>${index + 1}</td>
+                                            <td>${address.detail}, ${address.ward}, ${address.district}, ${address.province}</td>
+                                            <td>${address.isDefault ? '<span class="text-success"><i class="fas fa-check"></i></span>' : ''}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" onclick="chooseAddress(${index})">
+                                                    Chọn
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+}
+
+const chooseAddress = async (index) => {
+    const address = userAddressList[index];
+    await fillAddress(address);
+    userAddressSelected = address;
+    $('#modal-address').modal('hide');
+}
+
+const fillDataUserSelected = (userSelected) => {
+    nameEl.value = userSelected.username;
+    phoneEl.value = userSelected.phone;
+    emailEl.value = userSelected.email;
+}
+
+const fillAddressUserSelected = async (addresses) => {
+    clearAddress();
+
+    if (addresses.length === 0) return;
+
+    // find address default
+    const addressDefault = addresses.find(address => address.isDefault === true);
+    if (addressDefault) {
+        await fillAddress(addressDefault);
+        userAddressSelected = addressDefault;
+    }
+}
+
+const fillAddress = async (address) => {
+    addressEl.value = address.detail;
+
+    // choose province by province name to select element. value of select element is provinceId and content is provinceName
+    provinceSelect.querySelector(`option[data-province-name="${address.province}"]`).selected = true;
+
+    // get districts of province
+    await getDistricts(provinceSelect.value);
+
+    // choose district by district name to select element. value of select element is districtId and content is districtName
+    districtSelect.querySelector(`option[data-district-name="${address.district}"]`).selected = true;
+
+    // get wards of district
+    await getWards(districtSelect.value);
+
+    // choose ward by ward name to select element. value of select element is wardId and content is wardName
+    wardSelect.querySelector(`option[data-ward-name="${address.ward}"]`).selected = true;
+
+    // enable district and ward
+    districtSelect.disabled = false;
+    wardSelect.disabled = false;
+}
+
+const getAddressOfUser = async (userId) => {
+    try {
+        const res = await axios.get(`/api/v1/admin/users/${userId}/addresses`);
+        if (res.status === 200) {
+            await fillAddressUserSelected(res.data);
+            userAddressList = res.data;
+        } else {
+            toastr.error('Không thể lấy địa chỉ của user');
+        }
+    } catch (error) {
+        console.log(error);
+        toastr.error(error.response.data.message);
+    }
+}
+
+const clearAddress = () => {
+    addressEl.value = '';
+    provinceSelect.value = '';
+    districtSelect.value = '';
+    wardSelect.value = '';
+
+    districtSelect.disabled = true;
+    wardSelect.disabled = true;
+}
+
+const cancelUser = () => {
+    // clear input
+    nameEl.value = '';
+    phoneEl.value = '';
+    emailEl.value = '';
+
+    // clear address
+    clearAddress();
+
+    // reset userSelected
+    userSelected = null;
+
+    userInformation.innerHTML = '';
+}
+
+// ----------------- handle create order -----------------

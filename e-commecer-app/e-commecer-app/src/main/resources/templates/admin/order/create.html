@@ -1,10 +1,259 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Tạo đơn hàng</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet"
+              th:href="@{/admin-assets/admin-lte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
+    </th:block>
+
 </head>
+
 <body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/transactions">Đơn hàng</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Tạo đơn hàng
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/orders" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-create">
+                        Lưu
+                    </button>
+                    <button type="button" class="btn btn-secondary px-4" data-toggle="modal" data-target="#modal-user">
+                        Chọn user
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal-user">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Thêm user</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="form-user">
+                                <div class="form-group">
+                                    <label>Chọn user</label>
+                                    <select class="form-control select2bs4" style="width: 100%;" id="user" name="user">
+                                        <option></option>
+                                        <option th:each="user : ${users}"
+                                                th:value="${user.userId}"
+                                        >
+                                            <span th:text="${user.username}"></span>
+                                        </option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer justify-content-end">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary" id="btn-choose-user">Xác nhận</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12" id="user-info">
+
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h5 class="mb-4 text-muted">Thông tin người nhận</h5>
+                                    <div class="form-group">
+                                        <label>Họ tên</label>
+                                        <input type="text" class="form-control" id="name" name="name"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Số điện thoại</label>
+                                        <input type="text" class="form-control" id="phone" name="phone"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" class="form-control" id="email" name="email"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Ghi chú đơn hàng</label>
+                                        <textarea class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <h5 class="mb-4 text-muted">Thông tin địa chỉ</h5>
+                                    <div class="form-group">
+                                        <label>Tỉnh/Thành phố</label>
+                                        <select class="form-control" id="province" name="province">
+
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Quận/Huyện</label>
+                                        <select class="form-control" id="district" name="district">
+
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Xã/Phường</label>
+                                        <select class="form-control" id="ward" name="ward">
+
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Địa chỉ giao hàng</label>
+                                        <input type="text" class="form-control" id="address" name="address"/>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <h5 class="mb-4 text-muted">Thanh toán / Vận chuyển</h5>
+                                    <div class="form-group">
+                                        <label>Phương thức thanh toán</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" id="payment"
+                                                name="payment">
+                                            <option hidden="hidden" value="">Chọn phương thức thanh toán</option>
+                                            <option th:each="paymentMethod : ${paymentMethodList}" th:value="${paymentMethod}" th:text="${paymentMethod}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Phương thức vận chuyển</label>
+                                        <select class="form-control select2bs4" style="width: 100%;" id="shipping"
+                                                name="shipping">
+                                            <option hidden="hidden" value="">Chọn phương thức vận chuyển</option>
+                                            <option th:each="shipping : ${shippingMethodList}" th:value="${shipping}" th:text="${shipping}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="text-muted">Tổng số sản phẩm : <span id="total-product">0</span></p>
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Tên sản phẩm</th>
+                                            <th>Số lượng</th>
+                                            <th>Giá sản phẩm</th>
+                                            <th>Giá khuyến mại (nếu có)</th>
+                                            <th>Thành tiền</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="product-selected">
+
+                                        </tbody>
+                                    </table>
+                                    <div>
+                                        <button class="btn btn-primary" onclick="openModalCreateProduct()">Thêm sản phẩm
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modal-product">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Thêm sản phẩm</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-product">
+                        <div class="form-group">
+                            <label>Chọn sản phẩm</label>
+                            <select class="form-control select2bs4" style="width: 100%;" id="product" name="product">
+                                <option></option>
+                                <option th:each="product : ${products}"
+                                        th:value="${product.productId}"
+                                >
+                                    <span th:text="${product.name}"></span>
+                                    (<span th:text="|${product.stockQuantity} sản phẩm|"></span>)
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Số lượng</label>
+                            <input type="text" class="form-control" id="quantity" name="quantity"/>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="btn-handle">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+    <script th:inline="javascript">
+        const productList = [[${products}]];
+        const userList = [[${users}]];
+        console.log(productList);
+        console.log(userList);
+    </script>
+    <script th:src="@{/admin-assets/assets/js/order/create.js}"></script>
+</th:block>
 
 </body>
+
 </html>

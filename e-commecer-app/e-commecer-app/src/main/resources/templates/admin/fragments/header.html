@@ -21,9 +21,10 @@
             <li class="nav-item dropdown">
                 <a class="nav-link py-0 d-flex align-items-center" data-toggle="dropdown" href="#">
                     <div class="user-panel">
-                        <div class="image">
-                            <img src="https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bWFufGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60"
-                                 class="img-circle border" alt="User Image">
+                        <div class="d-flex align-items-center image">
+                            <span th:text="${#authentication.principal.getName()}"></span>
+                            <img th:src="${#authentication.principal.getAvatar()}"
+                                 class="img-circle border ml-1" alt="User Image">
                         </div>
                     </div>
                 </a>
@@ -38,11 +39,6 @@
                         <span class="text-muted">Đăng xuất</span>
                     </a>
                 </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                    <i class="fas fa-expand-arrows-alt"></i>
-                </a>
             </li>
         </ul>
     </nav>
@@ -208,6 +204,11 @@
                             <li class="nav-item">
                                 <a href="/admin/orders" class="nav-link pl-5">
                                     <p>Danh sách đơn hàng</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/admin/orders/create" class="nav-link pl-5">
+                                    <p>Tạo đơn hàng</p>
                                 </a>
                             </li>
                         </ul>

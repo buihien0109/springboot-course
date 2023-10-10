@@ -13,7 +13,7 @@ public interface OrderItemPublic {
 
     Integer getQuantity();
 
-    BigDecimal getPrice();
+    Integer getPrice();
 
     @RequiredArgsConstructor
     class OrderItemPublicImpl implements OrderItemPublic {
@@ -36,7 +36,7 @@ public interface OrderItemPublic {
         }
 
         @Override
-        public BigDecimal getPrice() {
+        public Integer getPrice() {
             return orderItem.getPrice();
         }
     }

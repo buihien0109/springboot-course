@@ -17,7 +17,7 @@
                         <h2 th:text="${blog.title}">The Moment You Need To Remove Garlic From The Menu</h2>
                         <ul>
                             <li th:text="${blog.user.username}">By Michael Scofield</li>
-                            <li th:text="${#temporals.format(blog.publishedAt, 'dd/MM/yyyy')}">January 14, 2019</li>
+                            <li th:text="${#dates.format(blog.publishedAt, 'dd/MM/yyyy')}">January 14, 2019</li>
                             <li>
                                 <th:block th:text="${blog.comments.size()}">8</th:block>
                                 bình luận
@@ -63,7 +63,7 @@
                                     </div>
                                     <div class="blog__sidebar__recent__item__text">
                                         <h6 th:text="${blog.title}">09 Kinds Of Vegetables<br/> Protect The Liver</h6>
-                                        <span th:text="${#temporals.format(blog.publishedAt, 'dd/MM/yyyy')}">MAR 05, 2019</span>
+                                        <span th:text="${#dates.format(blog.publishedAt, 'dd/MM/yyyy')}">MAR 05, 2019</span>
                                     </div>
                                 </a>
                             </div>
@@ -127,7 +127,7 @@
                         <div class="blog__item__text">
                             <ul>
                                 <li><i class="fa fa-calendar-o"></i>
-                                    <th:block th:text="${#temporals.format(blog.publishedAt, 'dd/MM/yyyy')}">May
+                                    <th:block th:text="${#dates.format(blog.publishedAt, 'dd/MM/yyyy')}">May
                                         4,2019
                                     </th:block>
                                 </li>

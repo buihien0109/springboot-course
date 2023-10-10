@@ -27,4 +27,18 @@ public class OrderResources {
         orderService.cancelOrder(id);
         return ResponseEntity.ok().body("Hủy đơn hàng thành công");
     }
+
+    // ==================== ADMIN ====================
+    // admin update order info
+    @PutMapping("/admin/orders/{id}")
+    public ResponseEntity<?> updateOrder(@PathVariable Long id, @RequestBody OrderRequest orderRequest) {
+        return ResponseEntity.ok(orderService.updateOrderByAdmin(id, orderRequest));
+    }
+
+    // admin cancel order
+    @PutMapping("/admin/orders/{id}/cancel")
+    public ResponseEntity<?> cancelOrderByAdmin(@PathVariable Long id) {
+        orderService.cancelOrderByAdmin(id);
+        return ResponseEntity.ok().body("Hủy đơn hàng thành công");
+    }
 }

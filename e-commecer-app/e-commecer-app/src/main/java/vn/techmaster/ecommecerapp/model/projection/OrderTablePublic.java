@@ -43,11 +43,11 @@ public interface OrderTablePublic {
 
     Integer getCouponDiscount();
 
-    BigDecimal getTotalAmount();
+    Integer getTotalAmount();
 
-    BigDecimal getTemporaryAmount();
+    Integer getTemporaryAmount();
 
-    BigDecimal getDiscountAmount();
+    Integer getDiscountAmount();
 
     UserPublic getUser();
 
@@ -144,17 +144,17 @@ public interface OrderTablePublic {
         }
 
         @Override
-        public BigDecimal getTotalAmount() {
+        public Integer getTotalAmount() {
             return orderTable.getTotalAmount();
         }
 
         @Override
-        public BigDecimal getTemporaryAmount() {
+        public Integer getTemporaryAmount() {
             return orderTable.getTemporaryAmount();
         }
 
         @Override
-        public BigDecimal getDiscountAmount() {
+        public Integer getDiscountAmount() {
             return orderTable.getDiscountAmount();
         }
 
