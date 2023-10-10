@@ -133,7 +133,7 @@ const renderProducts = () => {
     totalProduct.innerHTML = productsSelected.length.toString();
 
     // if productsSelected is empty remove button coupon and modal coupon. otherwise, add button coupon and modal coupon
-    if(productsSelected.length === 0) {
+    if (productsSelected.length === 0) {
         hideCoupon();
     } else {
         showCoupon();
@@ -152,6 +152,7 @@ const renderAmount = () => {
     const subtotalAmount = getSubtotalAmount();
     const discountAmount = getDiscountAmount();
     const totalAmount = getTotalAmount();
+    console.log({couponSelected, subtotalAmount, discountAmount, totalAmount})
 
     const amountHtml = `
         <tr class="amount">
@@ -395,7 +396,6 @@ const getWards = async (districtId) => {
         toastr.error('Không thể lấy danh sách xã/phường');
     }
 }
-getProvinces();
 
 // ----------------- handle add user -----------------
 $('#form-user').validate({
@@ -572,6 +572,20 @@ const getAddressOfUser = async (userId) => {
     }
 }
 
+const getAddressOfUserNotFillData = async (userId) => {
+    try {
+        const res = await axios.get(`/api/v1/admin/users/${userId}/addresses`);
+        if (res.status === 200) {
+            userAddressList = res.data;
+        } else {
+            toastr.error('Không thể lấy địa chỉ của user');
+        }
+    } catch (error) {
+        console.log(error);
+        toastr.error(error.response.data.message);
+    }
+}
+
 const clearAddress = () => {
     addressEl.value = '';
     provinceSelect.value = '';
@@ -670,7 +684,7 @@ const cancelCoupon = () => {
 }
 
 // ----------------- handle create order -----------------
-$('#form-create-order').validate({
+$('#form-update-order').validate({
     rules: {
         name: {
             required: true
@@ -695,10 +709,10 @@ $('#form-create-order').validate({
         address: {
             required: true
         },
-        payment : {
+        payment: {
             required: true
         },
-        shipping : {
+        shipping: {
             required: true
         }
     },
@@ -726,10 +740,10 @@ $('#form-create-order').validate({
         address: {
             required: "Địa chỉ không được để trống",
         },
-        payment : {
+        payment: {
             required: "Phương thức thanh toán không được để trống",
         },
-        shipping : {
+        shipping: {
             required: "Phương thức vận chuyển không được để trống",
         }
     },
@@ -746,9 +760,9 @@ $('#form-create-order').validate({
     }
 });
 
-const btnCreateOrder = document.getElementById('btn-create');
-btnCreateOrder.addEventListener('click', async () => {
-    if (!$("#form-create-order").valid()) return;
+const btnUpdateOrder = document.getElementById('btn-update');
+btnUpdateOrder.addEventListener('click', async () => {
+    if (!$("#form-update-order").valid()) return;
 
     // check product selected
     if (productsSelected.length === 0) {
@@ -787,7 +801,7 @@ btnCreateOrder.addEventListener('click', async () => {
     const wardName = wardSelected.getAttribute('data-ward-name');
 
     const order = {
-        userId : userSelected ? userSelected.userId : null,
+        userId: userSelected ? userSelected.userId : null,
         username,
         phone,
         email,
@@ -804,15 +818,12 @@ btnCreateOrder.addEventListener('click', async () => {
     }
     console.log({order})
 
-    axios.post('/api/v1/admin/orders', order)
+    axios.put(`/api/v1/admin/orders/${order.orderId}`, order)
         .then(response => {
             if (response.status === 200) {
-                toastr.success('Đặt hàng thành công');
-                setTimeout(() => {
-                    window.location.href = `/admin/orders/${response.data}/detail`;
-                }, 1500)
+                toastr.success('Cập nhật đơn hàng thành công');
             } else {
-                toastr.error('Đặt hàng thất bại');
+                toastr.error('Cập nhật đơn hàng thất bại');
             }
         })
         .catch(error => {
@@ -822,17 +833,52 @@ btnCreateOrder.addEventListener('click', async () => {
 })
 
 // ----------------- init data -----------------
-const initAddressUser = () => {
+const initAddressUser = async () => {
+// choose province by province name to select element. value of select element is provinceId and content is provinceName
+    console.log(order)
+    provinceSelect.querySelector(`option[data-province-name="${order.province}"]`).selected = true;
 
+    // get districts of province
+    await getDistricts(provinceSelect.value);
+
+    // choose district by district name to select element. value of select element is districtId and content is districtName
+    districtSelect.querySelector(`option[data-district-name="${order.district}"]`).selected = true;
+
+    // get wards of district
+    await getWards(districtSelect.value);
+
+    // choose ward by ward name to select element. value of select element is wardId and content is wardName
+    wardSelect.querySelector(`option[data-ward-name="${order.ward}"]`).selected = true;
+
+    // enable district and ward
+    districtSelect.disabled = false;
+    wardSelect.disabled = false;
 }
 const init = async () => {
     // check order has userId
     if (order.user) {
+        await getAddressOfUserNotFillData(order.user.userId);
+        await getProvinces();
+        await initAddressUser();
         userSelected = userList.find(user => user.userId === order.user.userId);
-        console.log(userSelected)
-        await getAddressOfUser(userSelected.userId);
         displayUserSelected(userSelected);
     }
+
+    // init productsSelected
+    productsSelected = order.orderItems.map(orderItem => {
+        return {
+            productId: orderItem.product.productId,
+            productName: orderItem.product.name,
+            quantity: orderItem.quantity,
+            price: orderItem.product.price,
+            discountPrice: orderItem.product.price !== orderItem.price ? orderItem.price : null
+        }
+    })
+    couponSelected = (order.couponDiscount && order.couponDiscount) ? {
+        code: order.couponCode,
+        discount: order.couponDiscount
+    } : null;
+    renderProducts();
 }
 
 init();

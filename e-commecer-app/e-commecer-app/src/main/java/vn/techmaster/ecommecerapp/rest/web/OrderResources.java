@@ -30,10 +30,10 @@ public class OrderResources {
     }
 
     // ==================== ADMIN ====================
-    // admin update order info
-    @PutMapping("/admin/orders/{id}")
-    public ResponseEntity<?> updateOrder(@PathVariable Long id, @RequestBody OrderRequest orderRequest) {
-        return ResponseEntity.ok(orderService.updateOrderByAdmin(id, orderRequest));
+    // admin create order
+    @PostMapping("/admin/orders")
+    public ResponseEntity<?> createOrderByAdmin(@RequestBody AdminCreateOrderRequest orderRequest) {
+        return ResponseEntity.ok(orderService.createOrderByAdmin(orderRequest));
     }
 
     // admin cancel order
@@ -41,11 +41,5 @@ public class OrderResources {
     public ResponseEntity<?> cancelOrderByAdmin(@PathVariable Long id) {
         orderService.cancelOrderByAdmin(id);
         return ResponseEntity.ok().body("Hủy đơn hàng thành công");
-    }
-
-    // admin create order
-    @PostMapping("/admin/orders")
-    public ResponseEntity<?> createOrderByAdmin(@RequestBody AdminCreateOrderRequest orderRequest) {
-        return ResponseEntity.ok(orderService.createOrderByAdmin(orderRequest));
     }
 }

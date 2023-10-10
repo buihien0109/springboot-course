@@ -185,7 +185,7 @@ public class OrderService {
     public String createOrderByAdmin(AdminCreateOrderRequest orderRequest) {
         // check user id is exist
         User user = null;
-        if(orderRequest.getUserId() != null) {
+        if (orderRequest.getUserId() != null) {
             user = userRepository.findById(orderRequest.getUserId())
                     .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy user"));
         }
@@ -236,20 +236,26 @@ public class OrderService {
         orderTable.getOrderItems().forEach(item -> {
             Product product = item.getProduct();
             product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
+
+            // if product quantity = 0 then set status UNAVAILABLE
+            if (product.getStockQuantity() == 0) {
+                product.setStatus(Product.Status.UNAVAILABLE);
+            }
             productRepository.save(product);
         });
 
         return orderNumber;
     }
 
-    public OrderTablePublic updateOrderByAdmin(Long id, OrderRequest orderRequest) {
-        return null;
-    }
-
     public void cancelOrderByAdmin(Long id) {
         // find order by id
         OrderTable orderTable = orderTableRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Order not found"));
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đơn hàng"));
+
+        // check order status
+        if (orderTable.getStatus() != OrderTable.Status.WAIT) {
+            throw new ResouceNotFoundException("Trạng thái đơn hàng không cho phép hủy");
+        }
 
         // update order status to CANCELED
         orderTable.setStatus(OrderTable.Status.CANCELED);
@@ -261,6 +267,11 @@ public class OrderService {
         orderTable.getOrderItems().forEach(item -> {
             Product product = item.getProduct();
             product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
+
+            // if product quantity > 0 then set status AVAILABLE
+            if (product.getStockQuantity() > 0) {
+                product.setStatus(Product.Status.AVAILABLE);
+            }
             productRepository.save(product);
         });
     }
