@@ -126,14 +126,25 @@ const renderProducts = () => {
         productTableContentEl.innerHTML += html;
     })
     // render total amount at the end of table
+    const subtotalAmount = getSubtotalAmount();
+    const discountAmount = getDiscountAmount();
     const totalAmount = getTotalAmount();
-    const totalAmountHtml = `
+    
+    const amountHtml = `
+        <tr>
+            <td colspan="5" class="text-right">Thành tiền</td>
+            <td colspan="1">${formatCurrency(subtotalAmount)}</td>
+        </tr>
+        <tr>
+            <td colspan="5" class="text-right">Giảm giá ${couponSelected ? `(${couponSelected.discount}%)` : ''}</td>
+            <td colspan="1">${formatCurrency(discountAmount)}</td>
+        </tr>
         <tr>
             <td colspan="5" class="text-right">Tổng tiền</td>
             <td colspan="1">${formatCurrency(totalAmount)}</td>
         </tr>
     `;
-    productTableContentEl.innerHTML += totalAmountHtml;
+    productTableContentEl.innerHTML += amountHtml;
 
     // update total product
     const totalProduct = document.getElementById('total-product');
@@ -193,8 +204,8 @@ const renderCoupon = () => {
             <tr>
                 <td>${coupon.code}</td>
                 <td>${coupon.discount}</td>
-                <td>${formatCurrency(getTotalAmount())}</td>
-                <td>${formatCurrency(Math.round(getTotalAmount() * (100 - coupon.discount) / 100))}</td>
+                <td>${formatCurrency(getSubtotalAmount())}</td>
+                <td>${formatCurrency(Math.round(getSubtotalAmount() * (100 - coupon.discount) / 100))}</td>
                 <td>
                     <button class="btn btn-primary btn-sm" onclick="chooseCoupon(${index})">
                         Chọn
@@ -208,16 +219,28 @@ const renderCoupon = () => {
 
 const chooseCoupon = (index) => {
     couponSelected = couponList[index];
+    renderProducts();
     $('#modal-coupon').modal('hide');
 }
 
-const getTotalAmount = () => {
+const getSubtotalAmount = () => {
     return productsSelected.reduce((total, product) => {
         if (product.discountPrice != null) {
             return total + product.quantity * product.discountPrice;
         }
         return total + product.quantity * product.price;
     }, 0);
+}
+
+const getDiscountAmount = () => {
+    if (couponSelected) {
+        return Math.round(getSubtotalAmount() * couponSelected.discount / 100);
+    }
+    return 0;
+}
+
+const getTotalAmount = () => {
+    return getSubtotalAmount() - getDiscountAmount();
 }
 
 const deleteProduct = (index) => {
