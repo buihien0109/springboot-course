@@ -101,8 +101,8 @@ $('#modal-product').on('hidden.bs.modal', function (e) {
     idUpdate = null;
 })
 
+const productTableContentEl = document.getElementById('product-table-content');
 const renderProducts = () => {
-    const productTableContentEl = document.getElementById('product-table-content');
     productTableContentEl.innerHTML = '';
     productsSelected.forEach((product, index) => {
         const html = `
@@ -125,26 +125,8 @@ const renderProducts = () => {
             `;
         productTableContentEl.innerHTML += html;
     })
-    // render total amount at the end of table
-    const subtotalAmount = getSubtotalAmount();
-    const discountAmount = getDiscountAmount();
-    const totalAmount = getTotalAmount();
-    
-    const amountHtml = `
-        <tr>
-            <td colspan="5" class="text-right">Thành tiền</td>
-            <td colspan="1">${formatCurrency(subtotalAmount)}</td>
-        </tr>
-        <tr>
-            <td colspan="5" class="text-right">Giảm giá ${couponSelected ? `(${couponSelected.discount}%)` : ''}</td>
-            <td colspan="1">${formatCurrency(discountAmount)}</td>
-        </tr>
-        <tr>
-            <td colspan="5" class="text-right">Tổng tiền</td>
-            <td colspan="1">${formatCurrency(totalAmount)}</td>
-        </tr>
-    `;
-    productTableContentEl.innerHTML += amountHtml;
+
+    renderAmount();
 
     // update total product
     const totalProduct = document.getElementById('total-product');
@@ -165,6 +147,7 @@ const hideCoupon = () => {
 
 const showCoupon = () => {
     couponInfoEl.innerHTML = `
+        <button class="btn btn-default" onclick="cancelCoupon()">Hủy mã giảm giá</button>
         <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#modal-coupon">Thêm mã giảm giá</button>
         <div class="modal fade" id="modal-coupon">
             <div class="modal-dialog modal-lg">
@@ -219,8 +202,44 @@ const renderCoupon = () => {
 
 const chooseCoupon = (index) => {
     couponSelected = couponList[index];
-    renderProducts();
+    renderAmount();
     $('#modal-coupon').modal('hide');
+}
+
+const cancelCoupon = () => {
+    couponSelected = null;
+    renderAmount();
+}
+
+const renderAmount = () => {
+    const amountEls = document.querySelectorAll(".amount");
+    if (amountEls.length > 0) {
+        amountEls.forEach(amountEl => {
+            amountEl.parentElement.removeChild(amountEl);
+        })
+    }
+
+    // render total amount at the end of table
+    const subtotalAmount = getSubtotalAmount();
+    const discountAmount = getDiscountAmount();
+    const totalAmount = getTotalAmount();
+
+    const amountHtml = `
+        <tr class="amount">
+            <td colspan="5" class="text-right">Thành tiền</td>
+            <td colspan="1">${formatCurrency(subtotalAmount)}</td>
+        </tr>
+        <tr class="amount">
+            <td colspan="5" class="text-right">Giảm giá ${couponSelected ? `(${couponSelected.discount}%)` : ''}</td>
+            <td colspan="1">${formatCurrency(discountAmount)}</td>
+        </tr>
+        <tr class="amount">
+            <td colspan="5" class="text-right">Tổng tiền</td>
+            <td colspan="1">${formatCurrency(totalAmount)}</td>
+        </tr>
+    `;
+
+    productTableContentEl.innerHTML += amountHtml;
 }
 
 const getSubtotalAmount = () => {
