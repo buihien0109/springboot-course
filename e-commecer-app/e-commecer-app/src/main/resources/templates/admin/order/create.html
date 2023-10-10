@@ -26,7 +26,7 @@
                             <a href="/admin/dashboard">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="/admin/transactions">Đơn hàng</a>
+                            <a href="/admin/orders">Đơn hàng</a>
                         </li>
                         <li class="breadcrumb-item active">
                             Tạo đơn hàng
@@ -93,7 +93,8 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="row">
+                            <form id="form-create-order">
+                                <div class="row">
                                 <div class="col-md-4">
                                     <h5 class="mb-4 text-muted">Thông tin người nhận</h5>
                                     <div class="form-group">
@@ -113,7 +114,7 @@
 
                                     <div class="form-group">
                                         <label>Ghi chú đơn hàng</label>
-                                        <textarea class="form-control" rows="3"></textarea>
+                                        <textarea class="form-control" rows="3" id="note"></textarea>
                                     </div>
                                 </div>
 
@@ -167,6 +168,7 @@
                                     </div>
                                 </div>
                             </div>
+                            </form>
                         </div>
                     </div>
                 </div>

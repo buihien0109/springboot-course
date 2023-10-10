@@ -3,6 +3,7 @@ package vn.techmaster.ecommecerapp.rest.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.techmaster.ecommecerapp.model.request.AdminCreateOrderRequest;
 import vn.techmaster.ecommecerapp.model.request.OrderRequest;
 import vn.techmaster.ecommecerapp.service.OrderService;
 
@@ -40,5 +41,11 @@ public class OrderResources {
     public ResponseEntity<?> cancelOrderByAdmin(@PathVariable Long id) {
         orderService.cancelOrderByAdmin(id);
         return ResponseEntity.ok().body("Hủy đơn hàng thành công");
+    }
+
+    // admin create order
+    @PostMapping("/admin/orders")
+    public ResponseEntity<?> createOrderByAdmin(@RequestBody AdminCreateOrderRequest orderRequest) {
+        return ResponseEntity.ok(orderService.createOrderByAdmin(orderRequest));
     }
 }

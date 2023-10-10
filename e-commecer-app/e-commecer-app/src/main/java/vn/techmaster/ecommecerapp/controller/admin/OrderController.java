@@ -42,6 +42,11 @@ public class OrderController {
 
     @GetMapping("/{orderNumber}/detail")
     public String getOrderDetailPage(@PathVariable String orderNumber, Model model) {
+        model.addAttribute("products", productService.getAllProductsByStatus(List.of(Product.Status.AVAILABLE)));
+        model.addAttribute("paymentMethodList", OrderTable.PaymentMethod.values());
+        model.addAttribute("shippingMethodList", OrderTable.ShippingMethod.values());
+        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("coupons", couponService.getAllCouponValid());
         model.addAttribute("order", orderService.getOrderByOrderNumber(orderNumber));
         return "admin/order/detail";
     }

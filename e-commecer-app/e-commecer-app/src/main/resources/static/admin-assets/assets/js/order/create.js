@@ -140,77 +140,6 @@ const renderProducts = () => {
     }
 }
 
-const couponInfoEl = document.getElementById('coupon-info');
-const hideCoupon = () => {
-    couponInfoEl.innerHTML = '';
-}
-
-const showCoupon = () => {
-    couponInfoEl.innerHTML = `
-        <button class="btn btn-default" onclick="cancelCoupon()">Hủy mã giảm giá</button>
-        <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#modal-coupon">Thêm mã giảm giá</button>
-        <div class="modal fade" id="modal-coupon">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Chọn mã giảm giá</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                            <tr>
-                                <th>Coupon code</th>
-                                <th>Mức giảm</th>
-                                <th>Tổng tiền</th>
-                                <th>Tổng tiền sau khuyến mại</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                ${renderCoupon()}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `
-}
-
-const renderCoupon = () => {
-    let html = '';
-    couponList.forEach((coupon, index) => {
-        html += `
-            <tr>
-                <td>${coupon.code}</td>
-                <td>${coupon.discount}</td>
-                <td>${formatCurrency(getSubtotalAmount())}</td>
-                <td>${formatCurrency(Math.round(getSubtotalAmount() * (100 - coupon.discount) / 100))}</td>
-                <td>
-                    <button class="btn btn-primary btn-sm" onclick="chooseCoupon(${index})">
-                        Chọn
-                    </button>
-                </td>
-            </tr>
-        `
-    })
-    return html;
-}
-
-const chooseCoupon = (index) => {
-    couponSelected = couponList[index];
-    renderAmount();
-    $('#modal-coupon').modal('hide');
-}
-
-const cancelCoupon = () => {
-    couponSelected = null;
-    renderAmount();
-}
-
 const renderAmount = () => {
     const amountEls = document.querySelectorAll(".amount");
     if (amountEls.length > 0) {
@@ -669,6 +598,225 @@ const cancelUser = () => {
 }
 
 // ----------------- handle add coupon -----------------
+const couponInfoEl = document.getElementById('coupon-info');
+const hideCoupon = () => {
+    couponInfoEl.innerHTML = '';
+}
 
+const showCoupon = () => {
+    couponInfoEl.innerHTML = `
+        <button class="btn btn-default" onclick="cancelCoupon()">Hủy mã giảm giá</button>
+        <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#modal-coupon">Thêm mã giảm giá</button>
+        <div class="modal fade" id="modal-coupon">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Chọn mã giảm giá</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>Coupon code</th>
+                                <th>Mức giảm</th>
+                                <th>Tổng tiền</th>
+                                <th>Tổng tiền sau khuyến mại</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                ${renderCoupon()}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+}
+
+const renderCoupon = () => {
+    let html = '';
+    couponList.forEach((coupon, index) => {
+        html += `
+            <tr>
+                <td>${coupon.code}</td>
+                <td>${coupon.discount}</td>
+                <td>${formatCurrency(getSubtotalAmount())}</td>
+                <td>${formatCurrency(Math.round(getSubtotalAmount() * (100 - coupon.discount) / 100))}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" onclick="chooseCoupon(${index})">
+                        Chọn
+                    </button>
+                </td>
+            </tr>
+        `
+    })
+    return html;
+}
+
+const chooseCoupon = (index) => {
+    couponSelected = couponList[index];
+    renderAmount();
+    $('#modal-coupon').modal('hide');
+}
+
+const cancelCoupon = () => {
+    couponSelected = null;
+    renderAmount();
+}
 
 // ----------------- handle create order -----------------
+$('#form-create-order').validate({
+    rules: {
+        name: {
+            required: true
+        },
+        phone: {
+            required: true,
+            pattern: /^(0\d{9}|(\+84|84)[1-9]\d{8})$/
+        },
+        email: {
+            required: true,
+            email: true
+        },
+        province: {
+            required: true
+        },
+        district: {
+            required: true
+        },
+        ward: {
+            required: true
+        },
+        address: {
+            required: true
+        },
+        payment : {
+            required: true
+        },
+        shipping : {
+            required: true
+        }
+    },
+    messages: {
+        name: {
+            required: "Họ tên không được để trống",
+        },
+        phone: {
+            required: "Số điện thoại không được để trống",
+            pattern: "Số điện thoại không đúng định dạng"
+        },
+        email: {
+            required: "Email không được để trống",
+            email: "Email không đúng định dạng"
+        },
+        province: {
+            required: "Tỉnh/Thành phố không được để trống",
+        },
+        district: {
+            required: "Quận/Huyện không được để trống",
+        },
+        ward: {
+            required: "Xã/Phường không được để trống",
+        },
+        address: {
+            required: "Địa chỉ không được để trống",
+        },
+        payment : {
+            required: "Phương thức thanh toán không được để trống",
+        },
+        shipping : {
+            required: "Phương thức vận chuyển không được để trống",
+        }
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+    }
+});
+
+const btnCreateOrder = document.getElementById('btn-create');
+btnCreateOrder.addEventListener('click', async () => {
+    if (!$("#form-create-order").valid()) return;
+
+    // check product selected
+    if (productsSelected.length === 0) {
+        toastr.error('Vui lòng chọn sản phẩm');
+        return;
+    }
+
+    // create order request
+    const username = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value;
+    const address = document.getElementById('address').value;
+    const note = document.getElementById('note').value;
+    const shippingMethod = document.getElementById('shipping').value;
+    const paymentMethod = document.getElementById('payment').value;
+    const couponCode = couponSelected ? couponSelected.code : null;
+    const couponDiscount = couponSelected ? couponSelected.discount : null;
+    const items = productsSelected.map(product => {
+        return {
+            productId: product.productId,
+            quantity: product.quantity,
+            price: product.discountPrice ? product.discountPrice : product.price,
+        }
+    })
+
+    // get province selected and get province name by attribute data-province-name
+    const provinceSelected = provinceSelect.options[provinceSelect.selectedIndex];
+    const provinceName = provinceSelected.getAttribute('data-province-name');
+
+    // get district selected and get district name by attribute data-district-name
+    const districtSelected = districtSelect.options[districtSelect.selectedIndex];
+    const districtName = districtSelected.getAttribute('data-district-name');
+
+    // get ward selected and get ward name by attribute data-ward-name
+    const wardSelected = wardSelect.options[wardSelect.selectedIndex];
+    const wardName = wardSelected.getAttribute('data-ward-name');
+
+    const order = {
+        userId : userSelected ? userSelected.userId : null,
+        username,
+        phone,
+        email,
+        province: provinceName,
+        district: districtName,
+        ward: wardName,
+        address,
+        note,
+        shippingMethod,
+        paymentMethod,
+        couponCode,
+        couponDiscount,
+        items,
+    }
+    console.log({order})
+
+    axios.post('/api/v1/admin/orders', order)
+        .then(response => {
+            if (response.status === 200) {
+                toastr.success('Đặt hàng thành công');
+                setTimeout(() => {
+                    window.location.href = `/admin/orders/${response.data}/detail`;
+                }, 1500)
+            } else {
+                toastr.error('Đặt hàng thất bại');
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            toastr.error(error.response.data.message);
+        })
+})

@@ -10,6 +10,7 @@ import vn.techmaster.ecommecerapp.entity.*;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.OrderTablePublic;
+import vn.techmaster.ecommecerapp.model.request.AdminCreateOrderRequest;
 import vn.techmaster.ecommecerapp.model.request.OrderRequest;
 import vn.techmaster.ecommecerapp.repository.OrderTableRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
@@ -181,9 +182,64 @@ public class OrderService {
                 .toList();
     }
 
-    public OrderTablePublic createOrderByAdmin(OrderRequest orderRequest) {
+    public String createOrderByAdmin(AdminCreateOrderRequest orderRequest) {
         // check user id is exist
-        return null;
+        User user = null;
+        if(orderRequest.getUserId() != null) {
+            user = userRepository.findById(orderRequest.getUserId())
+                    .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy user"));
+        }
+
+        // Create order from request info
+        OrderTable orderTable = new OrderTable();
+
+        // generate order number with 8 characters
+        String orderNumber = RandomStringUtils.randomAlphanumeric(8);
+        orderTable.setOrderNumber(orderNumber);
+        orderTable.setUsername(orderRequest.getUsername());
+        orderTable.setPhone(orderRequest.getPhone());
+        orderTable.setEmail(orderRequest.getEmail());
+        orderTable.setProvince(orderRequest.getProvince());
+        orderTable.setDistrict(orderRequest.getDistrict());
+        orderTable.setWard(orderRequest.getWard());
+        orderTable.setAddress(orderRequest.getAddress());
+        orderTable.setNote(orderRequest.getNote());
+        orderTable.setShippingMethod(orderRequest.getShippingMethod());
+        orderTable.setPaymentMethod(orderRequest.getPaymentMethod());
+        orderTable.setCouponCode(orderRequest.getCouponCode());
+        orderTable.setCouponDiscount(orderRequest.getCouponDiscount());
+        orderTable.setUser(user);
+        orderTable.setStatus(OrderTable.Status.WAIT);
+        orderTable.setUseType(user == null ? OrderTable.UseType.ANONYMOUS : OrderTable.UseType.USER);
+
+        // save list order item from request to order item
+        orderRequest.getItems().forEach(item -> {
+            Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm"));
+
+            // check product quantity
+            if (product.getStockQuantity() < item.getQuantity()) {
+                throw new BadRequestException("Sản phẩm " + product.getName() + " không đủ số lượng");
+            }
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(product);
+            orderItem.setQuantity(item.getQuantity());
+            orderItem.setPrice(item.getPrice());
+            orderTable.addOrderItem(orderItem);
+        });
+
+        // save order to database
+        orderTableRepository.save(orderTable);
+
+        // update product quantity
+        orderTable.getOrderItems().forEach(item -> {
+            Product product = item.getProduct();
+            product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
+            productRepository.save(product);
+        });
+
+        return orderNumber;
     }
 
     public OrderTablePublic updateOrderByAdmin(Long id, OrderRequest orderRequest) {
