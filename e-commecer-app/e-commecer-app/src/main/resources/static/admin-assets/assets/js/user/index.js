@@ -1,4 +1,3 @@
-
 // render users from users to body of table
 const tableBody = document.querySelector('table tbody');
 const renderUsers = (userList) => {
@@ -15,10 +14,18 @@ const renderUsers = (userList) => {
                       <td>
                             ${user.phone}
                       </td>
-                      <td>Active</td>
+                      <td>
+                            ${user.enabled
+                                ? `<span class="badge bg-success">Kích hoạt</span>`
+                                : `<span class="badge bg-secondary">Chưa kích hoạt</span>`
+                            }
+                      </td>
                       <td>
                             ${user.roles.map(role => `<span class="badge bg-info mr-1">${role.name}</span>`).join('')}
-                        </td>
+                      </td>
+                      <td>
+                        <span>${formatDate(user.createdAt)}</span>
+                      </td>
                   </tr>
                 `;
     })
@@ -33,7 +40,7 @@ const renderPagination = (userList) => {
         callback: function (data, pagination) {
             renderUsers(data);
         },
-        hideOnlyOnePage : true
+        hideOnlyOnePage: true
     })
 }
 renderPagination(users);

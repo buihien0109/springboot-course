@@ -18,6 +18,7 @@ public class Banner {
     private Integer id;
 
     private String name;
+    private String slug;
     private String linkRedirect;
     private String url;
     private Integer displayOrder;

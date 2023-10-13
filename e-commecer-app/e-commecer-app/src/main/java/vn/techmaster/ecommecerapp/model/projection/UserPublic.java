@@ -20,6 +20,8 @@ public interface UserPublic {
 
     String getAvatar();
 
+    Boolean getEnabled();
+
     Date getCreatedAt();
 
     Set<Role> getRoles();
@@ -52,6 +54,11 @@ public interface UserPublic {
         @Override
         public String getAvatar() {
             return this.user.getAvatar();
+        }
+
+        @Override
+        public Boolean getEnabled() {
+            return this.user.getEnabled();
         }
 
         @Override

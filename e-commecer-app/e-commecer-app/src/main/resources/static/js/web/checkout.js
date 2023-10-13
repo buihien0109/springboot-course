@@ -101,7 +101,29 @@ const getWards = async (districtId) => {
         toastr.error('Không thể lấy danh sách xã/phường');
     }
 }
-getProvinces();
+
+// chose address
+const fillAddress = async (address) => {
+    document.getElementById("address").value = address.detail;
+
+    provinceSelect.querySelector(`option[data-province-name="${address.province}"]`).selected = true;
+    await getDistricts(provinceSelect.value);
+
+    districtSelect.querySelector(`option[data-district-name="${address.district}"]`).selected = true;
+    await getWards(districtSelect.value);
+
+    wardSelect.querySelector(`option[data-ward-name="${address.ward}"]`).selected = true;
+
+    // enable district and ward
+    districtSelect.disabled = false;
+    wardSelect.disabled = false;
+}
+
+const chooseAddress = async (index) => {
+    const address = addressList[index];
+    await fillAddress(address);
+    $('#modal-address').modal('hide');
+}
 
 // get TemporaryAmount
 const getTemporaryAmount = () => {
@@ -252,7 +274,6 @@ btnSubmitOrder.addEventListener("click", () => {
     const note = document.getElementById('note').value;
     const shippingMethod = document.querySelector('#shipping-method input[type="radio"]:checked').value;
     const paymentMethod = document.querySelector('#payment-method input[type="radio"]:checked').value;
-    const couponCode = document.getElementById('coupon-input').value;
     const items = cart.cartItems.map(cartItem => {
         return {
             productId: cartItem.product.productId,
@@ -262,17 +283,14 @@ btnSubmitOrder.addEventListener("click", () => {
     })
 
     // get province selected and get province name by attribute data-province-name
-    const provinceSelect = document.getElementById('province');
     const provinceSelected = provinceSelect.options[provinceSelect.selectedIndex];
     const provinceName = provinceSelected.getAttribute('data-province-name');
 
     // get district selected and get district name by attribute data-district-name
-    const districtSelect = document.getElementById('district');
     const districtSelected = districtSelect.options[districtSelect.selectedIndex];
     const districtName = districtSelected.getAttribute('data-district-name');
 
     // get ward selected and get ward name by attribute data-ward-name
-    const wardSelect = document.getElementById('ward');
     const wardSelected = wardSelect.options[wardSelect.selectedIndex];
     const wardName = wardSelected.getAttribute('data-ward-name');
 
@@ -311,4 +329,11 @@ btnSubmitOrder.addEventListener("click", () => {
         })
 })
 
-displayTotalPrice();
+const init = async () => {
+    await getProvinces();
+    if(isLogin && addressList.length > 0) {
+        await fillAddress(addressList[0]);
+    }
+    displayTotalPrice();
+}
+init()

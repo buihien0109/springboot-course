@@ -2408,11 +2408,19 @@ ol {
     color: #1c1c1c;
     font-weight: 700;
     padding-bottom: 20px;
-    margin-top: 40px;
+    margin-top: 30px;
 }
 
 .checkout__form > h4 {
-    margin-top: 0px;
+    margin-top: 0;
+}
+
+.checkout__input .chose-other-address {
+    color: #7fad39;
+}
+
+.checkout__input .chose-other-address:hover {
+    text-decoration: underline;
 }
 
 .checkout__input #coupon-input {

@@ -9,7 +9,11 @@ import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.repository.PaymentVoucherRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootTest
 public class PaymentVoucherTests {
@@ -33,11 +37,31 @@ public class PaymentVoucherTests {
         }
     }
 
+    @Test
+    void update_created_at_payment_voucher() {
+        List<PaymentVoucher> paymentVouchers = paymentVoucherRepository.findAll();
+        Date start = new Calendar.Builder().setDate(2023, 8, 1).build().getTime();
+        Date end = new Date();
+        for (PaymentVoucher paymentVoucher : paymentVouchers) {
+            paymentVoucher.setCreatedAt(randomDateBetweenTwoDates(start, end));
+            paymentVoucherRepository.save(paymentVoucher);
+        }
+    }
+
     public int randomPrice() {
         Random random = new Random();
         int price = random.nextInt(1000000 - 100000 + 1) + 10000;
         price = price / 1000;
         price = price * 1000;
         return price;
+    }
+
+    private Date randomDateBetweenTwoDates(Date startInclusive, Date endExclusive) {
+        long startMillis = startInclusive.getTime();
+        long endMillis = endExclusive.getTime();
+        long randomMillisSinceEpoch = ThreadLocalRandom
+                .current()
+                .nextLong(startMillis, endMillis);
+        return new Date(randomMillisSinceEpoch);
     }
 }

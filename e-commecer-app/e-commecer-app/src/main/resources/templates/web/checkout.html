@@ -55,6 +55,10 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="checkout__input form-group" th:if="${isLogin && addressList.size() > 0}">
+                                <a href="javascript:void(0)" class="chose-other-address" type="button"
+                                   data-toggle="modal" data-target="#modal-address">Chọn địa chỉ giao hàng khác</a>
+                            </div>
                             <div class="checkout__input form-group">
                                 <select id="province" name="province" class="form-control"></select>
                             </div>
@@ -75,21 +79,30 @@
                             <div class="checkout__input">
                                 <h4>Phương thức vận chuyển</h4>
                                 <div id="shipping-method">
-                                    <div class="d-flex align-items-center">
-                                        <input type="radio" id="delivery" class="mr-1" value="STANDARD" checked
+                                    <div class="d-flex align-items-center mb-2"
+                                         th:each="shippingMethod : ${shippingMethodList}">
+                                        <input type="radio" class="mr-1" th:value="${shippingMethod}"
+                                               th:id="${shippingMethod}"
+                                               th:checked="${shippingMethod == shippingMethodList[0]}"
                                                name="shipping-method">
-                                        <label for="delivery" class="mb-0">Giao hàng tận nơi</label>
+                                        <label th:for="${shippingMethod}" class="mb-0"
+                                               th:text="${shippingMethod.getDisplayValue()}">Thanh toán khi giao
+                                            hàng</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="checkout__input">
                                 <h4>Phương thức thanh toán</h4>
                                 <div id="payment-method">
-                                    <div class="d-flex align-items-center">
-                                        <input type="radio" id="payment-upon-delivery" class="mr-1" value="COD" checked
+                                    <div class="d-flex align-items-center mb-2"
+                                         th:each="paymentMethod : ${paymentMethodList}">
+                                        <input type="radio" class="mr-1" th:value="${paymentMethod}"
+                                               th:id="${paymentMethod}"
+                                                  th:checked="${paymentMethod == paymentMethodList[0]}"
                                                name="payment-method">
-                                        <label for="payment-upon-delivery" class="mb-0">Thanh toán khi giao hàng
-                                            (COD)</label>
+                                        <label th:for="${paymentMethod}" class="mb-0"
+                                               th:text="${paymentMethod.getDisplayValue()}">Thanh toán khi giao
+                                            hàng</label>
                                     </div>
                                 </div>
                             </div>
@@ -129,10 +142,61 @@
             </div>
         </div>
     </section>
+
+    <div class="modal fade" id="modal-address" th:if="${isLogin && addressList.size() > 0}">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Chọn địa chỉ</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 10%; text-align: center">STT</th>
+                            <th>Địa chỉ</th>
+                            <th style="width: 15%; text-align: center">Mặc định</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr th:each="address, state : ${addressList}">
+                            <td style="text-align: center; vertical-align: middle;">
+                                <span th:text="${state.index + 1}"></span>
+                            </td>
+                            <td style="vertical-align: middle;">
+                                <span th:text="|${address.detail}, ${address.ward}, ${address.district}, ${address.province}|"></span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <span class="text-success" th:if="${address.isDefault}" style="font-size: 20px">
+                                    <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                </span>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <button th:with="index=${state.index}" class="primary-btn border-0"
+                                        th:onclick="|chooseAddress(${index})|">
+                                    Chọn
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Checkout Section End -->
 </th:block>
 
 <th:block id="js">
+    <script th:inline="javascript">
+        const addressList = [[${addressList}]];
+        console.log(addressList)
+    </script>
     <script src="/js/web/checkout.js"></script>
 </th:block>
 </body>

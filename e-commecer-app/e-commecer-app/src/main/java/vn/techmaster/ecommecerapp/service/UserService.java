@@ -36,7 +36,9 @@ public class UserService {
     // get all user return list userpublic
     public List<UserPublic> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return users.stream().map(UserPublic::of).toList();
+        return users.stream()
+                .sorted((u1, u2) -> u2.getCreatedAt().compareTo(u1.getCreatedAt()))
+                .map(UserPublic::of).toList();
     }
 
     // get user by id

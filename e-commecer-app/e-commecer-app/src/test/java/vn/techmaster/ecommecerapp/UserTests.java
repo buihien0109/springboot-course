@@ -10,7 +10,8 @@ import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.repository.RoleRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
 
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootTest
 public class UserTests {
@@ -57,13 +58,17 @@ public class UserTests {
     @Test
     void save_users_1() {
         Faker faker = new Faker();
-        for (int i = 0; i < 20; i++) {
+        Date start = new Calendar.Builder().setDate(2023, 1, 1).build().getTime();
+        Date end = new Date();
+        for (int i = 0; i < 50; i++) {
             User user = new User();
-            user.setUsername(faker.name().username());
+            String name = faker.name().username();
+            user.setUsername(name);
             user.setEmail(faker.internet().emailAddress());
             user.setPhone(faker.phoneNumber().phoneNumber());
-            user.setAvatar(faker.company().logo());
+            user.setAvatar(generateLinkAuthorAvatar(name));
             user.setEnabled(true);
+            user.setCreatedAt(randomDateBetweenTwoDates(start, end));
             user.setRoles(Set.of(roleRepository.findByName("USER").get()));
             user.setPassword(passwordEncoder.encode("123"));
             userRepository.save(user);
@@ -92,5 +97,50 @@ public class UserTests {
     // generate link author avatar follow struct : https://placehold.co/200x200?text=[...]
     private String generateLinkAuthorAvatar(String authorName) {
         return "https://placehold.co/200x200?text=" + getCharacter(authorName);
+    }
+
+    // write method to random date between 2 date
+    private Date randomDateBetweenTwoDates(Date startInclusive, Date endExclusive) {
+        long startMillis = startInclusive.getTime();
+        long endMillis = endExclusive.getTime();
+        long randomMillisSinceEpoch = ThreadLocalRandom
+          .current()
+          .nextLong(startMillis, endMillis);
+        return new Date(randomMillisSinceEpoch);
+    }
+
+    @Test
+    void update_created_at_for_user() {
+        List<User> users = userRepository.findAll();
+        // start date 2023-01-01 not using new Date
+        Date start = new Calendar.Builder().setDate(2023, 8, 1).build().getTime();
+        Date end = new Date();
+
+        for (User user : users) {
+            user.setCreatedAt(randomDateBetweenTwoDates(start, end));
+            userRepository.save(user);
+        }
+    }
+
+    @Test
+    void random_user_disabled() {
+        Random random = new Random();
+        List<User> users = userRepository.findAll();
+
+        List<User> rdUsers = new ArrayList<>();
+
+        // random 10 user unique using for loop and add to list rdUsers
+        for (int i = 0; i < 15; i++) {
+            int rd = random.nextInt(users.size());
+            if (!rdUsers.contains(users.get(rd))) {
+                rdUsers.add(users.get(rd));
+            }
+        }
+
+        // set enabled = false for user in list rdUsers
+        for (User user : rdUsers) {
+            user.setEnabled(false);
+            userRepository.save(user);
+        }
     }
 }

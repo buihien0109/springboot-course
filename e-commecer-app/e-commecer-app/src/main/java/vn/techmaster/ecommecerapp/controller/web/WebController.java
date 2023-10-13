@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import vn.techmaster.ecommecerapp.entity.OrderTable;
 import vn.techmaster.ecommecerapp.model.projection.ProductPublic;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
 import vn.techmaster.ecommecerapp.service.*;
@@ -26,6 +27,7 @@ public class WebController {
     private final ReviewService reviewService;
     private final BannerService bannerService;
     private final AuthService authService;
+    private final UserAddressService userAddressService;
 
 
     @GetMapping("/")
@@ -96,7 +98,12 @@ public class WebController {
     }
 
     @GetMapping("/thanh-toan")
-    public String getCheckout() {
+    public String getCheckout(Model model) {
+        if (SecurityUtils.isAuthenticated()) {
+            model.addAttribute("addressList", userAddressService.findAllAddressByUserLogin());
+        }
+        model.addAttribute("paymentMethodList", OrderTable.PaymentMethod.values());
+        model.addAttribute("shippingMethodList", OrderTable.ShippingMethod.values());
         return "web/checkout";
     }
 

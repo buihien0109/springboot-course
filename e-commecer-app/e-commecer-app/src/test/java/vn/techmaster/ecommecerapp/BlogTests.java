@@ -5,12 +5,17 @@ import com.github.slugify.Slugify;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import vn.techmaster.ecommecerapp.entity.*;
-import vn.techmaster.ecommecerapp.repository.*;
+import vn.techmaster.ecommecerapp.entity.Blog;
+import vn.techmaster.ecommecerapp.entity.Comment;
+import vn.techmaster.ecommecerapp.entity.Tag;
+import vn.techmaster.ecommecerapp.entity.User;
+import vn.techmaster.ecommecerapp.repository.BlogRepository;
+import vn.techmaster.ecommecerapp.repository.CommentRepository;
+import vn.techmaster.ecommecerapp.repository.TagRepository;
+import vn.techmaster.ecommecerapp.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootTest
 public class BlogTests {
@@ -48,7 +53,7 @@ public class BlogTests {
         List<User> userList = userRepository.findByRoles_NameIn(List.of("ADMIN"));
         List<Tag> tagList = tagRepository.findAll();
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             // Random 1 user
             User rdUser = userList.get(rd.nextInt(userList.size()));
 
@@ -56,7 +61,7 @@ public class BlogTests {
             List<Tag> rdList = new ArrayList<>();
             for (int j = 0; j < 2; j++) {
                 Tag rdTag = tagList.get(rd.nextInt(tagList.size()));
-                if(!rdList.contains(rdTag)) {
+                if (!rdList.contains(rdTag)) {
                     rdList.add(rdTag);
                 }
             }
@@ -110,5 +115,56 @@ public class BlogTests {
             tag.setSlug(slugify.slugify(tag.getName()));
         }
         tagRepository.saveAll(tagList);
+    }
+
+    @Test
+    void update_info_blog() {
+        Blog blogSample = blogRepository.findById(25).get();
+        List<Blog> blogList = blogRepository.findAll();
+
+        Date start = new Calendar.Builder().setDate(2023, 8, 1).build().getTime();
+        Date end = new Date();
+        for (Blog blog : blogList) {
+            Date rdDate = randomDateBetweenTwoDates(start, end);
+            if (!List.of(24, 25, 27).contains(blog.getId())) {
+                blog.setContent(blogSample.getContent());
+                blog.setDescription(blogSample.getDescription());
+                blog.setThumbnail(generateLinkImage(blog.getTitle()));
+            }
+            blog.setCreatedAt(rdDate);
+            blog.setUpdatedAt(rdDate);
+            blog.setPublishedAt(rdDate);
+            blog.setStatus(true);
+            blogRepository.save(blog);
+        }
+    }
+
+    // write method to random date between 2 date
+    private Date randomDateBetweenTwoDates(Date startInclusive, Date endExclusive) {
+        long startMillis = startInclusive.getTime();
+        long endMillis = endExclusive.getTime();
+        long randomMillisSinceEpoch = ThreadLocalRandom
+                .current()
+                .nextLong(startMillis, endMillis);
+        return new Date(randomMillisSinceEpoch);
+    }
+
+    // get character first each of word from string, and to uppercase
+    private String getCharacter(String str) {
+        String[] words = str.split(" ");
+        StringBuilder result = new StringBuilder();
+        for (String word : words) {
+            result.append(word.charAt(0));
+        }
+        if (result.length() >= 2) {
+            return result.substring(0, 2).toUpperCase();
+        } else {
+            return result.toString().toUpperCase();
+        }
+    }
+
+    // generate link author avatar follow struct : https://placehold.co/200x200?text=[...]
+    private String generateLinkImage(String authorName) {
+        return "https://placehold.co/200x200?text=" + getCharacter(authorName);
     }
 }
