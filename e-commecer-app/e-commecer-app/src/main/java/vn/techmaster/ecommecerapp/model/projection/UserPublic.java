@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Role;
 import vn.techmaster.ecommecerapp.entity.User;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,8 @@ public interface UserPublic {
     String getPhone();
 
     String getAvatar();
+
+    Date getCreatedAt();
 
     Set<Role> getRoles();
 
@@ -49,6 +52,11 @@ public interface UserPublic {
         @Override
         public String getAvatar() {
             return this.user.getAvatar();
+        }
+
+        @Override
+        public Date getCreatedAt() {
+            return this.user.getCreatedAt();
         }
 
         @Override

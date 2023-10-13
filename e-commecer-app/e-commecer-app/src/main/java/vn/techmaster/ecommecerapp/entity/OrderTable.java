@@ -96,20 +96,54 @@ public class OrderTable {
         orderItem.setOrder(null);
     }
 
+    @Getter
     public enum Status {
-        WAIT, DELIVERY, COMPLETE, CANCELED, RETURNED
+        WAIT("Chờ xác nhận"),
+        WAIT_DELIVERY("Chờ giao hàng"),
+        DELIVERY("Đang giao"),
+        COMPLETE("Đã giao"),
+        CANCELED("Đã hủy"),
+        RETURNED("Trả hàng");
+
+        private final String displayValue;
+
+        Status(String displayValue) {
+            this.displayValue = displayValue;
+        }
     }
 
+    @Getter
     public enum PaymentMethod {
-        COD, PAYPAL, STRIPE
+        COD("Thanh toán khi nhận hàng"),
+        E_PAYMENT("Thanh toán trực tuyến");
+
+        private final String displayValue;
+
+        PaymentMethod(String displayValue) {
+            this.displayValue = displayValue;
+        }
     }
 
+    @Getter
     public enum ShippingMethod {
-        STANDARD, EXPRESS
+        STANDARD("Ship tiêu chuẩn"), EXPRESS("Ship nhanh");
+
+        private final String displayValue;
+
+        ShippingMethod(String displayValue) {
+            this.displayValue = displayValue;
+        }
     }
 
+    @Getter
     public enum UseType {
-        USER, ANONYMOUS
+        USER("Khách hàng"), ANONYMOUS("Khách vãng lai");
+
+        private final String displayValue;
+
+        UseType(String displayValue) {
+            this.displayValue = displayValue;
+        }
     }
 
     @PrePersist

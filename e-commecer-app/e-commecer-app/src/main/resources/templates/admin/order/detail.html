@@ -29,7 +29,7 @@
                             <a href="/admin/orders">Đơn hàng</a>
                         </li>
                         <li class="breadcrumb-item active">
-                            Chi tiết đơn hàng
+                            Chi tiết đơn hàng <th:block th:text="'#' + ${order.orderNumber}"></th:block>
                         </li>
                     </ol>
                 </div>
@@ -41,19 +41,35 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row py-2">
-                <div class="col-6">
-                    <a href="/admin/orders" type="button" class="btn btn-default">
-                        <i class="fas fa-chevron-left"></i> Quay lại
-                    </a>
-                    <button type="button" class="btn btn-info px-4" id="btn-update">
-                        Cập nhật
-                    </button>
-                    <button type="button" class="btn btn-secondary px-4" data-toggle="modal" data-target="#modal-user">
-                        Chọn user
-                    </button>
-                    <button type="button" class="btn btn-warning" id="btn-confirm-order">
-                        Xác nhận đơn hàng
-                    </button>
+                <div class="col-12">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a href="/admin/orders" type="button" class="btn btn-default">
+                                <i class="fas fa-chevron-left"></i> Quay lại
+                            </a>
+                            <button type="button" class="btn btn-info px-4 btn-action" id="btn-update">
+                                Cập nhật
+                            </button>
+                            <button type="button" class="btn btn-secondary px-4 btn-action" data-toggle="modal"
+                                    data-target="#modal-user">
+                                Chọn user
+                            </button>
+                        </div>
+                        <div>
+                            <button th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT}"
+                                    type="button" class="btn btn-warning">
+                                Xác nhận đơn hàng
+                            </button>
+                            <button th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT_DELIVERY}"
+                                    type="button" class="btn btn-warning">
+                                Vận chuyển
+                            </button>
+                            <button th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT || order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT_DELIVERY}"
+                                    type="button" class="btn btn-default" onclick="cancelOrder()">
+                                Hủy đơn hàng
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -102,22 +118,26 @@
                                         <h5 class="mb-4 text-muted">Thông tin người nhận</h5>
                                         <div class="form-group">
                                             <label>Họ tên</label>
-                                            <input type="text" class="form-control" id="name" name="name" th:value="${order.username}"/>
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                   th:value="${order.username}"/>
                                         </div>
 
                                         <div class="form-group">
                                             <label>Số điện thoại</label>
-                                            <input type="text" class="form-control" id="phone" name="phone" th:value="${order.phone}"/>
+                                            <input type="text" class="form-control" id="phone" name="phone"
+                                                   th:value="${order.phone}"/>
                                         </div>
 
                                         <div class="form-group">
                                             <label>Email</label>
-                                            <input type="text" class="form-control" id="email" name="email" th:value="${order.email}"/>
+                                            <input type="text" class="form-control" id="email" name="email"
+                                                   th:value="${order.email}"/>
                                         </div>
 
                                         <div class="form-group">
                                             <label>Ghi chú đơn hàng</label>
-                                            <textarea class="form-control" rows="3" id="note" th:text="${order.note}"></textarea>
+                                            <textarea class="form-control" rows="3" id="note"
+                                                      th:text="${order.note}"></textarea>
                                         </div>
                                     </div>
 
@@ -146,7 +166,8 @@
 
                                         <div class="form-group">
                                             <label>Địa chỉ giao hàng</label>
-                                            <input type="text" class="form-control" id="address" name="address" th:value="${order.address}"/>
+                                            <input type="text" class="form-control" id="address" name="address"
+                                                   th:value="${order.address}"/>
                                         </div>
                                     </div>
 
@@ -196,7 +217,7 @@
                                             <th>Giá sản phẩm</th>
                                             <th>Giá khuyến mại (nếu có)</th>
                                             <th>Thành tiền</th>
-                                            <th></th>
+                                            <th class="btn-action"></th>
                                         </tr>
                                         </thead>
                                         <tbody id="product-table-content">
@@ -204,7 +225,7 @@
                                         </tbody>
                                     </table>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <button class="btn btn-primary" onclick="openModalCreateProduct()">Thêm sản phẩm
+                                        <button class="btn btn-primary btn-action" onclick="openModalCreateProduct()">Thêm sản phẩm
                                         </button>
                                         <div id="coupon-info">
 

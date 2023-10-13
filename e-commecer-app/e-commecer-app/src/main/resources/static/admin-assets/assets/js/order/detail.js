@@ -75,21 +75,22 @@ function openModalCreateProduct() {
     modalTitleEl.innerHTML = 'Thêm sản phẩm';
 }
 
-function openModalUpdateProduct(id) {
+function openModalUpdateProduct(productId) {
     $('#modal-product').modal('show');
 
     // change title
     modalTitleEl.innerHTML = 'Cập nhật sản phẩm';
 
     // fill data
-    const product = productsSelected.find((product, index) => index === id);
+    const product = productsSelected.find(product => product.productId === productId);
 
     // Trigger value product using select2
     $('#product').val(product.productId);
     $('#product').trigger('change');
     quantityEl.value = product.quantity;
 
-    idUpdate = id;
+    idUpdate = productId;
+    productEl.disabled = true;
 }
 
 // add event modal hidden
@@ -99,6 +100,7 @@ $('#modal-product').on('hidden.bs.modal', function (e) {
     quantityEl.value = '';
 
     idUpdate = null;
+    productEl.disabled = false;
 })
 
 const productTableContentEl = document.getElementById('product-table-content');
@@ -113,11 +115,11 @@ const renderProducts = () => {
                     <td>${formatCurrency(product.price)}</td>
                     <td>${product.discountPrice ? formatCurrency(product.discountPrice) : ''}</td>
                     <td>${product.discountPrice ? formatCurrency(product.quantity * product.discountPrice) : formatCurrency(product.quantity * product.price)}</td>
-                    <td>
-                         <button type="button" class="btn btn-primary btn-sm" onclick="openModalUpdateProduct(${index})">
+                    <td class="btn-action">
+                         <button type="button" class="btn btn-primary btn-sm" onclick="openModalUpdateProduct(${product.productId})">
                             <i class="fas fa-pen"></i>
                         </button>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(${index})">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(${product.productId})">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -192,12 +194,33 @@ const getTotalAmount = () => {
     return getSubtotalAmount() - getDiscountAmount();
 }
 
-const deleteProduct = (index) => {
+const deleteProduct = (productId) => {
     const isDelete = confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');
     if (!isDelete) return;
 
-    productsSelected.splice(index, 1);
-    renderProducts();
+    // get order item by productId
+    const orderItem = order.orderItems.find(orderItem => orderItem.product.productId === productId);
+    console.log({orderItem})
+
+    // call api delete order item
+    axios.delete(`/api/v1/admin/order-items/${orderItem.orderItemId}`)
+        .then(response => {
+            if (response.status === 200) {
+                toastr.success('Xóa sản phẩm thành công');
+                // remove order item in order
+                order.orderItems = order.orderItems.filter(orderItem => orderItem.product.productId !== productId);
+
+                // remove product in productsSelected
+                productsSelected = productsSelected.filter(product => product.productId !== productId);
+                renderProducts();
+            } else {
+                toastr.error('Xóa sản phẩm thất bại');
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            toastr.error(error.response.data.message);
+        })
 }
 
 // handle add product
@@ -220,21 +243,45 @@ const addProduct = () => {
         return;
     }
 
-    const productSelectedObject = {
+    // call api create order item
+    const data = {
+        orderId: order.orderId,
         productId: productSelectedId,
-        productName: productSelectedName,
         quantity: quantityValue,
-        price: productInfo.price,
-        discountPrice: productInfo.discountPrice
+        price: productInfo.discountPrice ? productInfo.discountPrice : productInfo.price,
     }
-    productsSelected.push(productSelectedObject);
-    renderProducts();
 
-    // clear input
-    quantityEl.value = '';
+    axios.post('/api/v1/admin/order-items', data)
+        .then(response => {
+            if (response.status === 200) {
+                toastr.success('Thêm sản phẩm thành công');
+                // add order item to order
+                order.orderItems.push(response.data);
 
-    // close modal
-    $('#modal-product').modal('hide');
+                // add product to productsSelected
+                const productSelectedObject = {
+                    productId: productSelectedId,
+                    productName: productSelectedName,
+                    quantity: quantityValue,
+                    price: productInfo.price,
+                    discountPrice: productInfo.discountPrice
+                }
+                productsSelected.push(productSelectedObject);
+                renderProducts();
+
+                // clear input
+                quantityEl.value = '';
+
+                // close modal
+                $('#modal-product').modal('hide');
+            } else {
+                toastr.error('Thêm sản phẩm thất bại');
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            toastr.error(error.response.data.message);
+        })
 }
 
 // handle update product
@@ -244,7 +291,7 @@ const updateProduct = () => {
     const productSelectedName = productEl.options[productEl.selectedIndex].text;
 
     // check product exist and different idUpdate
-    const productExist = productsSelected.find((product, index) => product.productId === productSelectedId && index !== idUpdate);
+    const productExist = productsSelected.find((product) => product.productId === productSelectedId && product.productId !== idUpdate);
     if (productExist) {
         toastr.error('Sản phẩm đã tồn tại');
         return;
@@ -252,38 +299,69 @@ const updateProduct = () => {
 
     const productInfo = productList.find(product => product.productId === productSelectedId);
 
-    // check quantity
-    if (quantityValue > productInfo.stockQuantity) {
+    // calculate difference between old quantity and new quantity and quantity of product in stock
+    const productSelected = productsSelected.find((product => product.productId === idUpdate));
+    const differenceQuantity = quantityValue - productSelected.quantity;
+    if (differenceQuantity > productInfo.stockQuantity) {
         toastr.error('Số lượng sản phẩm không đủ');
         return;
     }
 
-    const productSelectedObject = {
+    // call api update order item
+    const data = {
+        orderId: order.orderId,
         productId: productSelectedId,
-        productName: productSelectedName,
         quantity: quantityValue,
-        price: productInfo.price,
-        discountPrice: productInfo.discountPrice
+        price: productInfo.discountPrice ? productInfo.discountPrice : productInfo.price,
     }
 
-    // find product by idUpdate and update
-    for (let i = 0; i < productsSelected.length; i++) {
-        if (i === idUpdate) {
-            productsSelected[i] = productSelectedObject;
-            break;
-        }
-    }
+    // get order item by productId
+    const orderItem = order.orderItems.find(orderItem => orderItem.product.productId === idUpdate);
+    console.log({orderItem})
 
-    renderProducts();
+    // call api update order item
+    axios.put(`/api/v1/admin/order-items/${orderItem.orderItemId}`, data)
+        .then(response => {
+            if (response.status === 200) {
+                toastr.success('Cập nhật sản phẩm thành công');
+                // update order item in order
+                orderItem.quantity = quantityValue;
 
-    // clear input
-    quantityEl.value = '';
+                // update product in productsSelected
+                const productSelectedObject = {
+                    productId: productSelectedId,
+                    productName: productSelectedName,
+                    quantity: quantityValue,
+                    price: productInfo.price,
+                    discountPrice: productInfo.discountPrice
+                }
 
-    // reset idUpdate
-    idUpdate = null;
+                // find product by idUpdate and update
+                for (let i = 0; i < productsSelected.length; i++) {
+                    if (i === idUpdate) {
+                        productsSelected[i] = productSelectedObject;
+                        break;
+                    }
+                }
 
-    // close modal
-    $('#modal-product').modal('hide');
+                renderProducts();
+
+                // clear input
+                quantityEl.value = '';
+
+                // reset idUpdate
+                idUpdate = null;
+
+                // close modal
+                $('#modal-product').modal('hide');
+            } else {
+                toastr.error('Cập nhật sản phẩm thất bại');
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            toastr.error(error.response.data.message);
+        })
 }
 
 const btnHandle = document.getElementById('btn-handle');
@@ -432,6 +510,10 @@ const addressEl = document.getElementById('address');
 
 btnChooseUser.addEventListener('click', async () => {
     if (!$("#form-user").valid()) return;
+
+    // confirm choose user
+    const isChoose = confirm('Bạn có chắc chắn muốn chọn user này?');
+    if (!isChoose) return;
 
     const userId = Number(userEl.value);
     const user = userList.find(user => user.userId === Number(userId));
@@ -597,6 +679,10 @@ const clearAddress = () => {
 }
 
 const cancelUser = () => {
+    // confirm cancel user
+    const isCancel = confirm('Bạn có chắc chắn muốn hủy chọn user?');
+    if (!isCancel) return;
+
     // clear input
     nameEl.value = '';
     phoneEl.value = '';
@@ -619,8 +705,8 @@ const hideCoupon = () => {
 
 const showCoupon = () => {
     couponInfoEl.innerHTML = `
-        <button class="btn btn-default" onclick="cancelCoupon()">Hủy mã giảm giá</button>
-        <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#modal-coupon">Thêm mã giảm giá</button>
+        <button class="btn btn-default btn-action" onclick="cancelCoupon()">Hủy mã giảm giá</button>
+        <button class="btn btn-secondary btn-action" type="button" data-toggle="modal" data-target="#modal-coupon">Thêm mã giảm giá</button>
         <div class="modal fade" id="modal-coupon">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -780,13 +866,6 @@ btnUpdateOrder.addEventListener('click', async () => {
     const paymentMethod = document.getElementById('payment').value;
     const couponCode = couponSelected ? couponSelected.code : null;
     const couponDiscount = couponSelected ? couponSelected.discount : null;
-    const items = productsSelected.map(product => {
-        return {
-            productId: product.productId,
-            quantity: product.quantity,
-            price: product.discountPrice ? product.discountPrice : product.price,
-        }
-    })
 
     // get province selected and get province name by attribute data-province-name
     const provinceSelected = provinceSelect.options[provinceSelect.selectedIndex];
@@ -800,7 +879,7 @@ btnUpdateOrder.addEventListener('click', async () => {
     const wardSelected = wardSelect.options[wardSelect.selectedIndex];
     const wardName = wardSelected.getAttribute('data-ward-name');
 
-    const order = {
+    const data = {
         userId: userSelected ? userSelected.userId : null,
         username,
         phone,
@@ -813,14 +892,14 @@ btnUpdateOrder.addEventListener('click', async () => {
         shippingMethod,
         paymentMethod,
         couponCode,
-        couponDiscount,
-        items,
+        couponDiscount
     }
-    console.log({order})
+    console.log({data})
 
-    axios.put(`/api/v1/admin/orders/${order.orderId}`, order)
+    axios.put(`/api/v1/admin/orders/${order.orderId}`, data)
         .then(response => {
             if (response.status === 200) {
+                console.log(response.data);
                 toastr.success('Cập nhật đơn hàng thành công');
             } else {
                 toastr.error('Cập nhật đơn hàng thất bại');
@@ -832,7 +911,33 @@ btnUpdateOrder.addEventListener('click', async () => {
         })
 })
 
+// ----------------- handle cancel order -----------------
+const cancelOrder = () => {
+    const isCancel = confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');
+    if (!isCancel) return;
+
+    axios.put(`/api/v1/admin/orders/${order.orderId}/cancel`)
+        .then(response => {
+            if (response.status === 200) {
+                toastr.success('Hủy đơn hàng thành công');
+                removeBtnAction();
+            } else {
+                toastr.error('Hủy đơn hàng thất bại');
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            toastr.error(error.response.data.message);
+        })
+}
+
 // ----------------- init data -----------------
+const removeBtnAction = () => {
+    const btns = document.querySelectorAll('.btn-action');
+    btns.forEach(btn => {
+        btn.parentElement.removeChild(btn);
+    })
+}
 const initAddressUser = async () => {
 // choose province by province name to select element. value of select element is provinceId and content is provinceName
     console.log(order)
@@ -862,6 +967,9 @@ const init = async () => {
         await initAddressUser();
         userSelected = userList.find(user => user.userId === order.user.userId);
         displayUserSelected(userSelected);
+    } else {
+        await getProvinces();
+        await initAddressUser();
     }
 
     // init productsSelected
@@ -879,6 +987,8 @@ const init = async () => {
         discount: order.couponDiscount
     } : null;
     renderProducts();
+    if (order.status !== 'WAIT' && order.status !== 'WAIT_DELIVERY') {
+        removeBtnAction();
+    }
 }
-
 init();

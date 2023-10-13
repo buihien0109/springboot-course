@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+
+<head>
+    <title>Danh mục phiếu chi</title>
+</head>
+
+<body>
+<!-- BODY -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Danh mục phiếu chi
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <a href="/admin/payment_vouchers/create" class="btn btn-primary" id="btn-open-modal">
+                        <i class="fas fa-plus"></i> Tạo phiếu chi
+                    </a>
+                    <a href="/admin/payment_vouchers" type="button" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th style="width: 10%">Mã phiếu</th>
+                                    <th style="width: 10%">Ngày chi</th>
+                                    <th>Nội dung chi</th>
+                                    <th style="width: 10%">Số tiền</th>
+                                    <th style="width: 15%">Người chi</th>
+                                    <th>Ghi chú</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                            <div class="d-flex justify-content-center mt-3" id="pagination">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        let paymentVouchers = [[${paymentVouchers}]];
+        console.log(paymentVouchers);
+    </script>
+    <script th:src="@{/admin-assets/assets/js/payment-voucher/index.js}"></script>
+</th:block>
+</body>
+
+</html>

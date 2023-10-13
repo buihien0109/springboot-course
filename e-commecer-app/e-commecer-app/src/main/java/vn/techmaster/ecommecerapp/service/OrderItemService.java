@@ -25,21 +25,13 @@ public class OrderItemService {
     private final OrderTableRepository orderTableRepository;
     private final ProductRepository productRepository;
 
-    // get all order complete item by user login
-    public List<OrderItemPublic> findAllOrderItemByUserLogin() {
-        User user = SecurityUtils.getCurrentUserLogin();
-        List<OrderItem> orderItems = orderItemRepository
-                .findByOrder_User_UserIdAndOrder_Status(user.getUserId(), OrderTable.Status.COMPLETE);
-        return orderItems.stream().map(OrderItemPublic::of).toList();
-    }
-
     public OrderItemPublic adminCreateOrderItem(AdminUpsertOrderItemRequest request) {
         // check order exist
         OrderTable orderTable = orderTableRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đơn hàng"));
 
         // check order status
-        if (orderTable.getStatus() != OrderTable.Status.WAIT) {
+        if (orderTable.getStatus() != OrderTable.Status.WAIT && orderTable.getStatus() != OrderTable.Status.WAIT_DELIVERY) {
             throw new BadRequestException("Trạng thái đơn hàng không cho phép thêm sản phẩm");
         }
 
@@ -75,8 +67,10 @@ public class OrderItemService {
         // update product quantity
         product.setStockQuantity(product.getStockQuantity() - request.getQuantity());
 
-        // if product quantity = 0 then set status UNAVAILABLE
-        if (product.getStockQuantity() == 0) {
+        // if product quantity > 0 then set status AVAILABLE. Otherwise, set status UNAVAILABLE
+        if (product.getStockQuantity() > 0) {
+            product.setStatus(Product.Status.AVAILABLE);
+        } else {
             product.setStatus(Product.Status.UNAVAILABLE);
         }
         productRepository.save(product);
@@ -92,7 +86,7 @@ public class OrderItemService {
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đơn hàng"));
 
         // check order status
-        if (orderTable.getStatus() != OrderTable.Status.WAIT) {
+        if (orderTable.getStatus() != OrderTable.Status.WAIT && orderTable.getStatus() != OrderTable.Status.WAIT_DELIVERY) {
             throw new BadRequestException("Trạng thái đơn hàng không cho phép cập nhật sản phẩm");
         }
 
@@ -120,9 +114,11 @@ public class OrderItemService {
         // update product quantity
         product.setStockQuantity(product.getStockQuantity() - quantityDiff);
 
-        // if product quantity > 0 then set status AVAILABLE
+        // if product quantity > 0 then set status AVAILABLE. Otherwise, set status UNAVAILABLE
         if (product.getStockQuantity() > 0) {
             product.setStatus(Product.Status.AVAILABLE);
+        } else {
+            product.setStatus(Product.Status.UNAVAILABLE);
         }
 
         productRepository.save(product);
@@ -141,16 +137,18 @@ public class OrderItemService {
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm trong đơn hàng"));
 
         // check order status
-        if (orderItem.getOrder().getStatus() != OrderTable.Status.WAIT) {
+        if (orderItem.getOrder().getStatus() != OrderTable.Status.WAIT && orderItem.getOrder().getStatus() != OrderTable.Status.WAIT_DELIVERY) {
             throw new BadRequestException("Trạng thái đơn hàng không cho phép xóa sản phẩm");
         }
 
         // update product quantity
         Product product = orderItem.getProduct();
         product.setStockQuantity(product.getStockQuantity() + orderItem.getQuantity());
-        // if product quantity > 0 then set status AVAILABLE
+        // if product quantity > 0 then set status AVAILABLE. Otherwise, set status UNAVAILABLE
         if (product.getStockQuantity() > 0) {
             product.setStatus(Product.Status.AVAILABLE);
+        } else {
+            product.setStatus(Product.Status.UNAVAILABLE);
         }
         productRepository.save(product);
 

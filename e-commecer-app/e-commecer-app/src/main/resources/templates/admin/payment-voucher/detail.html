@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>Chi tiết phiếu chi</title>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/suppliers">Phiếu chi</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Chi tiết phiếu chi <th:block th:text="'#' + ${paymentVoucher.id}"></th:block>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/payment_vouchers" type="button" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form id="form-update-payment-voucher">
+                                        <div class="form-group">
+                                            <label>Mục đích chi</label>
+                                            <input type="text" class="form-control" id="purpose" name="purpose" th:value="${paymentVoucher.purpose}"/>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Số tiền</label>
+                                            <input type="text" class="form-control currency" id="amount" name="amount" th:value="${paymentVoucher.amount}"/>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Ghi chú</label>
+                                            <textarea class="form-control" rows="3" id="note" name="note" th:text="${paymentVoucher.note}">
+                                            </textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Người tạo</label>
+                                            <input type="text" class="form-control" id="user" name="user" th:value="${user.username}" disabled/>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        const paymentVoucher = [[${paymentVoucher}]];
+        console.log(paymentVoucher)
+    </script>
+    <script th:src="@{/admin-assets/assets/js/payment-voucher/detail.js}"></script>
+</th:block>
+
+</body>
+
+</html>

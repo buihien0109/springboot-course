@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -31,8 +32,8 @@ public class User {
     private String password;
 
     private String avatar;
-
     private Boolean enabled;
+    private Date createdAt;
 
     @ManyToMany(fetch = FetchType.EAGER) //EAGER: load hết dữ liệu của user và role
     @Fetch(FetchMode.SUBSELECT)
@@ -46,6 +47,11 @@ public class User {
         this.email = email;
         this.password = password;
         this.roles = roles;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = new Date();
     }
 }
 

@@ -18,7 +18,7 @@ const activeMenu = () => {
     menuParentEls.forEach(menuParent => {
         const menuChildEls = menuParent.nextElementSibling.querySelectorAll("ul.nav.nav-treeview > li > a");
         menuChildEls.forEach(menuChild => {
-            if(menuChild.getAttribute("href") === path) {
+            if (menuChild.getAttribute("href") === path) {
                 menuParent.parentElement.classList.add("menu-is-opening", "menu-open");
                 menuParent.classList.add("active");
                 menuChild.classList.add("active");
@@ -83,7 +83,9 @@ const formatDate = dateString => {
 
 const formatCurrency = (number) => {
     if (number) {
-        return number.toString().replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");+ 'đ';
+        const numberFormat = number.toString()
+            .replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return number >= 0 ? numberFormat : `-${numberFormat}`;
     }
     return number;
 }
@@ -95,7 +97,7 @@ function logout() {
             toastr.success("Đăng xuất thành công");
             setTimeout(() => {
                 window.location.href = '/admin/login';
-            },1500)
+            }, 1500)
         }
     }).catch(err => {
         console.log(err);

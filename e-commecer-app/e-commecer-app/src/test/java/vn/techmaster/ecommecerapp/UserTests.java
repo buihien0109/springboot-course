@@ -10,7 +10,6 @@ import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.repository.RoleRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
 
-import java.util.List;
 import java.util.Set;
 
 @SpringBootTest
@@ -64,9 +63,34 @@ public class UserTests {
             user.setEmail(faker.internet().emailAddress());
             user.setPhone(faker.phoneNumber().phoneNumber());
             user.setAvatar(faker.company().logo());
+            user.setEnabled(true);
             user.setRoles(Set.of(roleRepository.findByName("USER").get()));
             user.setPassword(passwordEncoder.encode("123"));
             userRepository.save(user);
         }
+    }
+
+    @Test
+    void update_avatar_for_user() {
+        for (int i = 35; i < 55; i++) {
+            User user = userRepository.findById((long) i).get();
+            user.setAvatar(generateLinkAuthorAvatar(user.getUsername()));
+            userRepository.save(user);
+        }
+    }
+
+    // get character first each of word from string, and to uppercase
+    private String getCharacter(String str) {
+        String[] words = str.split(" ");
+        StringBuilder result = new StringBuilder();
+        for (String word : words) {
+            result.append(word.charAt(0));
+        }
+        return result.toString().toUpperCase();
+    }
+
+    // generate link author avatar follow struct : https://placehold.co/200x200?text=[...]
+    private String generateLinkAuthorAvatar(String authorName) {
+        return "https://placehold.co/200x200?text=" + getCharacter(authorName);
     }
 }

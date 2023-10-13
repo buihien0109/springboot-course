@@ -155,4 +155,36 @@ public class ProductTests {
             productRepository.save(product);
         }
     }
+
+    @Test
+    void update_stock_quantity() {
+        Faker faker = new Faker();
+        // update stock quantity of all products
+        for (Product product : productRepository.findAll()) {
+            if (product.getStatus() == Product.Status.AVAILABLE) {
+                product.setStockQuantity(faker.number().numberBetween(10, 30));
+            } else {
+                product.setStockQuantity(0);
+            }
+            productRepository.save(product);
+        }
+    }
+
+    @Test
+    void update_price_product() {
+        // update price of all products
+        for (Product product : productRepository.findAll()) {
+            product.setPrice(randomPrice());
+            productRepository.save(product);
+        }
+    }
+
+    // viết method để random số từ 10000 đến 1000000 và làm tròn đến hàng nghìn
+    public int randomPrice() {
+        Random random = new Random();
+        int price = random.nextInt(100000 - 10000 + 1) + 10000;
+        price = price / 1000;
+        price = price * 1000;
+        return price;
+    }
 }

@@ -11,6 +11,7 @@ import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.OrderTablePublic;
 import vn.techmaster.ecommecerapp.model.request.AdminCreateOrderRequest;
+import vn.techmaster.ecommecerapp.model.request.AdminUpdateOrderRequest;
 import vn.techmaster.ecommecerapp.model.request.OrderRequest;
 import vn.techmaster.ecommecerapp.repository.OrderTableRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
@@ -253,7 +254,7 @@ public class OrderService {
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đơn hàng"));
 
         // check order status
-        if (orderTable.getStatus() != OrderTable.Status.WAIT) {
+        if (orderTable.getStatus() != OrderTable.Status.WAIT && orderTable.getStatus() != OrderTable.Status.WAIT_DELIVERY) {
             throw new ResouceNotFoundException("Trạng thái đơn hàng không cho phép hủy");
         }
 
@@ -271,8 +272,49 @@ public class OrderService {
             // if product quantity > 0 then set status AVAILABLE
             if (product.getStockQuantity() > 0) {
                 product.setStatus(Product.Status.AVAILABLE);
+            } else {
+                product.setStatus(Product.Status.UNAVAILABLE);
             }
             productRepository.save(product);
         });
+    }
+
+    public OrderTablePublic updateOrderByAdmin(Long id, AdminUpdateOrderRequest orderRequest) {
+        // find order by id
+        OrderTable orderTable = orderTableRepository.findById(id)
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đơn hàng"));
+
+        // check order status
+        if (orderTable.getStatus() != OrderTable.Status.WAIT && orderTable.getStatus() != OrderTable.Status.WAIT_DELIVERY) {
+            throw new ResouceNotFoundException("Trạng thái đơn hàng không cho phép cập nhật");
+        }
+
+        // check user id is exist
+        User user = null;
+        if (orderRequest.getUserId() != null) {
+            user = userRepository.findById(orderRequest.getUserId())
+                    .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy user"));
+        }
+
+        // update order from request info
+        orderTable.setUsername(orderRequest.getUsername());
+        orderTable.setPhone(orderRequest.getPhone());
+        orderTable.setEmail(orderRequest.getEmail());
+        orderTable.setProvince(orderRequest.getProvince());
+        orderTable.setDistrict(orderRequest.getDistrict());
+        orderTable.setWard(orderRequest.getWard());
+        orderTable.setAddress(orderRequest.getAddress());
+        orderTable.setNote(orderRequest.getNote());
+        orderTable.setShippingMethod(orderRequest.getShippingMethod());
+        orderTable.setPaymentMethod(orderRequest.getPaymentMethod());
+        orderTable.setCouponCode(orderRequest.getCouponCode());
+        orderTable.setCouponDiscount(orderRequest.getCouponDiscount());
+        orderTable.setUseType(user == null ? OrderTable.UseType.ANONYMOUS : OrderTable.UseType.USER);
+        orderTable.setUser(user);
+
+        // save order to database
+        orderTableRepository.save(orderTable);
+
+        return OrderTablePublic.of(orderTable);
     }
 }
