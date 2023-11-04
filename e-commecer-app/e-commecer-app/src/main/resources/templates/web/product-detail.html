@@ -272,7 +272,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6" th:each="rProduct : ${relatedProducts}">
                     <div class="product__item">
                         <div class="product__item__pic set-bg"
-                             th:style="|background-image: url(${rProduct.images.mainImage != null ? rProduct.images.mainImage.imageUrl : '/img/image-placeholder.png'})|">
+                             th:style="|background-image: url(${rProduct.imageUrl != null ? rProduct.imageUrl : '/img/image-placeholder.png'})|">
                             <ul class="product__item__pic__hover">
                                 <li><a href="javascript:void(0)" th:onclick="|addToWishList(${rProduct.productId})|"><i
                                         class="fa fa-heart"></i></a></li>

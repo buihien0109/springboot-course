@@ -18,10 +18,6 @@
                         <ul>
                             <li th:text="${blog.user.username}">By Michael Scofield</li>
                             <li th:text="${#dates.format(blog.publishedAt, 'dd/MM/yyyy')}">January 14, 2019</li>
-                            <li>
-                                <th:block th:text="${blog.comments.size()}">8</th:block>
-                                bình luận
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -72,9 +68,7 @@
                 </div>
                 <div class="col-lg-8 col-md-7 order-md-1 order-1">
                     <div class="blog__details__text">
-                        <md-block>
-                            <th:block th:text="${blog.content}"></th:block>
-                        </md-block>
+                        <th:block th:utext="${blog.content}"></th:block>
                     </div>
                     <div class="blog__details__content">
                         <div class="row">
@@ -151,7 +145,7 @@
     <!-- Related Blog Section End -->
 </th:block>
 <th:block id="js">
-    <script type="module" src="https://md-block.verou.me/md-block.js"></script>
+
 </th:block>
 </body>
 

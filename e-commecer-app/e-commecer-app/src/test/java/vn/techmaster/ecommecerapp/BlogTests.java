@@ -6,11 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import vn.techmaster.ecommecerapp.entity.Blog;
-import vn.techmaster.ecommecerapp.entity.Comment;
 import vn.techmaster.ecommecerapp.entity.Tag;
 import vn.techmaster.ecommecerapp.entity.User;
+import vn.techmaster.ecommecerapp.model.dto.BlogDto;
 import vn.techmaster.ecommecerapp.repository.BlogRepository;
-import vn.techmaster.ecommecerapp.repository.CommentRepository;
 import vn.techmaster.ecommecerapp.repository.TagRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
 
@@ -27,9 +26,6 @@ public class BlogTests {
 
     @Autowired
     private BlogRepository blogRepository;
-
-    @Autowired
-    private CommentRepository commentRepository;
 
     @Test
     void save_categories() {
@@ -83,31 +79,6 @@ public class BlogTests {
     }
 
     @Test
-    void save_comments() {
-        Faker faker = new Faker();
-        Random rd = new Random();
-        List<User> userList = userRepository.findAll();
-        List<Blog> blogList = blogRepository.findAll();
-
-        for (int i = 0; i < 100; i++) {
-            // Random 1 user
-            User rdUser = userList.get(rd.nextInt(userList.size()));
-
-            // Random 1 blog
-            Blog rdBlog = blogList.get(rd.nextInt(blogList.size()));
-
-            // Tao comment
-            Comment comment = Comment.builder()
-                    .content(faker.lorem().paragraph())
-                    .user(rdUser)
-                    .blog(rdBlog)
-                    .build();
-
-            commentRepository.save(comment);
-        }
-    }
-
-    @Test
     void update_tag_slug() {
         Slugify slugify = Slugify.builder().build();
         List<Tag> tagList = tagRepository.findAll();
@@ -139,6 +110,44 @@ public class BlogTests {
         }
     }
 
+    @Test
+    void update_blog_date() {
+        List<Blog> blogList = blogRepository.findAll();
+
+        Date start = new Calendar.Builder().setDate(2023, 8, 1).build().getTime();
+        Date end = new Date();
+
+        for (Blog blog : blogList) {
+            Date rdDate = randomDateBetweenTwoDates(start, end);
+            blog.setCreatedAt(rdDate);
+            blog.setUpdatedAt(rdDate);
+            blog.setPublishedAt(rdDate);
+            blog.setStatus(true);
+            blogRepository.save(blog);
+        }
+    }
+
+    @Test
+    void update_blog_category() {
+        Random rd = new Random();
+        List<Blog> blogList = blogRepository.findAll();
+        List<Tag> tagList = tagRepository.findAll();
+
+        for (Blog blog : blogList) {
+            // Random 1 ds category tuong ung
+            List<Tag> rdList = new ArrayList<>();
+            for (int j = 0; j < 2; j++) {
+                Tag rdTag = tagList.get(rd.nextInt(tagList.size()));
+                if (!rdList.contains(rdTag)) {
+                    rdList.add(rdTag);
+                }
+            }
+
+            blog.setTags(rdList);
+            blogRepository.save(blog);
+        }
+    }
+
     // write method to random date between 2 date
     private Date randomDateBetweenTwoDates(Date startInclusive, Date endExclusive) {
         long startMillis = startInclusive.getTime();
@@ -166,5 +175,10 @@ public class BlogTests {
     // generate link author avatar follow struct : https://placehold.co/200x200?text=[...]
     private String generateLinkImage(String authorName) {
         return "https://placehold.co/200x200?text=" + getCharacter(authorName);
+    }
+
+    @Test
+    void findAllBlogDtos() {
+        List<Blog> blogList = blogRepository.findAllBlogs();
     }
 }

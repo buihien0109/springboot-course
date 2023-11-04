@@ -6,9 +6,7 @@
     <title th:text="${blog.title}">AdminLTE 3 | Dashboard</title>
 
     <th:block id="css">
-        <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css"/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css"/>
-
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
         <link rel="stylesheet" th:href="@{/admin-assets/assets/css/image-management.css}">
@@ -163,8 +161,7 @@
 </div>
 
 <th:block id="js">
-    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.js}"></script>
     <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
     <script th:src="@{/admin-assets/assets/js/image-managent.js}"></script>
     <script th:inline="javascript">

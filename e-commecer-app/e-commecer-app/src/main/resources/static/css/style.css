@@ -1793,7 +1793,7 @@ ol {
 
 .product__details__pic__slider.owl-carousel .owl-item img {
     height: 82px;
-    width: auto;
+    width: 120px;
     object-fit: cover;
 }
 

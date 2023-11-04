@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,11 +18,15 @@ import vn.techmaster.ecommecerapp.model.request.LoginRequest;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class AddressService {
     @Value("${spring.api.ghtk.token}")
     private String tokenApi;
 
+    @Cacheable(value = "posts")
     public Map<String, Object> getAllProvince() throws JsonProcessingException {
+        log.info("Get all province");
+
         String API_URL = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province";
         RestTemplate restTemplate = new RestTemplate();
 
@@ -46,7 +52,10 @@ public class AddressService {
         return objectMapper.readValue(responseBody, typeReference);
     }
 
+    @Cacheable("districts")
     public Map<String, Object> getAllDistrictByProvince(Integer provinceId) throws JsonProcessingException {
+        log.info("Get all district by province id: " + provinceId);
+
         String API_URL = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district?province_id=" + provinceId;
         RestTemplate restTemplate = new RestTemplate();
 
@@ -72,7 +81,10 @@ public class AddressService {
         return objectMapper.readValue(responseBody, typeReference);
     }
 
+    @Cacheable("wards")
     public Map<String, Object> getAllWardByDistrict(Integer districtId) throws JsonProcessingException {
+        log.info("Get all ward by district id: " + districtId);
+
         String API_URL = "https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id=" + districtId;
         RestTemplate restTemplate = new RestTemplate();
 

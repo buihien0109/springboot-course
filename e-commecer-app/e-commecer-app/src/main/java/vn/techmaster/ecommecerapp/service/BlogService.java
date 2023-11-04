@@ -67,8 +67,12 @@ public class BlogService {
 
     // admin get all blogs
     public List<BlogPublic> getAllBlogsAdmin() {
-        List<Blog> blogs = blogRepository.findAll(Sort.by("createdAt").descending());
-        return blogs.stream().map(BlogPublic::of).toList();
+        log.info("Get all blogs admin");
+
+        List<Blog> blogs = blogRepository.findAllBlogs();
+        return blogs.stream()
+                .sorted((b1, b2) -> b2.getCreatedAt().compareTo(b1.getCreatedAt()))
+                .map(BlogPublic::of).toList();
     }
 
     // admin get all blog of logged user
@@ -118,7 +122,6 @@ public class BlogService {
                 .thumbnail(request.getThumbnail())
                 .status(request.getStatus())
                 .tags(tags)
-                .comments(new ArrayList<>())
                 .user(user)
                 .build();
 

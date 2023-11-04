@@ -3,42 +3,25 @@ $(".select2").select2({
     placeholder: "Chọn danh mục",
 });
 
-function uploadFileIDE(file, onSuccess, onError) {
-    console.log(file)
-    const formData = new FormData();
-    formData.append("file", file);
+$('#content').summernote({
+    height: 500,
+})
 
-    axios.post("/api/v1/files", formData).then((res) => {
-        if (res.status === 200) {
-            const imageUrl = `/api/v1/files/${res.data.id}`; // URL của hình ảnh đã tải lên
-            const cursorPosition = easyMDE.codemirror.getCursor(); // Lấy vị trí con trỏ
-            const imageMarkdown = '!'; // Tạo đoạn Markdown cho hình ảnh
-            easyMDE.codemirror.replaceRange(imageMarkdown, cursorPosition); // Chèn đoạn Markdown vào trình soạn thảo
-            onSuccess(imageUrl);
-        } else {
-            onError("Lỗi khi tải lên hình ảnh");
-        }
-    }).catch((err) => {
-        onError(err.response.data.message);
-    });
-}
+$('#content').css({
+    'display': 'block',
+    'height': '0',
+    'padding': '0',
+    'border': 'none'
+})
 
-// Initialize editor
-const easyMDE = new EasyMDE({
-    element: document.getElementById("content"),
-    spellChecker: false,
-    maxHeight: "350px",
-    renderingConfig: {
-        codeSyntaxHighlighting: true,
-    },
-    uploadImage: true,
-    imageUploadFunction: uploadFileIDE
+$('#content').on('summernote.change', function(we, contents, $editable) {
+    $("#content").html(contents);
 });
 
 // Initialize data
 const initData = (data) => {
     $("#title").val(data.title);
-    easyMDE.value(data.content);
+    $('#content').summernote('code', data.content);
     $("#description").html(data.description);
     $("#status").val(String(data.status));
     $("#tag").val(data.tags.map(e => e.id)).trigger("change");
@@ -46,28 +29,13 @@ const initData = (data) => {
 };
 initData(blog);
 
-// TODO : Chưa validate được nội dung của EasyMDE
-$.validator.addMethod(
-    "easymdeContent",
-    function (value, element) {
-        // Check if the EasyMDE content is not empty
-        // Lấy giá trị của textarea tương ứng với EasyMDE
-        let textareaValue = easyMDE.value();
-
-        // Kiểm tra xem nội dung của textarea có rỗng không
-        return textareaValue.trim() !== '';
-    },
-    "Nội dung không được để trống"
-);
-
 $('#form-update-blog').validate({
     rules: {
         title: {
             required: true
         },
         content: {
-            required: true,
-            easymdeContent: true
+            required: true
         },
         description: {
             required: true
@@ -78,8 +46,7 @@ $('#form-update-blog').validate({
             required: "Tiêu đề không được để trống"
         },
         content: {
-            required: "Nội dung không được để trống",
-            easymdeContent: "Nội dung không được để trống"
+            required: "Nội dung không được để trống"
         },
         description: {
             required: "Mô tả không được để trống"
@@ -107,7 +74,7 @@ btnUpdate.addEventListener("click", () => {
     }
 
     const title = $("#title").val();
-    const content = easyMDE.value();
+    const content = $('#content').summernote('code');
     const description = $("#description").val();
     const status = $("#status").val();
     const tagIds = $("#tag").val();

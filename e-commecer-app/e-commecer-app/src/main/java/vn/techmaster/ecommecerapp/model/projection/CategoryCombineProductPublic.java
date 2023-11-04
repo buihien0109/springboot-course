@@ -3,6 +3,7 @@ package vn.techmaster.ecommecerapp.model.projection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.Category;
+import vn.techmaster.ecommecerapp.model.projection.product.ProductPublic;
 
 import java.util.List;
 import java.util.stream.Collectors;

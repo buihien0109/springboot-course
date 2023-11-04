@@ -27,7 +27,7 @@ public class Tag {
     @Column(name = "slug")
     private String slug;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private List<Blog> blogs = new ArrayList<>();
 

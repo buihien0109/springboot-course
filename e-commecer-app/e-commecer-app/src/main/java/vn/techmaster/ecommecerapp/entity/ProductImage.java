@@ -27,7 +27,7 @@ public class ProductImage {
     @Enumerated(EnumType.STRING)
     private ImageType imageType;
 
-    public static enum ImageType {
+    public enum ImageType {
         MAIN,
         SUB
     }

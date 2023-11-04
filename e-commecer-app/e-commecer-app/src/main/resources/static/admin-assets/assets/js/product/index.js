@@ -13,11 +13,11 @@ const renderProducts = (productList) => {
                         </td>
                         <td>${product.stockQuantity}</td>
                         <td>${productStatus(product.status)}</td>
-                        <td>${product.category.name}</td>
+                        <td>${product.categoryName}</td>
                          <td>
                             ${
-                                product.supplier
-                                    ? `<a href="/admin/suppliers/${product.supplier.supplierId}/detail">${product.supplier.name}</a>`
+                                product.supplierId
+                                    ? `<a href="/admin/suppliers/${product.supplierId}/detail">${product.supplierName}</a>`
                                     : 'Unknown'
                             }
                         </td>

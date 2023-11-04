@@ -17,11 +17,11 @@ public class WishList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long wishlistId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 }

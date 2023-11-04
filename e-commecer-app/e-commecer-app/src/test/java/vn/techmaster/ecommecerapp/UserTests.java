@@ -77,11 +77,12 @@ public class UserTests {
 
     @Test
     void update_avatar_for_user() {
-        for (int i = 35; i < 55; i++) {
-            User user = userRepository.findById((long) i).get();
-            user.setAvatar(generateLinkAuthorAvatar(user.getUsername()));
+        List<User> users = userRepository.findAll();
+        users.forEach(user -> {
+            String name = user.getUsername();
+            user.setAvatar(generateLinkAuthorAvatar(name));
             userRepository.save(user);
-        }
+        });
     }
 
     // get character first each of word from string, and to uppercase

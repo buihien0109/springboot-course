@@ -3,6 +3,7 @@ package vn.techmaster.ecommecerapp.model.projection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.TransactionItem;
+import vn.techmaster.ecommecerapp.model.projection.product.ProductPublic;
 
 public interface TransactionItemPublic {
     Long getId();

@@ -8,6 +8,7 @@ import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.repository.FileServerRepository;
+import vn.techmaster.ecommecerapp.repository.UserRepository;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FileServerService {
     private final FileServerRepository fileServerRepository;
+    private final UserRepository userRepository;
 
     public List<FileServer> getAllFilesForLoggedInUser() {
         User user = SecurityUtils.getCurrentUserLogin();
@@ -97,4 +99,16 @@ public class FileServerService {
     public List<FileServer> getFilesOfUserId(Long userId) {
         return fileServerRepository.findByUser_UserIdOrderByCreatedAtDesc(userId);
     }
+
+    public FileServer saveFile(byte[] data) {
+        User user = userRepository.findByEmail("admin@gmail.com")
+                .orElseThrow(() -> new ResouceNotFoundException("Not found user"));
+        FileServer fileServer = new FileServer();
+        fileServer.setType("image/png");
+        fileServer.setData(data);
+        fileServer.setUser(user);
+        fileServerRepository.save(fileServer);
+        return fileServer;
+    }
+
 }

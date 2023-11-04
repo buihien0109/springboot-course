@@ -36,7 +36,7 @@ public class Blog {
     private Date publishedAt;
     private Boolean status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -46,10 +46,6 @@ public class Blog {
             joinColumns = @JoinColumn(name = "blog_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags = new ArrayList<>();
-
-    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Fetch(FetchMode.SUBSELECT)
-    private List<Comment> comments = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {

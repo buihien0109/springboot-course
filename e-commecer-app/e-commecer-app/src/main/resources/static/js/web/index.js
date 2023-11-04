@@ -37,7 +37,7 @@ const renderLoadMore = (categorySlug) => {
         html += `
                     <div class="col-lg-3 col-md-6 col-sm-6">
                         <div class="product__item">
-                            <div class="product__item__pic set-bg" style="background-image: url(${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'})">
+                            <div class="product__item__pic set-bg" style="background-image: url(${product.imageUrl != null ? product.imageUrl : '/img/image-placeholder.png'})">
                                 <ul class="product__item__pic__hover">
                                     <li><a href="javascript:void(0)" onclick="addToWishList(${product.productId})"><i class="fa fa-heart"></i></a></li>
                                     <li><a href="javascript:void(0)" onclick="addToCart(${product.productId}, 1)"><i class="fa fa-shopping-cart"></i></a></li>

@@ -11,8 +11,11 @@ import vn.techmaster.ecommecerapp.repository.ProductRepository;
 import vn.techmaster.ecommecerapp.repository.ReviewRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootTest
 public class ReviewTests {
@@ -64,13 +67,26 @@ public class ReviewTests {
 
     @Test
     void update_review() {
-        Product product = productRepository.findById(1L).get();
-        List<Review> reviews = reviewRepository.findByProduct_ProductIdOrderByUpdatedAtDesc(product.getProductId());
-
+        List<Review> reviews = reviewRepository.findAll();
+        Date start = new Calendar.Builder().setDate(2023, 8, 1).build().getTime();
+        Date end = new Date();
         // update review status
         for (Review review : reviews) {
+            Date randomDate = randomDateBetweenTwoDates(start, end);
             review.setStatus(Review.Status.ACCEPTED);
+            review.setCreatedAt(randomDate);
+            review.setUpdatedAt(randomDate);
             reviewRepository.save(review);
         }
+    }
+
+    // write method to random date between 2 date
+    private Date randomDateBetweenTwoDates(Date startInclusive, Date endExclusive) {
+        long startMillis = startInclusive.getTime();
+        long endMillis = endExclusive.getTime();
+        long randomMillisSinceEpoch = ThreadLocalRandom
+                .current()
+                .nextLong(startMillis, endMillis);
+        return new Date(randomMillisSinceEpoch);
     }
 }

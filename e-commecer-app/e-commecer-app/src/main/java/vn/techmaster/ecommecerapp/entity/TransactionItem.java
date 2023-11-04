@@ -27,12 +27,12 @@ public class TransactionItem {
     @Column(name = "purchase_price")
     private Integer purchasePrice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transaction_id")
     private Transaction transaction;
 

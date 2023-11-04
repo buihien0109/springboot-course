@@ -6,8 +6,7 @@
     <title>Tạo bài viết</title>
 
     <th:block id="css">
-        <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css"/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
         <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/dist/css/style.css}">
     </th:block>
@@ -65,7 +64,7 @@
 
                                         <div class="form-group">
                                             <label>Nội dung</label>
-                                            <textarea id="content" class="form-control" rows="3" name="editor"></textarea>
+                                            <textarea id="content" class="form-control" rows="3" name="content"></textarea>
                                         </div>
 
                                         <div class="form-group">
@@ -107,8 +106,7 @@
 </div>
 
 <th:block id="js">
-    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.js}"></script>
     <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
     <script th:src="@{/admin-assets/assets/js/blog/create.js}"></script>
 </th:block>

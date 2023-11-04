@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" th:fragment="main-fragment(title, cssResources, mainContent, jsResources)">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" th:href="@{/lib/bootstrap/bootstrap.min.css}">
+
+    <title th:replace="${title}">Title</title>
+
+    <th:block th:replace="${cssResources} ?: ~{}"></th:block>
+</head>
+<body>
+    <th:block th:replace="${mainContent} ?: ~{}"></th:block>
+
+    <script th:src="@{/lib/bootstrap/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/lib/axios/axios.min.js}"></script>
+    <th:block th:replace="${jsResources} ?: ~{}"></th:block>
+</body>
+</html>

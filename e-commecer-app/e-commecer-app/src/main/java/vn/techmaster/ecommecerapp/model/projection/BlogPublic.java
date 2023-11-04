@@ -30,8 +30,6 @@ public interface BlogPublic {
 
     List<TagPublic> getTags();
 
-    List<CommentPublic> getComments();
-
     UserPublic getUser();
 
     @RequiredArgsConstructor
@@ -93,14 +91,6 @@ public interface BlogPublic {
         public List<TagPublic> getTags() {
             return this.blog.getTags().stream()
                     .map(TagPublic::of)
-                    .toList();
-        }
-
-        @Override
-        public List<CommentPublic> getComments() {
-            return this.blog.getComments().stream()
-                    .sorted((c1, c2) -> c2.getCreatedAt().compareTo(c1.getCreatedAt()))
-                    .map(CommentPublic::of)
                     .toList();
         }
 

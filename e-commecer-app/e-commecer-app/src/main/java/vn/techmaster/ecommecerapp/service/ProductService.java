@@ -13,7 +13,8 @@ import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.CategorySeparatePublic;
 import vn.techmaster.ecommecerapp.model.projection.ProductAttributePublic;
 import vn.techmaster.ecommecerapp.model.projection.ProductImagePublic;
-import vn.techmaster.ecommecerapp.model.projection.ProductPublic;
+import vn.techmaster.ecommecerapp.model.projection.product.ProductNormalPublic;
+import vn.techmaster.ecommecerapp.model.projection.product.ProductPublic;
 import vn.techmaster.ecommecerapp.model.request.CreateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpsertProductAttributeRequest;
@@ -41,12 +42,6 @@ public class ProductService {
         return products.stream().map(ProductPublic::of).toList();
     }
 
-    public List<ProductPublic> getAllProductsByAdmin() {
-        List<Product> products = productRepository.findAll();
-        return products.stream()
-                .map(ProductPublic::of).toList();
-    }
-
     public List<ProductPublic> getAllProductsByStatus(List<Product.Status> statusList) {
         List<Product> products = productRepository.findByStatusIn(statusList);
         return products.stream()
@@ -71,10 +66,10 @@ public class ProductService {
     }
 
     // get products list same category with product id and get by limit
-    public List<ProductPublic> findAllProductByCategoryIdAndProductIdNot(Long categoryId, Long productId, int limit) {
+    public List<ProductNormalPublic> findAllProductByCategoryIdAndProductIdNot(Long categoryId, Long productId, int limit) {
         List<Product> products = productRepository
                 .findByCategory_CategoryIdAndProductIdNotAndStatusIn(categoryId, productId, List.of(Product.Status.AVAILABLE));
-        return products.stream().map(ProductPublic::of).limit(limit).toList();
+        return products.stream().map(ProductNormalPublic::of).limit(limit).toList();
     }
 
     // get all product by parent category name
@@ -86,7 +81,7 @@ public class ProductService {
     // get all product by parent category slug, page, size, sub category
     // return Page<ProductPublic>
     // page, size, sub category can be null
-    public Page<ProductPublic> findAllProductByParentCategorySlug(String slug, Integer page, Integer size, String sub) {
+    public Page<ProductNormalPublic> findAllProductByParentCategorySlug(String slug, Integer page, Integer size, String sub) {
         Page<Product> pageData;
 
         if (sub != null && !sub.isEmpty()) {
@@ -106,7 +101,7 @@ public class ProductService {
                     );
         }
 
-        return pageData.map(ProductPublic::of);
+        return pageData.map(ProductNormalPublic::of);
     }
 
     // get all product has discount valid date (not expies) and pagination with param page and size
@@ -116,13 +111,14 @@ public class ProductService {
                 List.of(Product.Status.AVAILABLE),
                 PageRequest.of(page - 1, size)
         );
+        Page<ProductNormalPublic> pageDataNormal = pageData.map(ProductNormalPublic::of);
         return Map.of(
                 "name", "Sản phẩm giảm giá",
                 "slug", "",
-                "products", pageData.getContent().stream().map(ProductPublic::of).toList(),
-                "totalElements", pageData.getTotalElements(),
-                "remain", pageData.getTotalElements() - (long) page * size < 0 ? 0 : pageData.getTotalElements() - (long) page * size,
-                "currentPage", pageData.getNumber() + 1
+                "products", pageDataNormal.getContent(),
+                "totalElements", pageDataNormal.getTotalElements(),
+                "remain", pageDataNormal.getTotalElements() - (long) page * size < 0 ? 0 : pageDataNormal.getTotalElements() - (long) page * size,
+                "currentPage", pageDataNormal.getNumber() + 1
         );
     }
 
@@ -136,14 +132,15 @@ public class ProductService {
                     List.of(Product.Status.AVAILABLE),
                     PageRequest.of(page - 1, size)
             );
+            Page<ProductNormalPublic> pageDataNormal = pageData.map(ProductNormalPublic::of);
             Map<String, Object> map = Map.of(
                     "id", category.getMainCategory().getCategoryId(),
                     "name", category.getMainCategory().getName(),
                     "slug", category.getMainCategory().getSlug(),
-                    "products", pageData.getContent().stream().map(ProductPublic::of).toList(),
-                    "totalElements", pageData.getTotalElements(),
-                    "remain", pageData.getTotalElements() - (long) page * size < 0 ? 0 : pageData.getTotalElements() - (long) page * size,
-                    "currentPage", pageData.getNumber() + 1
+                    "products", pageDataNormal.getContent(),
+                    "totalElements", pageDataNormal.getTotalElements(),
+                    "remain", pageDataNormal.getTotalElements() - (long) page * size < 0 ? 0 : pageDataNormal.getTotalElements() - (long) page * size,
+                    "currentPage", pageDataNormal.getNumber() + 1
             );
             data.add(map);
         });
@@ -169,12 +166,13 @@ public class ProductService {
                 List.of(Product.Status.AVAILABLE),
                 PageRequest.of(page - 1, size)
         );
+        Page<ProductNormalPublic> pageDataNormal = pageData.map(ProductNormalPublic::of);
         return Map.of(
                 "slug", categorySlug,
-                "products", pageData.getContent().stream().map(ProductPublic::of).toList(),
-                "totalElements", pageData.getTotalElements(),
-                "remain", pageData.getTotalElements() - (long) page * size < 0 ? 0 : pageData.getTotalElements() - (long) page * size,
-                "currentPage", pageData.getNumber() + 1
+                "products", pageDataNormal.getContent(),
+                "totalElements", pageDataNormal.getTotalElements(),
+                "remain", pageDataNormal.getTotalElements() - (long) page * size < 0 ? 0 : pageDataNormal.getTotalElements() - (long) page * size,
+                "currentPage", pageDataNormal.getNumber() + 1
         );
     }
 

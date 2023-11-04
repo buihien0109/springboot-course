@@ -3,8 +3,7 @@ package vn.techmaster.ecommecerapp.model.projection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import vn.techmaster.ecommecerapp.entity.OrderItem;
-
-import java.math.BigDecimal;
+import vn.techmaster.ecommecerapp.model.projection.product.ProductPublic;
 
 public interface OrderItemPublic {
     Long getOrderItemId();

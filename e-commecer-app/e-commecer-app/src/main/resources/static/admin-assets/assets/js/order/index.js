@@ -37,12 +37,14 @@ const orderStatus = status => {
     switch (status) {
         case 'WAIT':
             return '<span class="badge badge-warning">Chờ xác nhận</span></>';
+        case 'WAIT_DELIVERY':
+            return '<span class="badge badge-dark">Chờ giao hàng</span></>';
         case 'DELIVERY':
             return '<span class="badge badge-primary">Đang giao</span>';
         case 'COMPLETE':
             return '<span class="badge badge-success">Đã giao</span>';
         case 'CANCELED':
-            return '<span class="badge badge-danger">Đã hủy</span>';
+            return '<span class="badge badge-secondary">Đã hủy</span>';
         case 'RETURNED':
             return '<span class="badge badge-danger">Đã trả hàng</span>';
         default:

@@ -2,16 +2,13 @@ package vn.techmaster.ecommecerapp.controller.web;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import vn.techmaster.ecommecerapp.entity.OrderTable;
-import vn.techmaster.ecommecerapp.model.projection.ProductPublic;
+import vn.techmaster.ecommecerapp.model.projection.product.ProductPublic;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
 import vn.techmaster.ecommecerapp.service.*;
 

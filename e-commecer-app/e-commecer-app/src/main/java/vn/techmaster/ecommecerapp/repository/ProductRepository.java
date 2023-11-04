@@ -33,4 +33,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByCategory_ParentCategory_SlugIgnoreCaseAndCategory_SlugIgnoreCaseAndStatusIn(String slug, String subSlug, List<Product.Status> status, Pageable pageable);
 
     Set<Product> findByProductIdIn(List<Long> productIds);
+
+    List<Product> findByProductIdBetween(Long start, Long end);
 }

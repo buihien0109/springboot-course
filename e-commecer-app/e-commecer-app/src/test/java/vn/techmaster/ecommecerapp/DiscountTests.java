@@ -7,7 +7,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
 import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.model.projection.ProductPublic;
+import vn.techmaster.ecommecerapp.model.projection.product.ProductPublic;
 import vn.techmaster.ecommecerapp.repository.DiscountCampaignRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 

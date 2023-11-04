@@ -32,12 +32,18 @@ public class ProductTests {
     void save_products() {
         // Create 10 products, each product has 4 attributes, 4 images, 1 category using Faker
         Faker faker = new Faker();
-        for (int i = 0; i < 20; i++) {
+        Random rd = new Random();
+        List<Category> categories = categoryRepository.findByParentCategoryIsNotNull();
+        List<Supplier> suppliers = supplierRepository.findAll();
+        for (int i = 0; i < 100; i++) {
             Product product = new Product();
-            product.setName(faker.commerce().productName());
-            product.setDescription(faker.commerce().material());
-            product.setPrice(faker.number().numberBetween(1000, 100000));
+            String name = faker.commerce().productName();
+            product.setName(name);
+            product.setSlug(slugify.slugify(name));
+            product.setDescription(faker.lorem().sentence());
+            product.setPrice(randomPrice());
             product.setStockQuantity(faker.number().numberBetween(10, 20));
+            product.setStatus(Product.Status.AVAILABLE);
 
             // Create 4 attributes for each product
             ProductAttribute attribute1 = new ProductAttribute();
@@ -46,35 +52,15 @@ public class ProductTests {
 
             ProductAttribute attribute2 = new ProductAttribute();
             attribute2.setAttributeName("Thành Phần");
-            attribute2.setAttributeValue(faker.commerce().material());
+            attribute2.setAttributeValue(faker.lorem().sentence());
 
             ProductAttribute attribute3 = new ProductAttribute();
             attribute3.setAttributeName("Hướng Dẫn Sử Dụng");
-            attribute3.setAttributeValue(faker.commerce().material());
+            attribute3.setAttributeValue(faker.lorem().sentence());
 
             ProductAttribute attribute4 = new ProductAttribute();
             attribute4.setAttributeName("Bảo Quản");
-            attribute4.setAttributeValue(faker.commerce().material());
-
-            // Create 4 images for each product, has 1 main image and 3 sub images
-             ProductImage image1 = new ProductImage();
-             image1.setImageUrl(faker.company().logo());
-             image1.setImageType(ProductImage.ImageType.MAIN);
-
-             ProductImage image2 = new ProductImage();
-             image2.setImageUrl(faker.company().logo());
-             image2.setImageType(ProductImage.ImageType.SUB);
-
-             ProductImage image3 = new ProductImage();
-             image3.setImageUrl(faker.company().logo());
-                image3.setImageType(ProductImage.ImageType.SUB);
-
-             ProductImage image4 = new ProductImage();
-             image4.setImageUrl(faker.company().logo());
-             image4.setImageType(ProductImage.ImageType.SUB);
-
-            // random 1 sub category for each product
-            Category category = categoryRepository.findById((long) faker.number().numberBetween(10, 12)).get();
+            attribute4.setAttributeValue(faker.lorem().sentence());
 
             // Set relationship
             attribute1.setProduct(product);
@@ -82,25 +68,18 @@ public class ProductTests {
             attribute3.setProduct(product);
             attribute4.setProduct(product);
 
-            image1.setProduct(product);
-            image2.setProduct(product);
-            image3.setProduct(product);
-            image4.setProduct(product);
-
-            product.setCategory(category);
-
             // Save to database
             product.getAttributes().add(attribute1);
             product.getAttributes().add(attribute2);
             product.getAttributes().add(attribute3);
             product.getAttributes().add(attribute4);
 
-            product.getImages().add(image1);
-            product.getImages().add(image2);
-            product.getImages().add(image3);
-            product.getImages().add(image4);
+            Category rdCate = categories.get(rd.nextInt(categories.size()));
+            product.setCategory(rdCate);
 
-            product.setCategory(category);
+            Supplier rdSupplier = suppliers.get(rd.nextInt(suppliers.size()));
+            product.setSupplier(rdSupplier);
+
             productRepository.save(product);
         }
     }
@@ -175,6 +154,19 @@ public class ProductTests {
         // update price of all products
         for (Product product : productRepository.findAll()) {
             product.setPrice(randomPrice());
+            productRepository.save(product);
+        }
+    }
+
+    @Test
+    void update_category_product() {
+        Random rd = new Random();
+        List<Product> products = productRepository.findAll();
+        List<Category> categories = categoryRepository.findByParentCategoryIsNotNull();
+
+        for (Product product: products) {
+            Category rdCate = categories.get(rd.nextInt(categories.size()));
+            product.setCategory(rdCate);
             productRepository.save(product);
         }
     }
