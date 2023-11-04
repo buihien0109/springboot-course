@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org"
-      th:replace="~{layout :: main-fragment(~{:: title}, ~{:: #cssResources}, ~{:: #main-content}, ~{:: #jsResources})}"
+      th:replace="~{layout/layout :: main-fragment(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #jsResources})}"
       lang="en">
-
 
 <head>
     <title>Thông tin User</title>
-    <th:block id="cssResources">
-        <link rel="stylesheet" th:href="@{/css/detail.css}">
-    </th:block>
 </head>
 
 <body>

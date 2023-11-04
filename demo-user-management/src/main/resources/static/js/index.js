@@ -17,7 +17,7 @@ async function getUsers(term = "") {
         renderUsers(users);
     } catch (error) {
         console.log(error);
-        alert(error.response.data.message);
+        toastr.error(error.response.data.message);
     }
 }
 
@@ -72,9 +72,13 @@ const deleteUser = async (id) => {
 
             // Render lại giao diện
             renderUsers(users)
+
+            // Thông báo
+            toastr.success("Xóa thành công");
         }
     } catch (error) {
-        alert(error.response.data.message);
+        console.log(error)
+        toastr.error(error.response.data.message);
     }
 };
 

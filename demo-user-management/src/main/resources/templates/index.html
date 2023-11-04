@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org"
-      th:replace="~{layout :: main-fragment(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #jsResources})}"
+      th:replace="~{layout/layout :: main-fragment(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #jsResources})}"
       lang="en">
 
 <head>
@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="bg-light p-4">
-                    <table class="table table-hover" th:classappend="${#lists.isEmpty(users)} ? d-none : ''">
+                    <table class="table table-hover" th:classappend="${#lists.isEmpty(users)} ? 'd-none' : ''">
                         <thead>
                         <tr>
                             <th>STT</th>

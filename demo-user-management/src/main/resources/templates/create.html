@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{layout :: main-fragment(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #jsResources})}">
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{layout/layout :: main-fragment(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #jsResources})}">
 
 <head>
     <title>Tạo User</title>
@@ -10,38 +10,40 @@
     <div class="container mt-5 mb-5">
         <h2 class="text-center text-uppercase mb-3">Tạo user</h2>
 
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="bg-light p-4">
-                    <div class="mb-3">
-                        <label class="col-form-label">Name</label>
-                        <input type="text" id="name" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="col-form-label">Email</label>
-                        <input type="text" id="email" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="col-form-label">Phone</label>
-                        <input type="text" id="phone" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="col-form-label">Address</label>
-                        <select class="form-select" id="address">
+        <form id="form-create-user">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="bg-light p-4">
+                        <div class="mb-3 form-group">
+                            <label class="col-form-label">Name</label>
+                            <input type="text" id="name" class="form-control" name="name"/>
+                        </div>
+                        <div class="mb-3 form-group">
+                            <label class="col-form-label">Email</label>
+                            <input type="text" id="email" class="form-control" name="email"/>
+                        </div>
+                        <div class="mb-3 form-group">
+                            <label class="col-form-label">Phone</label>
+                            <input type="text" id="phone" class="form-control" name="phone"/>
+                        </div>
+                        <div class="mb-3 form-group">
+                            <label class="col-form-label">Address</label>
+                            <select class="form-select select2" id="address" name="address">
 
-                        </select>
+                            </select>
+                        </div>
+                        <div class="mb-3 form-group">
+                            <label class="col-form-label">Password</label>
+                            <input type="text" id="password" class="form-control" name="password"/>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="col-form-label">Password</label>
-                        <input type="text" id="password" class="form-control" />
+                    <div class="text-center mt-3">
+                        <a href="/" class="btn btn-secondary">Quay lại</a>
+                        <button class="btn btn-success" type="submit">Tạo User</button>
                     </div>
-                </div>
-                <div class="text-center mt-3">
-                    <button class="btn btn-secondary btn-back">Quay lại</button>
-                    <button class="btn btn-success" id="btn-save">Tạo User</button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 </th:block>
 

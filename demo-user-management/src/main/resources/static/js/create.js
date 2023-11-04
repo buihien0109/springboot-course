@@ -1,3 +1,7 @@
+$(".select2").select2({
+    placeholder: "Chọn địa chỉ",
+});
+
 // Truy cập vào ô input
 const nameEl = document.getElementById("name");
 const emailEl = document.getElementById("email");
@@ -5,15 +9,66 @@ const phoneEl = document.getElementById("phone");
 const addressEl = document.getElementById("address");
 const passwordEl = document.getElementById("password");
 
-// Xử lý quay lại trang index
-const btnBack = document.querySelector(".btn-back");
-btnBack.addEventListener("click", function () {
-    window.location.href = "/";
+// Validate dữ liệu
+$('#form-create-user').validate({
+    rules: {
+        name: {
+            required: true
+        },
+        email: {
+            required: true,
+            email: true,
+        },
+        phone: {
+            required: true,
+            pattern: /^(0\d{9}|(\+84|84)[1-9]\d{8})$/
+        },
+        address: {
+            required: true,
+        },
+        password: {
+            required: true,
+            minlength: 3
+        }
+    },
+    messages: {
+        name: {
+            required: "Tên user không được để trống"
+        },
+        email: {
+            required: "Email không được để trống",
+            email: "Email không đúng định dạng"
+        },
+        phone: {
+            required: "Số điện thoại không được để trống",
+            pattern: "Số điện thoại không đúng định dạng",
+
+        },
+        address: {
+            required: "Địa chỉ không được để trống",
+        },
+        password: {
+            required: "Mật khẩu không được để trống",
+            minlength: "Mật khẩu phải có ít nhất 3 ký tự"
+        }
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+    }
 });
 
 // Xử lý thêm user
-const btnSave = document.getElementById("btn-save");
-btnSave.addEventListener("click", async function () {
+const formCreateUserEl = document.getElementById("form-create-user");
+formCreateUserEl.addEventListener("submit", async function () {
+    if (!$('#form-create-user').valid()) return false;
     try {
         // Tạo object với dữ liệu đã được cập nhật
         let userNew = {
@@ -25,17 +80,16 @@ btnSave.addEventListener("click", async function () {
         };
 
         // Gọi API để tạo
-        let res = await axios({
-            method: "post",
-            url: `/api/v1/users`,
-            data: userNew,
-        });
-
-        if (res.data) {
-            window.location.href = "/users";
+        let res = await axios.post("/api/v1/users", userNew);
+        if (res.status === 201) {
+            toastr.success("Tạo user thành công!");
+            setTimeout(() => {
+                window.location.href = "/users";
+            }, 1500)
         }
     } catch (error) {
-        alert(error.response.data.message);
+        console.log(error)
+        toastr.error(error.response.data.message);
     }
 });
 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" th:fragment="main-fragment(title, cssResources, mainContent, jsResources)">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" th:href="@{/lib/bootstrap/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/lib/select2/css/select2.min.css}">
+  <link rel="stylesheet" th:href="@{/lib/toastr/toastr.min.css}">
+
+  <title th:replace="${title}">Title</title>
+
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <th:block th:replace="${cssResources} ?: ~{}"></th:block>
+</head>
+<body>
+<th:block th:replace="~{fragments/header :: header}"></th:block>
+
+<th:block th:replace="${mainContent} ?: ~{}"></th:block>
+
+<script th:src="@{/lib/jquery/jquery.min.js}"></script>
+<script th:src="@{/lib/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/lib/axios/axios.min.js}"></script>
+<script th:src="@{/lib/select2/js/select2.full.min.js}"></script>
+<script th:src="@{/lib/toastr/toastr.min.js}"></script>
+<script th:src="@{/lib/jquery-validation/jquery.validate.min.js}"></script>
+<script th:src="@{/lib/jquery-validation/additional-methods.min.js}"></script>
+<script th:src="@{/js/utils.js}"></script>
+<th:block th:replace="${jsResources} ?: ~{}"></th:block>
+</body>
+</html>
