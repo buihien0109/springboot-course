@@ -25,7 +25,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="col-form-label">Email</label>
-                        <input type="text" id="email" class="form-control" th:value="${user.email}"/>
+                        <input type="text" id="email" class="form-control" th:value="${user.email}" disabled/>
                     </div>
                     <div class="mb-3">
                         <label class="col-form-label">Phone</label>
@@ -98,7 +98,7 @@
 
 <th:block id="jsResources">
     <script th:inline="javascript">
-        let user = /*[[${user}]]*/;
+        let user = [[${user}]];
     </script>
     <script th:src="@{/js/detail.js}"></script>
 </th:block>

@@ -14,7 +14,7 @@ const renderUser = (user) => {
     addressEl.value = user.address;
 
     // Nếu user không có avatar thì lấy avatar mặc định
-    if(user.avatar) {
+    if (user.avatar) {
         avatarEl.src = user.avatar;
     } else {
         avatarEl.src = "https://via.placeholder.com/200"
@@ -46,10 +46,11 @@ btnSave.addEventListener("click", async function () {
             data: userUpdate,
         });
 
-        if (res.data) {
-            window.location.href = "/";
+        if (res.status === 200) {
+            alert("Cập nhật thông tin thành công!");
         }
     } catch (error) {
+        console.log(error)
         alert(error.response.data.message);
     }
 });
@@ -87,7 +88,7 @@ btnChangePassword.addEventListener("click", async function () {
 });
 
 // Quên mật khẩu
-btnForgotPassword.addEventListener("click", async function() {
+btnForgotPassword.addEventListener("click", async function () {
     try {
         let res = await axios.post(`${API_URL}/${user.id}/forgot-password`)
         alert(res.data);
@@ -123,9 +124,9 @@ function uploadFileAPI(file) {
     formData.append("file", file);
 
     return axios({
-        method : "POST",
-        url : `${API_URL}/${user.id}/upload-file`,
-        data : formData,
+        method: "POST",
+        url: `${API_URL}/${user.id}/upload-file`,
+        data: formData,
     })
 }
 

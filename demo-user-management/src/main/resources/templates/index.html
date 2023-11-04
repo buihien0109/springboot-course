@@ -48,7 +48,7 @@
                         </tbody>
                     </table>
 
-                    <p class="message m-0" th:classappend="${not #lists.isEmpty(users)} ? d-none : ''">Danh sách user trống!</p>
+                    <p class="message m-0" th:classappend="${not #lists.isEmpty(users)} ? 'd-none' : ''">Danh sách user trống!</p>
                 </div>
             </div>
         </div>
@@ -58,7 +58,7 @@
 
 <th:block id="jsResources">
     <script th:inline="javascript">
-        let users = /*[[${users}]]*/;
+        let users = [[${users}]];
     </script>
     <script th:src="@{/js/index.js}"></script>
 </th:block>

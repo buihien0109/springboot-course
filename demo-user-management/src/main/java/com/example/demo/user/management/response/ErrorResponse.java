@@ -1,4 +1,4 @@
-package com.example.demo.user.management.exception;
+package com.example.demo.user.management.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

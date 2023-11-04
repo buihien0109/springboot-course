@@ -53,7 +53,7 @@ function renderUsers(arr) {
                 <td>${u.phone}</td>
                 <td>${u.address}</td>
                 <td>
-                    <a href="/users/id=${u.id}" class="btn btn-success">Xem chi tiết</a>
+                    <a href="/users/${u.id}" class="btn btn-success">Xem chi tiết</a>
                     <button class="btn btn-danger" onclick="deleteUser(${u.id})">Xóa</button>
                 </td>
             </tr>
@@ -63,7 +63,7 @@ function renderUsers(arr) {
 
 const deleteUser = async (id) => {
     try {
-        isConfirm = confirm("Bạn có muốn xóa không");
+        const isConfirm = confirm("Bạn có muốn xóa không");
         if (isConfirm) {
             await axios.delete(`/api/v1/users/${id}`);
 
