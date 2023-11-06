@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .course-list}, ~{:: #js})}">
+
+<head>
+    <title th:text="${course.name}">Chi tiết khóa học</title>
+
+    <th:block id="css">
+        <!-- Link select2 -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    </th:block>
+</head>
+
+<body>
+<!-- BODY -->
+<div class="course-list mt-4 mb-4">
+    <div class="container">
+        <div class="mb-4 d-flex justify-content-between">
+            <div>
+                <button class="btn-custom btn-update-course">
+                    <span><i class="fa-solid fa-plus"></i></span>
+                    Cập nhật
+                </button>
+                <a href="/admin/courses" class="btn-custom btn-refresh">
+                    <span><i class="fa-solid fa-angle-left"></i></span>
+                    Quay lại
+                </a>
+            </div>
+            <div>
+                <button class="btn-custom btn-delete-course bg-danger">
+                    <span><i class="fa-solid fa-trash-can"></i></span>
+                    Xóa
+                </button>
+            </div>
+        </div>
+
+        <div class="course-list-inner p-2">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label for="course-name" class="form-label fw-bold">Tên khóa học</label>
+                        <input type="text" class="form-control" id="course-name" th:value="${course.name}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="course-description" class="form-label fw-bold">Mô tả</label>
+                        <textarea class="form-control" id="course-description" rows="10" th:text="${course.description}"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="course-type" class="form-label fw-bold">Hình thức học</label>
+                        <select class="form-control" id="course-type">
+                            <option hidden>- Chọn hình thức học</option>
+                            <option value="online" th:selected="${course.type == 'online'}">Online</option>
+                            <option value="onlab" th:selected="${course.type == 'onlab'}">Onlab</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="course-topic" class="form-label fw-bold">Chủ đề</label>
+                        <select class="form-control" id="course-topic" multiple="multiple">
+                            <option th:each="topic : ${topicList}" th:value="${topic}" th:text="${topic}" th:selected="${#lists.contains(course.topics, topic)}">Backend</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="course-supporter" class="form-label fw-bold">Tư vấn viên</label>
+                        <select class="form-control" id="course-supporter">
+                            <option hidden>- Chọn tư vấn viên</option>
+                            <option th:each="user : ${userList}" th:value="${user.id}" th:text="${user.name}" th:selected="${course.userId == user.id}">Bùi Hiên</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Thumbnail</label>
+                        <div class="course-logo-preview mb-3 rounded">
+                            <img id="course-logo-preview" class="rounded" th:src="${course.thumbnail}" th:alt="${course.name}" />
+                        </div>
+
+                        <label for="course-logo-input" class="btn btn-warning">Đổi ảnh
+                            <input type="file" id="course-logo-input" class="d-none">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="js">
+    <!-- select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script th:inline="javascript">
+        const course = [[${course}]];
+        console.log(course);
+        const courseTopic = $("#course-topic");
+
+        // Kích hoạt select2
+        courseTopic.select2({
+            placeholder: "- Chọn chủ đề",
+        });
+
+        const courseThumbnailPreviewEl = document.getElementById("course-logo-preview");
+        const courseThumbnailInputEl = document.getElementById("course-logo-input");
+
+        courseThumbnailInputEl.addEventListener("change", async (e) => {
+           // b1 : lấy ra file cần upload
+            const file = e.target.files[0];
+            console.log(file);
+
+           // b2 : tạo đối tượng formdata
+            const formData = new FormData();
+            formData.append("file", file);
+
+           // b3 : gọi api
+            try {
+                const res = await axios.post("/api/v1/files", formData);
+                if(res.status === 200) {
+                    courseThumbnailPreviewEl.src = res.data;
+                    toastr.success("Upload ảnh thành công");
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        });
+    </script>
+</th:block>
+</body>
+
+</html>

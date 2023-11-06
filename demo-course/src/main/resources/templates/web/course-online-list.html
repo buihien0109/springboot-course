@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="web/layout/layout :: layout(~{:: title}, ~{:: #cssLib}, ~{}, ~{:: .course-container}, ~{:: #jsLib}, ~{:: #js})">
+
+<head>
+    <title>Danh sách khóa học trực tuyến</title>
+
+    <th:block id="cssLib">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.css"
+              integrity="sha512-K1k7jSn9RDKEcn/ugqVVvWYu0bcS3q1w6m/5pQSnrj0bCfIqF6Wk49lkmckSb4wglvTP9V17LtS0q0XxYccXbg=="
+              crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    </th:block>
+</head>
+
+<body>
+<div class="course-container mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <button class="btn-unfilter btn btn-danger mb-4 px-5 rounded d-none">Bỏ lọc</button>
+                <h2 class="fs-5 mb-4">Chủ đề</h2>
+                <div class="topic-list">
+                    <div th:each="topic : ${topicList}" class="topic-item input-group d-flex align-items-center mb-1">
+                        <input type="radio" th:value="${topic}" th:id="${topic}" name="topic"/>
+                        <label th:for="${topic}" class="ms-2 fs-5" th:text="${topic}">Lập trình Backend</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="row justify-content-between">
+                    <div class="col-md-4">
+                        <div class="seach-form d-flex align-items-center rounded shadow-sm mb-4 pe-3">
+                            <input placeholder="Tìm kiếm khóa học" class="form-control border-0 seach-form-input"
+                                   type="search">
+                            <span class="text-black-50 seach-form-button"><i
+                                    class="fa-solid fa-magnifying-glass"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <select class="form-select item-per-page" aria-label="Default select example">
+                            <option hidden>Số lượng hiển thị</option>
+                            <option value="3">3 items</option>
+                            <option value="6">6 items</option>
+                            <option value="9">9 items</option>
+                            <option value="all">All items</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="course-list row">
+                    <th:block th:replace="~{web/fragments/fragment :: course-list(${courseList})}"></th:block>
+                </div>
+
+                <div class="row">
+                    <div class="d-flex justify-content-center mt-3" id="pagination">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="jsLib">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.js"
+            integrity="sha512-GzbaI5EsNzdEUq6/2XLYpr1y9CUZRIVsUeWTAFgULtQa5jZ3Nug8i0nZKM6jp9NffBCZhymPPQFcF0DK+JkRpw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</th:block>
+
+<th:block id="js">
+    <script th:src="@{/js/course.js}"></script>
+    <script th:inline="javascript">
+
+    </script>
+</th:block>
+</body>
+
+</html>

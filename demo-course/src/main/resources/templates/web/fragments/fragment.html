@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="header d-flex align-items-center" th:fragment="header">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-start align-items-center">
+      <div class="logo">
+        <a href="/khoa-hoc">
+          <img src="https://techmaster.vn/resources/image/logo-techmaster/white/white_200x74.png"
+               alt="logo">
+        </a>
+      </div>
+      <div class="menu">
+        <a class="text-white text-uppercase ms-5" href="/khoa-hoc/onlab">Phòng lab</a>
+        <a class="text-white text-uppercase ms-3" href="/khoa-hoc/online">Trực tuyến</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<th:block th:fragment="course-item(course)">
+  <div class="col-md-4">
+    <a th:href="@{/khoa-hoc/{id} (id = ${course.id})}">
+      <div class="course-item shadow-sm rounded mb-4">
+        <div class="course-item-image">
+          <img th:src="${course.thumbnail}" th:alt="${course.name}" />
+        </div>
+        <div class="course-item-info p-3">
+          <h2 class="fs-5 mb-3 text-dark" th:text="${course.name}">Spring Boot - Web Back End</h2>
+          <p class="type fw-light text-black-50" th:text="${course.type == 'online' ? 'Trực tuyến' : 'Phòng lab'}">Trực tuyến</p>
+        </div>
+      </div>
+    </a>
+  </div>
+</th:block>
+
+<th:block th:fragment="course-list(courses)">
+  <th:block th:each="course : ${courses}">
+    <th:block th:replace="~{:: course-item(${course})}"></th:block>
+  </th:block>
+</th:block>
+</body>
+</html>

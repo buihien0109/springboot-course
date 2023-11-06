@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .course-list}, ~{:: #js})}">
+
+<head>
+    <title>Danh sách khóa học</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.css"
+              integrity="sha512-K1k7jSn9RDKEcn/ugqVVvWYu0bcS3q1w6m/5pQSnrj0bCfIqF6Wk49lkmckSb4wglvTP9V17LtS0q0XxYccXbg=="
+              crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </th:block>
+</head>
+
+<body>
+
+<!-- BODY -->
+<div class="course-list mt-4 mb-4">
+    <div class="container">
+        <div class="mb-4">
+            <a href="/admin/courses/create" class="btn-custom btn-create-course">
+                <span><i class="fa-solid fa-plus"></i></span>
+                Tạo khóa học
+            </a>
+            <a href="/admin/courses" class="btn-custom btn-refresh">
+                <span><i class="fa-solid fa-arrow-rotate-right"></i></span>
+                Refresh
+            </a>
+        </div>
+
+        <div class="course-list-inner p-2">
+            <table class="table course-table">
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Tên khóa học</th>
+                    <th>Hình thức</th>
+                    <th>Chủ đề</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="course, state : ${courseList}">
+                    <td th:text="${state.index + 1}">1</td>
+                    <td>
+                        <a th:href="@{/admin/courses/{id} (id = ${course.id})}" th:text="${course.name}">SpringBoot - Web Back End</a>
+                    </td>
+                    <td class="text-info">
+                        <span class="badge" th:text="${course.type}" th:classappend="${course.type == 'online'} ? 'bg-primary' : 'bg-success'">Onlab</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-secondary me-2" th:each="topic : ${course.topics}" th:text="${topic}">Secondary</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-center mt-3" id="pagination">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.js"
+            integrity="sha512-GzbaI5EsNzdEUq6/2XLYpr1y9CUZRIVsUeWTAFgULtQa5jZ3Nug8i0nZKM6jp9NffBCZhymPPQFcF0DK+JkRpw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script th:inline="javascript">
+        let courseList = [[${courseList}]];
+        console.log(courseList);
+        // function renderPagination(courseList) {
+        //     $('#pagination').pagination({
+        //         dataSource: courseList,
+        //         pageSize: 5,
+        //         callback: function (data) { // data = [] course trên trang hiện tại
+        //             renderCourses(data);
+        //         }
+        //     })
+        // }
+        //
+        // renderPagination()
+    </script>
+</th:block>
+</body>
+
+</html>
