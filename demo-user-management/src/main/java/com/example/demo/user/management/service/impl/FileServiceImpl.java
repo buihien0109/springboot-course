@@ -61,7 +61,7 @@ public class FileServiceImpl implements FileService {
     public String uploadFile(Integer userId, MultipartFile file) {
         // Kiểm tra user id
         User user = userDAO.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + userId + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + userId));
 
         // Tạo folder tương ứng với user id
         String userDir = uploadDir.concat(File.separator).concat(String.valueOf(userId));

@@ -1,20 +1,25 @@
-// Định nghĩa API lấy danh sách user
-function getUsersAPI(term = "") {
-    let url = "/api/v1/users";
-    if (term) {
-        url = `/api/v1/users/search?name=${term}`;
-    }
+const API_URL = "/api/v1/users";
 
-    return axios.get(url);
+// Định nghĩa API lấy danh sách user
+const userAPI = {
+    getAllUsers(term) {
+        return axios.get(API_URL, {params: {search: term}});
+    },
+    deleteUser(id) {
+        return axios.delete(`${API_URL}/${id}`);
+    }
 }
 
 // Gọi API và hiển thị ra dữ liệu
-async function getUsers(term = "") {
+async function getUsers(term) {
     try {
-        let res = await getUsersAPI(term);
-
-        users = res.data;
-        renderUsers(users);
+        let res = await userAPI.getAllUsers(term);
+        if (res.status === 200) {
+            users = res.data;
+            renderUsers(users);
+        } else {
+            toastr.error("Lỗi khi lấy dữ liệu");
+        }
     } catch (error) {
         console.log(error);
         toastr.error(error.response.data.message);
@@ -29,7 +34,7 @@ const tableBodyEl = document.querySelector("tbody");
 // Hiển thi user ra ngoài giao diện
 function renderUsers(arr) {
     // Kiểm tra nếu arr rỗng
-    if(arr.length === 0) {
+    if (arr.length === 0) {
         messageEl.classList.remove("d-none");
         tableEl.classList.add("d-none");
 
@@ -64,17 +69,15 @@ function renderUsers(arr) {
 const deleteUser = async (id) => {
     try {
         const isConfirm = confirm("Bạn có muốn xóa không");
-        if (isConfirm) {
-            await axios.delete(`/api/v1/users/${id}`);
+        if (!isConfirm) return;
 
-            // Xóa user ứng với id trong mảng users ban đầu
+        let res = await userAPI.deleteUser(id);
+        if (res.status === 200) {
             users = users.filter(user => user.id !== id);
-
-            // Render lại giao diện
             renderUsers(users)
-
-            // Thông báo
             toastr.success("Xóa thành công");
+        } else {
+            toastr.error("Xóa thất bại");
         }
     } catch (error) {
         console.log(error)
@@ -86,7 +89,6 @@ const searchEl = document.getElementById("search");
 searchEl.addEventListener("keydown", function (e) {
     if (e.keyCode === 13) {
         let term = e.target.value;
-
         getUsers(term);
     }
 });

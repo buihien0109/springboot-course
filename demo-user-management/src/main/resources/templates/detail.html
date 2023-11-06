@@ -12,79 +12,118 @@
     <div class="container mt-5 mb-5">
         <h2 class="text-center text-uppercase mb-3">Thông tin user</h2>
 
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="bg-light p-4">
-                    <div class="mb-3">
-                        <label class="col-form-label">Name</label>
-                        <input type="text" id="name" class="form-control" th:value="${user.name}"/>
-                    </div>
-                    <div class="mb-3">
-                        <label class="col-form-label">Email</label>
-                        <input type="text" id="email" class="form-control" th:value="${user.email}" disabled/>
-                    </div>
-                    <div class="mb-3">
-                        <label class="col-form-label">Phone</label>
-                        <input type="text" id="phone" class="form-control" th:value="${user.phone}"/>
-                    </div>
-                    <div class="mb-3">
-                        <label class="col-form-label">Address</label>
-                        <select class="form-select" id="address">
-
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Avatar</label>
-                        <div class="avatar-preview mb-3 rounded">
-                            <img th:src="${user.avatar}" alt="avatar" id="avatar-preview" class="rounded">
+        <form id="form-update-user">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="bg-light p-4">
+                        <div class="mb-3 form-group">
+                            <label class="col-form-label">Name</label>
+                            <input type="text" id="name" class="form-control" th:value="${user.name}" name="name"/>
                         </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Email</label>
+                            <input type="text" id="email" class="form-control" th:value="${user.email}" disabled/>
+                        </div>
+                        <div class="mb-3 form-group">
+                            <label class="col-form-label">Phone</label>
+                            <input type="text" id="phone" class="form-control" th:value="${user.phone}" name="phone"/>
+                        </div>
+                        <div class="mb-3 form-group">
+                            <label class="col-form-label">Address</label>
+                            <select class="form-select select2" id="address" name="address" style="width: 100%;">
+                                <option></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Avatar</label>
+                            <div class="image-preview-container mb-3 rounded">
+                                <img th:src="${user.avatar}" alt="avatar" id="image" class="rounded">
+                            </div>
 
-                        <label for="avatar" class="btn btn-warning">Đổi avatar</label>
-                        <input type="file" id="avatar" class="d-none">
-                    </div>
-                    <div class="mb-3">
-                        <label class="col-form-label">Password</label>
-                        <div class="">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#modal-change-password">
-                                Đổi mật khẩu
-                            </button>
-                            <button class="btn btn-warning" id="btn-forgot-password">
-                                Quên mật khẩu
+                            <button type="button" class="btn btn-warning btn-flat rounded" data-bs-toggle="modal"
+                                    data-bs-target="#modal-image" id="btn-modal-image">
+                                Chọn hình ảnh
                             </button>
                         </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Password</label>
+                            <div class="">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#modal-change-password">
+                                    Đổi mật khẩu
+                                </button>
+                                <button type="button" class="btn btn-warning" id="btn-forgot-password">
+                                    Quên mật khẩu
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="/" class="btn btn-secondary btn-back">Quay lại</a>
+                        <button type="submit" class="btn btn-success" id="btn-save">Cập nhật</button>
                     </div>
                 </div>
-                <div class="text-center mt-3">
-                    <button class="btn btn-secondary btn-back">Quay lại</button>
-                    <button class="btn btn-success" id="btn-save">Cập nhật</button>
+            </div>
+        </form>
+
+        <!-- Modal quản lý ảnh-->
+        <div class="modal fade" id="modal-image" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Danh sách hình ảnh</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button class="btn btn-success" id="btn-chose-image" disabled>Chọn ảnh</button>
+
+                                <label for="input-image" class="btn btn-warning mb-0">Upload ảnh</label>
+                                <input type="file" id="input-image" class="d-none">
+                            </div>
+                            <div>
+                                <button class="btn btn-danger" id="btn-delete-image" disabled>Xóa ảnh</button>
+                            </div>
+                        </div>
+                        <!-- Hiển thị danh sách ảnh -->
+                        <div class="image-container mt-4 mb-4">
+
+                        </div>
+
+                        <!-- Hiển thị phần phân trang -->
+                        <div class="image-pagination-container d-flex justify-content-center">
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Modal đổi mật khẩu-->
-        <div class="modal fade" id="modal-change-password" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="modal-change-password" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="staticBackdropLabel">Đổi mật khẩu</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="col-form-label">Mật khẩu cũ</label>
-                            <input type="text" id="old-password" class="form-control" />
+                    <form id="form-change-password">
+                        <div class="modal-body">
+                            <div class="mb-3 form-group">
+                                <label class="col-form-label">Mật khẩu cũ</label>
+                                <input type="text" id="old-password" class="form-control" name="oldPassword"/>
+                            </div>
+                            <div class="mb-3 form-group">
+                                <label class="col-form-label">Mật khẩu mới</label>
+                                <input type="text" id="new-password" class="form-control" name="newPassword"/>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="col-form-label">Mật khẩu mới</label>
-                            <input type="text" id="new-password" class="form-control" />
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary" id="btn-change-password">Xác nhận</button>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="button" class="btn btn-primary" id="btn-change-password">Xác nhận</button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

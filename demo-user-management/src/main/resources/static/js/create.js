@@ -1,13 +1,8 @@
-$(".select2").select2({
-    placeholder: "Chọn địa chỉ",
-});
+const API_URL = "/api/v1/users";
 
-// Truy cập vào ô input
-const nameEl = document.getElementById("name");
-const emailEl = document.getElementById("email");
-const phoneEl = document.getElementById("phone");
-const addressEl = document.getElementById("address");
-const passwordEl = document.getElementById("password");
+$('.select2').select2({
+    placeholder: 'Chọn địa chỉ'
+})
 
 // Validate dữ liệu
 $('#form-create-user').validate({
@@ -66,26 +61,34 @@ $('#form-create-user').validate({
 });
 
 // Xử lý thêm user
+const nameEl = document.getElementById("name");
+const emailEl = document.getElementById("email");
+const phoneEl = document.getElementById("phone");
+const addressEl = document.getElementById("address");
+const passwordEl = document.getElementById("password");
 const formCreateUserEl = document.getElementById("form-create-user");
-formCreateUserEl.addEventListener("submit", async function () {
+formCreateUserEl.addEventListener("submit", async function (e) {
+    e.preventDefault();
     if (!$('#form-create-user').valid()) return false;
     try {
         // Tạo object với dữ liệu đã được cập nhật
-        let userNew = {
+        let data = {
             name: nameEl.value,
             phone: phoneEl.value,
             email: emailEl.value,
             address: addressEl.value,
-            password : passwordEl.value
+            password: passwordEl.value
         };
 
         // Gọi API để tạo
-        let res = await axios.post("/api/v1/users", userNew);
+        let res = await axios.post(API_URL, data);
         if (res.status === 201) {
             toastr.success("Tạo user thành công!");
             setTimeout(() => {
                 window.location.href = "/users";
             }, 1500)
+        } else {
+            toastr.error("Tạo user thất bại!");
         }
     } catch (error) {
         console.log(error)

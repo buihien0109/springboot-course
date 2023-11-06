@@ -45,14 +45,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Integer id) {
         User user = userDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + id));
         return UserMapper.toUserDto(user);
     }
 
     @Override
     public void deleteUser(Integer id) {
         User user = userDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + id));
         userDAO.deleteById(user.getId());
         fileService.deleteAllFiles(id);
     }
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(CreateUserRequest request) {
         if (userDAO.findByEmail(request.getEmail()).isPresent()) {
-            throw new BadRequestException("email = " + request.getEmail() + " is existed");
+            throw new BadRequestException("email = " + request.getEmail() + " đã tồn tại");
         }
 
         User user = User.builder()
@@ -79,11 +79,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(Integer id, UpdateUserRequest request) {
         User user = userDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + id));
 
         user.setName(request.getName());
         user.setPhone(request.getPhone());
         user.setAddress(request.getAddress());
+        user.setAvatar(request.getAvatar());
 
         userDAO.save(user);
 
@@ -93,16 +94,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updatePassword(Integer id, UpdatePasswordRequest request) {
         User user = userDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + id));
 
         // Kiểm tra oldPassword có đúng không
         if (!user.getPassword().equals(request.getOldPassword())) {
-            throw new BadRequestException("old password is incorrect!");
+            throw new BadRequestException("Mật khẩu cũ không đúng!");
         }
 
         // Kiểm tra oldPassword có = newPassword không
         if (request.getNewPassword().equals(request.getOldPassword())) {
-            throw new BadRequestException("old password and new password cannot be the same!");
+            throw new BadRequestException("Mật khẩu mới không được trùng với mật khẩu cũ!");
         }
 
         // Cập nhật newPassword cho user tương ứng
@@ -113,7 +114,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String forgotPassword(Integer id) {
         User user = userDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + id));
 
         // Random chuỗi password mới cho user
         String newPassword = Utils.generatePassword(3);
@@ -129,7 +130,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateAvatar(Integer id, UpdateAvatarRequest request) {
         User user = userDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + id));
 
         // Update lại avatar
         user.setAvatar(request.getAvatar());
@@ -139,7 +140,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String uploadFile(Integer id, MultipartFile file) {
         User user = userDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + id));
 
         return fileService.uploadFile(id, file);
     }
@@ -147,7 +148,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public byte[] readFile(Integer id, String fileName) {
         User user = userDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + id));
 
         return fileService.readFile(id, fileName);
     }
@@ -155,7 +156,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<String> getFiles(Integer id) {
         User user = userDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + id));
 
         return fileService.getFiles(id);
     }
@@ -163,7 +164,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteFile(int id, String fileName) {
         User user = userDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("user with id = " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user với id = " + id));
 
         fileService.deleteFile(id, fileName);
     }
