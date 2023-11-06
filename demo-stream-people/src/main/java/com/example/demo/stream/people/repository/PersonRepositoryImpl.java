@@ -13,11 +13,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class PersonRepositoryImpl implements PersonRepository {
-    private List<Person> people;
+    private final List<Person> people;
 
     @Autowired
     public PersonRepositoryImpl(ReadFile fileReader) {
-        this.people = fileReader.readFile("classpath:static/people.csv");
+        this.people = fileReader.readFile("classpath:static/personsmall.csv");
+        printListPeople(people);
     }
 
     @Override

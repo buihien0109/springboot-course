@@ -58,5 +58,5 @@ public interface PersonRepository {
 
     Map<String, Double> averageCityAge(); //Ứng với mỗi thành phố hãy tính độ tuổi trung bình
 
-    List<String> find5CitiesHaveMostSpecificJob(String job); //Với một nghề cụ thể, hãy tìm ra 5 thành phố có nhiều làm nghề đó nhất
+    List<String> find5CitiesHaveMostSpecificJob(String job); //Với một nghề cụ thể, hãy tìm ra 5 thành phố có nhiều người làm nghề đó nhất
 }
