@@ -114,6 +114,8 @@ async function createTodo(title) {
 
 // Hàm xử lý việc xóa
 async function deleteTodo(id) {
+    const isDelete = confirm("Bạn có chắc chắn muốn xóa công việc này?");
+    if (!isDelete) return;
     try {
         await deleteTodoAPI(id)
         todos = todos.filter((todo) => todo.id !== id);

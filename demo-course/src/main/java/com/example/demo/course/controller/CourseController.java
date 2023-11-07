@@ -32,6 +32,7 @@ public class CourseController {
     @GetMapping("/create")
     public String getCourseCreatePage(Model model) {
         model.addAttribute("topicList", TopicDB.topicList);
+        model.addAttribute("userList", userService.getAllUser());
         return "admin/course/create";
     }
 

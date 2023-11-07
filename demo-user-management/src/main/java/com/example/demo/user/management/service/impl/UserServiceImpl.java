@@ -14,6 +14,7 @@ import com.example.demo.user.management.service.FileService;
 import com.example.demo.user.management.service.UserService;
 import com.example.demo.user.management.utils.Utils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserDAO userDAO;
     private final FileService fileService;
@@ -36,6 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> searchUser(String name) {
+        log.info("name = {}", name);
         return userDAO.findByNameContainingIgnoreCase(name)
                 .stream()
                 .map(UserMapper::toUserDto)

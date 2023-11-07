@@ -3,7 +3,7 @@ const API_URL = "/api/v1/users";
 // Định nghĩa API lấy danh sách user
 const userAPI = {
     getAllUsers(term) {
-        return axios.get(API_URL, {params: {search: term}});
+        return axios.get(`${API_URL}/search`, {params: {name: term}});
     },
     deleteUser(id) {
         return axios.delete(`${API_URL}/${id}`);
@@ -72,7 +72,7 @@ const deleteUser = async (id) => {
         if (!isConfirm) return;
 
         let res = await userAPI.deleteUser(id);
-        if (res.status === 200) {
+        if (res.status === 204) {
             users = users.filter(user => user.id !== id);
             renderUsers(users)
             toastr.success("Xóa thành công");

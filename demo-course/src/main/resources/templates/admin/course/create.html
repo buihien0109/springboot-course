@@ -6,8 +6,7 @@
     <title>Tạo khóa học</title>
 
     <th:block id="css">
-        <!-- Link select2 -->
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     </th:block>
 
 </head>
@@ -17,7 +16,7 @@
 <div class="course-list mt-4 mb-4">
     <div class="container">
         <div class="mb-4">
-            <button class="btn-custom btn-create-course">
+            <button class="btn-custom btn-create-course" id="btn-create-course">
                 <span><i class="fa-solid fa-plus"></i></span>
                 Tạo
             </button>
@@ -28,63 +27,141 @@
         </div>
 
         <div class="course-list-inner p-2">
-            <div class="row">
+            <form id="form-create-course">
+                <div class="row">
                 <div class="col-md-8">
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                         <label for="course-name" class="form-label fw-bold">Tên khóa học</label>
-                        <input type="text" class="form-control" id="course-name">
+                        <input type="text" class="form-control" id="course-name" name="name">
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                         <label for="course-description" class="form-label fw-bold">Mô tả</label>
-                        <textarea class="form-control" id="course-description" rows="10"></textarea>
+                        <textarea class="form-control" id="course-description" rows="10" name="description"></textarea>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                         <label for="course-type" class="form-label fw-bold">Hình thức học</label>
-                        <select class="form-control" id="course-type">
-                            <option hidden>- Chọn hình thức học</option>
+                        <select class="form-control select2" id="course-type" name="type">
+                            <option></option>
                             <option value="online">Online</option>
                             <option value="onlab">Onlab</option>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                         <label for="course-topic" class="form-label fw-bold">Chủ đề</label>
-                        <select class="form-control" id="course-topic" multiple="multiple">
-                            <option value="1">Backend</option>
-                            <option value="2">Frontend</option>
-                            <option value="3">Mobile</option>
-                            <option value="4">Lập trình web</option>
-                            <option value="5">Database</option>
-                            <option value="6">Devops</option>
+                        <select class="form-control select2" id="course-topic" multiple="multiple">
+                            <option></option>
+                            <option th:each="topic : ${topicList}" th:value="${topic}" th:text="${topic}">Backend
+                            </option>
                         </select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 form-group">
                         <label for="course-supporter" class="form-label fw-bold">Tư vấn viên</label>
-                        <select class="form-control" id="course-supporter">
-                            <option hidden>- Chọn tư vấn viên</option>
-                            <option value="1">Nguyễn Văn A</option>
-                            <option value="2">Trần Văn B</option>
-                            <option value="3">Ngô Thị C</option>
+                        <select class="form-control select2" id="course-supporter" name="supporter">
+                            <option></option>
+                            <option th:each="user : ${userList}" th:value="${user.id}"
+                                    th:text="${user.name}">Nguyễn Văn A
+                            </option>
                         </select>
                     </div>
                 </div>
             </div>
+            </form>
         </div>
     </div>
 </div>
 
 <th:block id="js">
-    <!-- select2 -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <script>
-        const courseTopic = $("#course-topic");
-
         // Kích hoạt select2
-        courseTopic.select2({
-            placeholder: "- Chọn chủ đề",
+        $("#course-type").select2({
+            placeholder: "Chọn hình thức học",
         });
+        $("#course-topic").select2({
+            placeholder: "Chọn chủ đề",
+        });
+        $("#course-supporter").select2({
+            placeholder: "Chọn tư vấn viên",
+        });
+
+        // Validate dữ liệu
+        $('#form-create-course').validate({
+            rules: {
+                name: {
+                    required: true
+                },
+                description: {
+                    required: true,
+                    minlength: 10
+                },
+                type: {
+                    required: true
+                },
+                supporter: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "Tên user không được để trống"
+                },
+                description: {
+                    required: "Mô tả không được để trống",
+                    minlength: "Mô tả phải có ít nhất 10 ký tự"
+                },
+                type: {
+                    required: "Hình thức học không được để trống"
+                },
+                supporter: {
+                    required: "Tư vấn viên không được để trống"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+
+
+        // Tạo khóa học
+        const courseName = document.getElementById("course-name");
+        const courseDescription = document.getElementById("course-description");
+        const courseType = document.getElementById("course-type");
+        const courseSupporter = document.getElementById("course-supporter");
+        const btnCreate = document.getElementById("btn-create-course")
+        btnCreate.addEventListener("click", async () => {
+            if(!$("#form-create-course").valid()) return;
+
+            try {
+                let res = await axios.post("/api/v1/admin/courses", {
+                    name: courseName.value,
+                    description: courseDescription.value,
+                    type: courseType.value,
+                    topics: $("#course-topic").val(),
+                    userId: Number(courseSupporter.value)
+                })
+
+                if (res.status === 201) {
+                    toastr.success("Tạo khóa học thành công");
+                    setTimeout(() => {
+                        window.location.href = `/admin/courses/${res.data.id}`
+                    }, 1500)
+                } else {
+                    toastr.error("Tạo khóa học thất bại");
+                }
+            } catch (e) {
+                console.log(e)
+                toastr.error(e.response.data.message);
+            }
+        })
     </script>
 </th:block>
 

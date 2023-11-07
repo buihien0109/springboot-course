@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -50,5 +51,12 @@ public class CourseResources {
     public ResponseEntity<?> deleteCourse(@PathVariable Integer id) {
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 6. Cập nhật ảnh khóa học
+    @PostMapping("/{id}/upload-thumbnail")
+    public ResponseEntity<?> uploadThumbnail(@RequestParam MultipartFile file, @PathVariable Integer id) {
+        String thumbnailPath = courseService.uploadThumbnail(id, file);
+        return ResponseEntity.ok(thumbnailPath);
     }
 }

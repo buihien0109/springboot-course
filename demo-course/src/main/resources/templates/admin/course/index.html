@@ -8,7 +8,7 @@
     <th:block id="css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.6.0/pagination.min.css"
               integrity="sha512-K1k7jSn9RDKEcn/ugqVVvWYu0bcS3q1w6m/5pQSnrj0bCfIqF6Wk49lkmckSb4wglvTP9V17LtS0q0XxYccXbg=="
-              crossorigin="anonymous" referrerpolicy="no-referrer" />
+              crossorigin="anonymous" referrerpolicy="no-referrer"/>
     </th:block>
 </head>
 
@@ -42,10 +42,12 @@
                 <tr th:each="course, state : ${courseList}">
                     <td th:text="${state.index + 1}">1</td>
                     <td>
-                        <a th:href="@{/admin/courses/{id} (id = ${course.id})}" th:text="${course.name}">SpringBoot - Web Back End</a>
+                        <a th:href="@{/admin/courses/{id} (id = ${course.id})}" th:text="${course.name}">SpringBoot -
+                            Web Back End</a>
                     </td>
                     <td class="text-info">
-                        <span class="badge" th:text="${course.type}" th:classappend="${course.type == 'online'} ? 'bg-primary' : 'bg-success'">Onlab</span>
+                        <span class="badge" th:text="${course.type}"
+                              th:classappend="${course.type == 'online'} ? 'bg-primary' : 'bg-success'">Onlab</span>
                     </td>
                     <td>
                         <span class="badge bg-secondary me-2" th:each="topic : ${course.topics}" th:text="${topic}">Secondary</span>
@@ -69,17 +71,40 @@
     <script th:inline="javascript">
         let courseList = [[${courseList}]];
         console.log(courseList);
-        // function renderPagination(courseList) {
-        //     $('#pagination').pagination({
-        //         dataSource: courseList,
-        //         pageSize: 5,
-        //         callback: function (data) { // data = [] course trên trang hiện tại
-        //             renderCourses(data);
-        //         }
-        //     })
-        // }
-        //
-        // renderPagination()
+
+        function renderCourses(courses, pagination) {
+            let html = '';
+            courses.forEach((course, index) => {
+                html += `
+                    <tr>
+                        <td>${pagination.pageSize * (pagination.pageNumber - 1) + (index + 1)}</td>
+                        <td>
+                            <a href="/admin/courses/${course.id}">${course.name}</a>
+                        </td>
+                        <td class="text-info">
+                            <span class="badge ${course.type === 'online' ? 'bg-primary' : 'bg-success'}">${course.type}</span>
+                        </td>
+                        <td>
+                            ${course.topics.map(topic => `<span class="badge bg-secondary me-2">${topic}</span>`).join('')}
+                        </td>
+                    </tr>
+                `
+            })
+            $('.course-table tbody').html(html);
+        }
+
+        function renderPagination(courseList) {
+            $('#pagination').pagination({
+                dataSource: courseList,
+                pageSize: 10,
+                callback: function (data, pagination) { // data = [] course trên trang hiện tại
+                    console.log(pagination)
+                    renderCourses(data, pagination);
+                }
+            })
+        }
+
+        renderPagination(courseList)
     </script>
 </th:block>
 </body>

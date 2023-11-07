@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="web/layout/layout :: layout(~{:: title}, ~{:: #cssLib}, ~{}, ~{:: .course-container}, ~{:: #jsLib}, ~{:: #js})">
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{:: #cssLib}, ~{}, ~{:: .course-container}, ~{:: #jsLib}, ~{:: #js})}">
 
 <head>
     <title>Danh sách khóa học trực tuyến</title>
@@ -69,7 +69,7 @@
 </th:block>
 
 <th:block id="js">
-    <script th:src="@{/js/course.js}"></script>
+    <script th:src="@{/js/course-online.js}"></script>
     <script th:inline="javascript">
 
     </script>

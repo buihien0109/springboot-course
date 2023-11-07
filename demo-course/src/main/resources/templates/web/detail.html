@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="web/layout/layout :: layout(~{:: title}, ~{}, ~{}, ~{:: .course-container}, ~{}, ~{})">>
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{}, ~{:: .course-container}, ~{}, ~{})}">>
 
 <head>
   <title th:text="${course.name}">Document</title>

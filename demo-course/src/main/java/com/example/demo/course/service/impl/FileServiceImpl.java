@@ -13,7 +13,7 @@ import java.util.UUID;
 public class FileServiceImpl implements FileService {
     // folder lưu tru file
     // .../course-app/uploads
-    private static String uploadDir = System.getProperty("user.dir")
+    private static final String uploadDir = System.getProperty("user.dir")
             .concat(File.separator)
             .concat("uploads");
 

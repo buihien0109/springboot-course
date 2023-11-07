@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="web/layout/layout :: layout(~{:: title}, ~{:: #cssLib}, ~{}, ~{:: .course-container}, ~{:: #jsLib}, ~{:: #js})">
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{:: #cssLib}, ~{}, ~{:: .course-container}, ~{:: #jsLib}, ~{:: #js})}">
 
 <head>
   <title>Danh sách khóa học</title>
