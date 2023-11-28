@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh Sách Sản Phẩm</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .product-card {
+            margin-bottom: 20px;
+        }
+
+        .product-image {
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{components/header-web :: header}"></th:block>
+<div class="container">
+    <h3 class="mt-5 mb-4">Danh Sách Sản Phẩm</h3>
+    <div class="row">
+        <!-- Thêm sản phẩm vào đây -->
+        <!-- Ví dụ, lặp qua danh sách sản phẩm (sử dụng Thymeleaf) -->
+        <div th:each="product : ${products}" class="col-md-4">
+            <div class="product-card shadow-sm">
+                <img th:src="${product.imageUrl == null ? 'https://placehold.co/600x400' : product.imageUrl}"
+                     alt="Product Image" class="card-img-top product-image">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${product.name}">Tên sản phẩm</h5>
+                    <p class="card-text" th:text="${#numbers.formatInteger(product.price,3,'COMMA') + 'đ'}">Giá sản phẩm</p>
+                    <button class="btn btn-primary" th:onclick="|addToCart(${product.id})|">Thêm vào giỏ hàng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thêm Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function addToCart(productId) {
+        const url = '/api/cart/add';
+        const data = {productId: productId, quantity: 1};
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Đã thêm vào giỏ hàng');
+                } else if (response.status === 401) {
+                    window.location.href = '/login';
+                } else {
+                    alert('Có lỗi xảy ra, vui lòng thử lại sau');
+                }
+            })
+            .catch((error) => alert(error.message));
+    }
+</script>
+</body>
+</html>

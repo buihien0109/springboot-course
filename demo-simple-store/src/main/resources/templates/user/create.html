@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create User</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<th:block th:replace="~{components/header :: header}"></th:block>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h2 class="text-center mb-4 mt-5">Tạo Người Dùng Mới</h2>
+            <div class="bg-light p-4 rounded">
+                <form th:action="@{/admin/users/saveUser}" th:object="${user}" method="post">
+                    <div class="form-group">
+                        <label>Tên:</label>
+                        <input type="text" th:field="*{name}" class="form-control" placeholder="Nhập tên người dùng">
+                        <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" th:field="*{email}" class="form-control" placeholder="Nhập email">
+                        <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" th:field="*{password}" class="form-control" placeholder="Nhập password">
+                        <span class="text-danger" th:if="${#fields.hasErrors('password')}"
+                              th:errors="*{password}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Vai trò:</label>
+                        <select id="role" th:field="*{role}" class="form-control">
+                            <option value="">Chọn vai trò</option>
+                            <option value="ROLE_ADMIN">ADMIN</option>
+                            <option value="ROLE_SALE">SALE</option>
+                        </select>
+                        <span class="text-danger" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

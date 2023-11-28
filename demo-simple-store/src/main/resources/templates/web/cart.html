@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<th:block th:replace="~{components/header-web :: header}"></th:block>
+<div class="container">
+    <h3 class="mt-5 mb-4">Giỏ Hàng của Bạn</h3>
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Tên Sản Phẩm</th>
+            <th>Số Lượng</th>
+            <th>Giá</th>
+            <th>Tổng Cộng</th>
+            <th>Hành Động</th>
+        </tr>
+        </thead>
+        <tbody id="cart-items">
+        <tr th:each="cartItem : ${cart.items}">
+            <td th:text="${cartItem.product.name}">Tên Sản Phẩm</td>
+            <td th:text="${cartItem.quantity}">Số Lượng</td>
+            <td th:text="${#numbers.formatInteger(cartItem.product.price,3,'COMMA') + 'đ'}">Giá</td>
+            <td th:text="${#numbers.formatInteger(cartItem.product.price * cartItem.quantity,3,'COMMA') + 'đ'}">Tổng Cộng</td>
+            <td>
+                <button class="btn btn-secondary" th:onclick="|updateCartItem(${cartItem.id}, -1)|">Giảm</button>
+                <button class="btn btn-primary" th:onclick="|updateCartItem(${cartItem.id}, 1)|">Tăng</button>
+                <button class="btn btn-danger" th:onclick="|deleteCartItem(${cartItem.id})|">Xóa</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Bootstrap JS và phụ thuộc -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Script để xử lý giỏ hàng (ví dụ: cập nhật số lượng, xóa sản phẩm) -->
+<script>
+    function updateCartItem(cartItemId, quantity) {
+        const url = '/api/cart/update-item';
+        const data = {cartItemId: cartItemId, quantity: quantity};
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    alert('Có lỗi xảy ra, vui lòng thử lại sau');
+                }
+            })
+            .then(() => {
+                window.location.reload();
+            })
+            .catch((error) => alert(error.message));
+    }
+
+    function deleteCartItem(cartItemId) {
+        const url = `/api/cart/remove-item/${cartItemId}`;
+        const data = {cartItemId: cartItemId};
+
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    alert('Có lỗi xảy ra, vui lòng thử lại sau');
+                }
+            })
+            .then(() => {
+                window.location.reload();
+            })
+            .catch((error) => alert(error.message));
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h2 class="text-center mb-4 mt-5">Đăng Nhập</h2>
+            <div class="bg-light p-4 rounded">
+                <form th:action="@{/login}" th:object="${loginData}" method="post">
+                    <div class="form-group">
+                        <label for="email">Tên đăng nhập:</label>
+                        <input type="email" id="email" th:field="*{email}" class="form-control"/>
+                        <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mật khẩu:</label>
+                        <input type="password" id="password" th:field="*{password}" class="form-control"/>
+                        <span class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                        <a href="/register">Đăng ký tài khoản?</a>
+                    </div>
+                    <a href="#" class="d-inline-block mt-3">Quên mật khẩu</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

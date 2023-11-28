@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0433c1eb-e67d-450e-b294-97f3830d5cb5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/author-persistence/src/main/java/com/example/author/persistence/config/ApplicationConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/author-persistence/src/main/java/com/example/author/persistence/config/JsonConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/author-persistence/src/main/java/com/example/author/persistence/config/KafkaConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/author-persistence/src/main/java/com/example/author/persistence/config/KafkaConfigProps.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/author-persistence/src/main/java/com/example/author/persistence/domain/Author.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/author-persistence/src/main/java/com/example/author/persistence/domain/Book.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/author-persistence/src/main/java/com/example/author/persistence/listener/BookPublishedListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/author-persistence/src/main/java/com/example/author/persistence/repository/AuthorRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/author-persistence/src/main/java/com/example/author/persistence/repository/BookRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/config/ApplicationConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/config/JsonConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/config/KafkaConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/config/KafkaConfigProps.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/domain/Author.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/domain/Book.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/exception/BookPublishException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/repository/AuthorRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/repository/BookRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/service/BookPublisherService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/service/impl/KafkaBookPublisherService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/resources/db/migration/V1__baseline_migration.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/resources/db/migration/V2__init_author_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../demo-microservices-kafka/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo-book-restapi/src/test/java/com/example/demo/DemoBookRestapiApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../demo-book-restapi/src/test/java/com/example/demo/DemoBookRestapiApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/BookPublisherApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/java/com/example/book/publisher/BookPublisherApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../demo-microservices-kafka/book-publisher/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../send-mail.zip" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="com.haulmont.jpb.JpaRepository" />
+        <option value="Class" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="JpbToolWindowState">
+    <option name="isToolWindowVisible" value="false" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2Yi77yBYmrmW0odGlkFj6BLd9Bh" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;MTConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/templates/utils-page" />
+      <recent name="$PROJECT_DIR$/src/main/resources/templates" />
+      <recent name="$PROJECT_DIR$/src/main/resources/templates/product" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.DemoThymeleafCrudApplication">
+    <configuration name="DemoThymeleafCrudApplicationTests.save_products" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="demo-thymeleaf-crud" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.demo.thymeleaf.crud.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.example.demo.thymeleaf.crud" />
+      <option name="MAIN_CLASS_NAME" value="com.example.demo.thymeleaf.crud.DemoThymeleafCrudApplicationTests" />
+      <option name="METHOD_NAME" value="save_products" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DemoThymeleafCrudApplicationTests.save_user" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="demo-thymeleaf-crud" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.demo.thymeleaf.crud.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.example.demo.thymeleaf.crud" />
+      <option name="MAIN_CLASS_NAME" value="com.example.demo.thymeleaf.crud.DemoThymeleafCrudApplicationTests" />
+      <option name="METHOD_NAME" value="save_user" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DemoThymeleafCrudApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="demo-thymeleaf-crud" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.demo.thymeleaf.crud.DemoThymeleafCrudApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.DemoThymeleafCrudApplicationTests.save_user" />
+        <item itemvalue="JUnit.DemoThymeleafCrudApplicationTests.save_products" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0433c1eb-e67d-450e-b294-97f3830d5cb5" name="Changes" comment="" />
+      <created>1700996386249</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1700996386249</updated>
+      <workItem from="1700996387411" duration="15951000" />
+      <workItem from="1701074313475" duration="10330000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

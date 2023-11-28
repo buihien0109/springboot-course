@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="73ff8a37-ca43-442e-865c-2be55e7d4dd8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/config/JsonConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/config/KafkaConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/config/KafkaConfigProps.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/domain/Author.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/domain/Book.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/exception/BookPublishException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/repository/AuthorRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/repository/BookRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/service/BookPublisherService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/service/impl/KafkaBookPublisherService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/resources/db/migration/V1__baseline_migration.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/book-publisher/src/main/resources/db/migration/V2__init_author_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/book-publisher/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/book-publisher/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/BookPublisherApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/book-publisher/src/main/java/com/example/book/publisher/BookPublisherApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/book-publisher/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/book-publisher/src/main/resources/application.properties" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="2XqqvIbI0DKumWzAxcByhjrD0Ar" />
+  <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "MTConfigurable",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="BookPublisherApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="book-publisher" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.book.publisher.BookPublisherApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="73ff8a37-ca43-442e-865c-2be55e7d4dd8" name="Changes" comment="" />
+      <created>1699367187999</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1699367187999</updated>
+      <workItem from="1699367189127" duration="468000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

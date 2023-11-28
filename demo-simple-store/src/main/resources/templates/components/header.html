@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<header th:fragment="header">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">APP</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link" href="/admin/products"
+                       th:if="${session.currentUser.role == 'ROLE_SALE' || session.currentUser.role == 'ROLE_ADMIN'}">Quản
+                        lý sản phẩm</a>
+                    <a class="nav-item nav-link" href="/admin/users" th:if="${session.currentUser.role == 'ROLE_ADMIN'}">Quản
+                        lý người dùng</a>
+                </div>
+            </div>
+            <div>
+                <p class="mb-0">
+                    <span th:text="${session.currentUser.name}"></span>
+                    (<a class="font-italic" href="/logout">Đăng xuất</a>)
+                </p>
+            </div>
+        </div>
+    </nav>
+</header>
+</body>
+</html>

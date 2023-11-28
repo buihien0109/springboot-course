@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>book-publisher</artifactId>
+    <artifactId>author-persistence</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>book-publisher</name>
-    <description>book-publisher</description>
+    <name>author-persistence</name>
+    <description>author-persistence</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -21,14 +21,6 @@
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
             <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-mysql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
