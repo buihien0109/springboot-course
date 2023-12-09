@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh Sách Sản Phẩm</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .blog-card {
+            margin-bottom: 20px;
+        }
+
+        .blog-image {
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{components/header-web :: header}"></th:block>
+<div class="container">
+    <h3 class="mt-5 mb-4">Danh Sách Bài Viết</h3>
+    <div class="row">
+        <div th:each="blog : ${blogs}" class="col-md-4">
+            <div class="blog-card shadow-sm">
+                <img th:src="${blog.imageUrl == null ? 'https://placehold.co/600x400' : blog.imageUrl}"
+                     alt="Product Image" class="card-img-top blog-image">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${blog.title}">Tiêu đề bài viết</h5>
+                    <p class="card-text"
+                       th:text="|${blog.author.name} - ${#temporals.format(blog.publishedAt, 'dd/MM/YYYY')}|">Tác
+                        giả</p>
+                    <p class="card-text" th:text="${blog.description}">Tác giả</p>
+                    <a th:href="@{/blogs/{id} (id = ${blog.id})}" class="btn btn-primary">Xêm chi tiết</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

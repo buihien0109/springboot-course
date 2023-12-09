@@ -8,7 +8,7 @@
 <header th:fragment="header">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="/">APP</a>
+            <a class="navbar-brand" href="/admin">ADMIN</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -18,6 +18,9 @@
                     <a class="nav-item nav-link" href="/admin/products"
                        th:if="${session.currentUser.role == 'ROLE_SALE' || session.currentUser.role == 'ROLE_ADMIN'}">Quản
                         lý sản phẩm</a>
+                    <a class="nav-item nav-link" href="/admin/blogs"
+                       th:if="${session.currentUser.role == 'ROLE_SALE' || session.currentUser.role == 'ROLE_ADMIN'}">Quản
+                        lý bài viết</a>
                     <a class="nav-item nav-link" href="/admin/users" th:if="${session.currentUser.role == 'ROLE_ADMIN'}">Quản
                         lý người dùng</a>
                 </div>

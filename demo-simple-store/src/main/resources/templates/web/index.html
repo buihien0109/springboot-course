@@ -22,15 +22,18 @@
         <!-- Thêm sản phẩm vào đây -->
         <!-- Ví dụ, lặp qua danh sách sản phẩm (sử dụng Thymeleaf) -->
         <div th:each="product : ${products}" class="col-md-4">
-            <div class="product-card shadow-sm">
-                <img th:src="${product.imageUrl == null ? 'https://placehold.co/600x400' : product.imageUrl}"
-                     alt="Product Image" class="card-img-top product-image">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${product.name}">Tên sản phẩm</h5>
-                    <p class="card-text" th:text="${#numbers.formatInteger(product.price,3,'COMMA') + 'đ'}">Giá sản phẩm</p>
-                    <button class="btn btn-primary" th:onclick="|addToCart(${product.id})|">Thêm vào giỏ hàng</button>
+            <a th:href="@{/products/{id} (id=${product.id})}" class="text-body text-decoration-none">
+                <div class="product-card shadow-sm">
+                    <img th:src="${product.imageUrl == null ? 'https://placehold.co/600x400' : product.imageUrl}"
+                         alt="Product Image" class="card-img-top product-image">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${product.name}">Tên sản phẩm</h5>
+                        <p class="card-text" th:text="${#numbers.formatInteger(product.price,3,'COMMA') + 'đ'}">Giá sản
+                            phẩm</p>
+                        <button class="btn btn-primary" th:onclick="|addToCart(${product.id})|">Thêm vào giỏ hàng</button>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </div>

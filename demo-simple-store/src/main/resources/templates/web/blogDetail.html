@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${blog.title}">Tiêu Đề Bài Viết</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<th:block th:replace="~{components/header-web :: header}"></th:block>
+<div class="container">
+    <h3 class="mt-5 mb-4" th:text="${blog.title}">Tiêu Đề Bài Viết</h3>
+    <div class="mb-4" th:text="${blog.content}"></div>
+
+    <div>
+        <p class="text-right" th:text="${blog.author.name}"></p>
+    </div>
+</div>
+</body>
+</html>

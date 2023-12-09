@@ -4,12 +4,18 @@ import com.example.demo.thymeleaf.crud.entity.Product;
 import com.example.demo.thymeleaf.crud.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/products")
@@ -37,12 +43,30 @@ public class ProductController {
         return "product/create";
     }
 
+//    @PostMapping("/saveProduct")
+//    public String saveProduct(@Valid @ModelAttribute("product") Product product, BindingResult result) {
+//        if (result.hasErrors()) {
+//            return "product/create";
+//        }
+//
+//        productService.save(product);
+//        return "redirect:/admin/products";
+//    }
+
     @PostMapping("/saveProduct")
-    public String saveProduct(@Valid @ModelAttribute("product") Product product, BindingResult result) {
+    public String saveProduct(@Valid @ModelAttribute("product") Product product, BindingResult result, @RequestParam("image") MultipartFile file, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "product/create";
         }
-        productService.save(product);
+
+        try {
+            productService.save(product, file);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Upload failed!");
+            return "product/create";
+        }
+
         return "redirect:/admin/products";
     }
 
@@ -54,12 +78,29 @@ public class ProductController {
         return "product/detail";
     }
 
+//    @PostMapping("/updateProduct")
+//    public String updateProduct(@Valid @ModelAttribute("product") Product product, BindingResult result) {
+//        if (result.hasErrors()) {
+//            return "product/detail";
+//        }
+//        productService.save(product);
+//        return "redirect:/admin/products";
+//    }
+
     @PostMapping("/updateProduct")
-    public String updateProduct(@Valid @ModelAttribute("product") Product product, BindingResult result) {
+    public String updateProduct(@Valid @ModelAttribute("product") Product product, BindingResult result, @RequestParam("image") MultipartFile file, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "product/detail";
         }
-        productService.save(product);
+
+        try {
+            productService.update(product, file);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Upload failed!");
+            return "product/detail";
+        }
+
         return "redirect:/admin/products";
     }
 

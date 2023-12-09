@@ -1,3 +1,14 @@
+// slider banner
+$(".banners__pic__slider").owlCarousel({
+    margin: 20,
+    items: 2,
+    dots: false,
+    smartSpeed: 1200,
+    autoHeight: false,
+    autoplay: true,
+    loop: true,
+});
+
 // load more product by category parent slug
 function loadMoreProduct(categorySlug) {
     // get info in data

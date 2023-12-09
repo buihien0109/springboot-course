@@ -10,19 +10,35 @@
     <div class="row justify-content-center">
         <div class="col-lg-6">
             <h2 class="text-center mb-4 mt-5">Tạo Sản Phẩm Mới</h2>
+
+            <!-- Hiển thị Flash Message -->
+            <div th:if="${message}" class="alert alert-danger">
+                <p th:text="${message}"></p>
+            </div>
+
             <div class="bg-light p-4 rounded">
-                <form th:action="@{/admin/products/saveProduct}" th:object="${product}" method="post">
+                <form th:action="@{/admin/products/saveProduct}" th:object="${product}" method="post"
+                      enctype="multipart/form-data">
                     <div class="form-group">
                         <label>Tên:</label>
                         <input type="text" th:field="*{name}" class="form-control" placeholder="Nhập tên sản phẩm">
                         <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
                     </div>
                     <div class="form-group">
+                        <label>Mô tả:</label>
+                        <textarea th:field="*{description}" class="form-control" placeholder="Nhập mô tả sản phẩm" rows="7"></textarea>
+                        <span class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+                    </div>
+                    <div class="form-group">
                         <label>Giá:</label>
                         <input type="number" th:field="*{price}" class="form-control" placeholder="Nhập giá">
                         <span class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <div class="form-group">
+                        <label>Ảnh:</label>
+                        <input type="file" class="form-control" name="image" id="image">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
                 </form>
             </div>
         </div>

@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
@@ -27,6 +28,7 @@ public class Tag {
     @Column(name = "slug")
     private String slug;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     private List<Blog> blogs = new ArrayList<>();

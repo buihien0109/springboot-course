@@ -21,12 +21,16 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Name không được để trống")
+    @NotEmpty(message = "Tên không được để trống")
     private String name;
 
     private String imageUrl;
 
-    @NotNull(message = "Price không được để trống")
-    @Min(value = 1, message = "Price phải lớn hơn 0")
+    @NotEmpty(message = "Mô tả không được để trống")
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @NotNull(message = "Giá không được để trống")
+    @Min(value = 1, message = "Giá phải lớn hơn 0")
     private Integer price;
 }

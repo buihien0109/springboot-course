@@ -11,9 +11,9 @@
     <!-- Banner Begin -->
     <div class="banner">
         <div class="container">
-            <div class="row">
-                <th:block th:with="bannerSelected = ${banners.subList(0, 2)}">
-                    <div class="col-lg-6 col-md-12" th:each="banner : ${bannerSelected}">
+            <div class="banners__pic__slider owl-carousel owl-theme">
+                <th:block th:with="bannerSelected = ${banners}">
+                    <div th:each="banner : ${bannerSelected}">
                         <div class="banner__pic">
                             <a th:href="${banner.linkRedirect}" class="d-block">
                                 <img th:src="${banner.url}" th:alt="${banner.name}" class="img-fluid">

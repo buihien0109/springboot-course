@@ -11,7 +11,8 @@
         <div class="col-lg-6">
             <h2 class="text-center mb-4 mt-5">Cập Nhật Sản Phẩm</h2>
             <div class="bg-light p-4 rounded">
-                <form th:action="@{/admin/products/updateProduct}" th:object="${product}" method="post">
+                <form th:action="@{/admin/products/updateProduct}" th:object="${product}" method="post"
+                      enctype="multipart/form-data">
                     <input type="hidden" th:field="*{id}"/>
                     <div class="form-group">
                         <label>Tên:</label>
@@ -19,11 +20,23 @@
                         <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
                     </div>
                     <div class="form-group">
+                        <label>Mô tả:</label>
+                        <textarea th:field="*{description}" class="form-control" placeholder="Nhập mô tả sản phẩm" rows="7"></textarea>
+                        <span class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+                    </div>
+                    <div class="form-group">
                         <label>Giá:</label>
                         <input type="number" th:field="*{price}" class="form-control" placeholder="Nhập giá">
                         <span class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
                     </div>
-                    <button type="submit" class="btn btn-success">Cập Nhật</button>
+                    <div class="form-group">
+                        <label>Ảnh:</label>
+                        <div class="image mb-3">
+                            <img th:src="${product.imageUrl == null ? 'https://placehold.co/600x400' : product.imageUrl}" class="img-fluid" />
+                        </div>
+                        <input type="file" class="form-control" name="image" id="image">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
                 </form>
             </div>
         </div>

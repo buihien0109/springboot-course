@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Update Blog</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<th:block th:replace="~{components/header :: header}"></th:block>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h2 class="text-center mb-4 mt-5">Cập Nhật Bài Viết</h2>
+            <div class="bg-light p-4 rounded">
+                <form th:action="@{/admin/blogs/updateBlogs}" th:object="${blog}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+                    <div class="form-group">
+                        <label>Tiêu đề:</label>
+                        <input type="text" th:field="*{title}" class="form-control" placeholder="Nhập tiêu đề">
+                        <span class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Nội dung:</label>
+                        <textarea th:field="*{content}" class="form-control" placeholder="Nhập nội dung"></textarea>
+                        <span class="text-danger" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Mô tả:</label>
+                        <textarea th:field="*{description}" class="form-control" placeholder="Nhập mô tả"></textarea>
+                        <span class="text-danger" th:if="${#fields.hasErrors('description')}"
+                              th:errors="*{description}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Trạng thái:</label>
+                        <select id="role" th:field="*{isPublished}" class="form-control">
+                            <option value="false">Nháp</option>
+                            <option value="true">Công khai</option>
+                        </select>
+                        <span class="text-danger" th:if="${#fields.hasErrors('isPublished')}"
+                              th:errors="*{isPublished}"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
