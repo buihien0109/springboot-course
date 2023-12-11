@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+</head>
+<body>
+<th:block th:replace="~{components/header-web :: header}"></th:block>
+<div class="container">
+    <div class="row my-5">
+        <div class="col-lg-6">
+            <h4 class="mb-4">Thông tin thanh toán</h4>
+            <form th:action="@{/saveOrder}" th:object="${order}" method="post">
+                <div class="form-group">
+                    <label>Họ tên</label>
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="Nhập họ tên"
+                           th:value="${session.currentUser.name}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" th:field="*{phone}" class="form-control" placeholder="Nhập số điện thoại"
+                           th:value="${session.currentUser.phone}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="text" th:field="*{email}" class="form-control" placeholder="Nhập email"
+                           th:value="${session.currentUser.email}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ:</label>
+                    <input type="text" th:field="*{address}" class="form-control" placeholder="Nhập địa chỉ"
+                           th:value="${session.currentUser.address}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+                </div>
+                <div class="form-group">
+                    <label>Ghi chú đơn hàng:</label>
+                    <textarea th:field="*{note}" class="form-control" placeholder="Nhập ghi chú" rows="4"></textarea>
+                    <span class="text-danger" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></span>
+                </div>
+                <div class="form-group">
+                    <label for="shippingMethod">Hình thức vận chuyển</label>
+                    <select id="shippingMethod" th:field="*{shippingMethod}" class="form-control">
+                        <option value="">Chọn phương thức vận chuyển</option>
+                        <option th:each="method : ${shippingMethods}"
+                                th:value="${method.name()}"
+                                th:text="${method.displayValue}">Standard
+                        </option>
+                    </select>
+                    <span class="text-danger" th:if="${#fields.hasErrors('shippingMethod')}"
+                          th:errors="*{shippingMethod}"></span>
+                </div>
+                <div class="form-group">
+                    <label for="paymentMethod">Hình thức thanh toán</label>
+                    <select id="paymentMethod" th:field="*{paymentMethod}" class="form-control">
+                        <option value="">Chọn phương thức thanh toán</option>
+                        <option th:each="method : ${paymentMethods}"
+                                th:value="${method.name()}"
+                                th:text="${method.displayValue}">COD
+                        </option>
+                    </select>
+                    <span class="text-danger" th:if="${#fields.hasErrors('paymentMethod')}"
+                          th:errors="*{paymentMethod}"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Đặt hàng</button>
+            </form>
+        </div>
+        <div class="col-lg-6">
+            <h4 class="mb-4">Thông tin đơn hàng</h4>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${cart.items}">
+                    <td th:text="${item.product.name}">Sản phẩm 1</td>
+                    <td th:text="${#numbers.formatInteger(item.product.price,3,'COMMA') + 'đ'}">100</td>
+                    <td th:text="${item.quantity}">1</td>
+                    <td th:text="${#numbers.formatInteger(item.product.price,3,'COMMA') + 'đ'}">100</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="3">Tổng tiền</td>
+                    <td th:text="${#numbers.formatInteger(T(com.example.demo.thymeleaf.crud.utils.Utils).calculateTotalMoney(cart.items),3,'COMMA') + 'đ'}">
+                        100
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

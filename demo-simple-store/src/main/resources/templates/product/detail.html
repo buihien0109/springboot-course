@@ -10,6 +10,12 @@
     <div class="row justify-content-center">
         <div class="col-lg-6">
             <h2 class="text-center mb-4 mt-5">Cập Nhật Sản Phẩm</h2>
+
+            <!-- Hiển thị Flash Message -->
+            <div th:if="${message}" class="alert alert-danger">
+                <p th:text="${message}"></p>
+            </div>
+
             <div class="bg-light p-4 rounded">
                 <form th:action="@{/admin/products/updateProduct}" th:object="${product}" method="post"
                       enctype="multipart/form-data">

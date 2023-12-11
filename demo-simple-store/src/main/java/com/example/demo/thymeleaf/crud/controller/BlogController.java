@@ -1,15 +1,22 @@
 package com.example.demo.thymeleaf.crud.controller;
 
 import com.example.demo.thymeleaf.crud.entity.Blog;
+import com.example.demo.thymeleaf.crud.entity.Product;
 import com.example.demo.thymeleaf.crud.service.BlogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/blogs")
@@ -37,12 +44,29 @@ public class BlogController {
         return "blog/create";
     }
 
+//    @PostMapping("/saveBlog")
+//    public String saveBlog(@Valid @ModelAttribute("blog") Blog blog, BindingResult result) {
+//        if (result.hasErrors()) {
+//            return "blog/create";
+//        }
+//        blogService.save(blog);
+//        return "redirect:/admin/blogs";
+//    }
+
     @PostMapping("/saveBlog")
-    public String saveBlog(@Valid @ModelAttribute("blog") Blog blog, BindingResult result) {
+    public String saveBlog(@Valid @ModelAttribute("blog") Blog blog, BindingResult result, @RequestParam("image") MultipartFile file, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "blog/create";
         }
-        blogService.save(blog);
+
+        try {
+            blogService.save(blog, file);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Upload failed!");
+            return "blog/create";
+        }
+
         return "redirect:/admin/blogs";
     }
 
@@ -54,12 +78,29 @@ public class BlogController {
         return "blog/detail";
     }
 
+//    @PostMapping("/updateBlog")
+//    public String updateBlog(@Valid @ModelAttribute("blog") Blog blog, BindingResult result) {
+//        if (result.hasErrors()) {
+//            return "blog/detail";
+//        }
+//        blogService.save(blog);
+//        return "redirect:/admin/blogs";
+//    }
+
     @PostMapping("/updateBlog")
-    public String updateBlog(@Valid @ModelAttribute("blog") Blog blog, BindingResult result) {
+    public String updateBlog(@Valid @ModelAttribute("blog") Blog blog, BindingResult result, @RequestParam("image") MultipartFile file, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "blog/detail";
         }
-        blogService.save(blog);
+
+        try {
+            blogService.update(blog, file);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Upload failed!");
+            return "blog/detail";
+        }
+
         return "redirect:/admin/blogs";
     }
 

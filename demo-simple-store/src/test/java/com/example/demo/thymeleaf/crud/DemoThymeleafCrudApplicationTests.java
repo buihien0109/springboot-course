@@ -2,9 +2,11 @@ package com.example.demo.thymeleaf.crud;
 
 import com.example.demo.thymeleaf.crud.entity.Blog;
 import com.example.demo.thymeleaf.crud.entity.Product;
+import com.example.demo.thymeleaf.crud.entity.ProductReview;
 import com.example.demo.thymeleaf.crud.entity.User;
 import com.example.demo.thymeleaf.crud.repository.BlogRepository;
 import com.example.demo.thymeleaf.crud.repository.ProductRepository;
+import com.example.demo.thymeleaf.crud.repository.ProductReviewRepository;
 import com.example.demo.thymeleaf.crud.repository.UserRepository;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,8 @@ class DemoThymeleafCrudApplicationTests {
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private BlogRepository blogRepository;
+    @Autowired
+    private ProductReviewRepository productReviewRepository;
 
 
     @Test
@@ -86,6 +90,26 @@ class DemoThymeleafCrudApplicationTests {
             blog.setAuthor(users.get(random.nextInt(users.size())));
             blog.setIsPublished(random.nextBoolean());
             blogRepository.save(blog);
+        }
+    }
+
+    @Test
+    void save_review() {
+        Faker faker = new Faker();
+        Random random = new Random();
+
+        List<User> users = userRepository.findAll();
+        List<Product> products = productRepository.findAll();
+
+        for (int i = 0; i < 50; i++) {
+            Product product = products.get(random.nextInt(products.size()));
+            User user = users.get(random.nextInt(users.size()));
+            ProductReview review = new ProductReview();
+            review.setContent(faker.lorem().sentence(10));
+            review.setRating(random.nextInt(5) + 1);
+            review.setProduct(product);
+            review.setUser(user);
+            productReviewRepository.save(review);
         }
     }
 }

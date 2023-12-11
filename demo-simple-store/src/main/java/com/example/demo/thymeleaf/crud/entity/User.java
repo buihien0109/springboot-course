@@ -24,6 +24,12 @@ public class User {
     @Email(message = "Email không đúng định dạng")
     private String email;
 
+    @NotEmpty(message = "SDT không được để trống")
+    private String phone;
+
+    private String avatar;
+    private String address;
+
     @NotEmpty(message = "Mật khẩu không được để trống")
     private String password;
 

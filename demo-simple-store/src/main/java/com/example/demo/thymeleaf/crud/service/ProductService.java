@@ -52,24 +52,24 @@ public class ProductService {
 
     public void update(Product product, MultipartFile file) throws IOException {
         log.info("Product: {}", product);
-        log.info("File: {}", file);
-        log.info("File name: {}", file.getOriginalFilename());
 
-        // Kiểm tra xem có file ảnh mới không
-        if (file != null && !file.isEmpty()) {
-            log.info("New Image");
-            String filePath = fileService.saveFile(file);
-            product.setImageUrl(filePath);
-        } else {
-            log.info("No New Image");
-            // Nếu không có file mới, giữ nguyên đường dẫn ảnh cũ
-            Product existingProduct = productRepository.findById(product.getId()).orElse(null);
-            if (existingProduct != null && existingProduct.getImageUrl() != null) {
-                product.setImageUrl(existingProduct.getImageUrl());
+        Product existingProduct = productRepository.findById(product.getId()).orElse(null);
+        if (existingProduct != null) {
+            log.info("Existing Product: {}", existingProduct);
+
+            existingProduct.setName(product.getName());
+            existingProduct.setPrice(product.getPrice());
+            existingProduct.setPrice(product.getPrice());
+
+            // Kiểm tra xem có file ảnh mới không
+            if (file != null && !file.isEmpty()) {
+                log.info("New Image");
+                String filePath = fileService.saveFile(file);
+                existingProduct.setImageUrl(filePath);
             }
-        }
 
-        productRepository.save(product);
+            productRepository.save(product);
+        }
     }
 
     public Optional<Product> findById(Long id) {

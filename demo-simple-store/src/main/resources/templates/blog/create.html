@@ -10,8 +10,14 @@
     <div class="row justify-content-center">
         <div class="col-lg-6">
             <h2 class="text-center mb-4 mt-5">Tạo Bài Viết Mới</h2>
+
+            <!-- Hiển thị Flash Message -->
+            <div th:if="${message}" class="alert alert-danger">
+                <p th:text="${message}"></p>
+            </div>
+
             <div class="bg-light p-4 rounded">
-                <form th:action="@{/admin/blogs/saveBlog}" th:object="${blog}" method="post">
+                <form th:action="@{/admin/blogs/saveBlog}" th:object="${blog}" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label>Tiêu đề:</label>
                         <input type="text" th:field="*{title}" class="form-control" placeholder="Nhập tiêu đề">
@@ -37,7 +43,11 @@
                         <span class="text-danger" th:if="${#fields.hasErrors('isPublished')}"
                               th:errors="*{isPublished}"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <div class="form-group">
+                        <label>Ảnh:</label>
+                        <input type="file" class="form-control" name="image" id="image">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Lưu bài viết</button>
                 </form>
             </div>
         </div>

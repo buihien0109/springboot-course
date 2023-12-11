@@ -13,7 +13,12 @@
 <th:block th:replace="~{components/header-web :: header}"></th:block>
 <div class="container">
     <h3 class="mt-5 mb-4">Giỏ Hàng Của Bạn</h3>
-    <table class="table table-striped table-bordered table-hover">
+
+    <div class="alert alert-info" th:if="${cart.items.size() == 0}">
+        Giỏ hàng của bạn đang trống
+    </div>
+
+    <table class="table table-striped table-bordered table-hover" th:if="${cart.items.size() > 0}">
         <thead>
         <tr>
             <th>Tên Sản Phẩm</th>
@@ -57,7 +62,7 @@
             <i class="fa-solid fa-arrow-left-long"></i>
             Tiếp tục mua hàng
         </a>
-        <a href="/checkout" class="btn btn-success">
+        <a href="/checkout" class="btn btn-success" th:if="${cart.items.size() > 0}">
             Thanh toán
             <i class="fa-solid fa-arrow-right-long"></i>
         </a>

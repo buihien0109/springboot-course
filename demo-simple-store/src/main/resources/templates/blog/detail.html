@@ -10,8 +10,14 @@
     <div class="row justify-content-center">
         <div class="col-lg-6">
             <h2 class="text-center mb-4 mt-5">Cập Nhật Bài Viết</h2>
+
+            <!-- Hiển thị Flash Message -->
+            <div th:if="${message}" class="alert alert-danger">
+                <p th:text="${message}"></p>
+            </div>
+
             <div class="bg-light p-4 rounded">
-                <form th:action="@{/admin/blogs/updateBlogs}" th:object="${blog}" method="post">
+                <form th:action="@{/admin/blogs/updateBlog}" th:object="${blog}" method="post" enctype="multipart/form-data">
                     <input type="hidden" th:field="*{id}"/>
                     <div class="form-group">
                         <label>Tiêu đề:</label>
@@ -38,7 +44,14 @@
                         <span class="text-danger" th:if="${#fields.hasErrors('isPublished')}"
                               th:errors="*{isPublished}"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <div class="form-group">
+                        <label>Ảnh:</label>
+                        <div class="image mb-3">
+                            <img th:src="${blog.imageUrl == null ? 'https://placehold.co/600x400' : blog.imageUrl}" class="img-fluid" />
+                        </div>
+                        <input type="file" class="form-control" name="image" id="image">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Lưu bài viết</button>
                 </form>
             </div>
         </div>

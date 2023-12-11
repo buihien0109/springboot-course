@@ -6,8 +6,8 @@
 </head>
 <body>
 <th:block th:replace="~{components/header-web :: header}"></th:block>
-<div class="container">
-    <div class="row mt-5 mb-4">
+<div class="container my-5">
+    <div class="row mb-4">
         <div class="col-lg-6">
             <div class="product-image">
                 <img th:src="${product.imageUrl}" th:alt="${product.name}" class="img-fluid">
@@ -20,9 +20,60 @@
             <button class="btn btn-primary" th:onclick="|addToCart(${product.id})|">Thêm vào giỏ hàng</button>
         </div>
     </div>
+    <!-- Hiển thị Reviews -->
+    <h3 class="mb-3">Reviews</h3>
+    <div th:each="review : ${reviews}" class="mb-2">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${review.user.name}">Username</h5>
+                <p class="card-text" th:text="${review.content}">Review Content</p>
+                <span th:text="${'Rating: ' + review.rating}">Rating</span>
+                <!-- Nút Xóa, chỉ hiển thị nếu người dùng hiện tại là người đã viết review -->
+                <div th:if="${session.currentUser != null && review.user.id == session.currentUser.id}">
+                    <a th:href="@{/products/{productId}/reviews/{reviewId}/edit(productId=${product.id}, reviewId=${review.id})}">Sửa</a>
+                    <a th:href="@{/products/{productId}/reviews/{reviewId}/delete(productId=${product.id}, reviewId=${review.id})}">Xóa</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Form Thêm Review -->
+    <th:block th:if="${session.currentUser != null}">
+        <form th:action="@{/products/{productId}/reviews/add(productId=${product.id})}" method="post"
+              th:object="${reviewData}" class="mt-4">
+            <div class="form-group">
+                <textarea class="form-control" th:field="*{content}" placeholder="Your review"></textarea>
+                <span class="text-danger" th:if="${#fields.hasErrors('content')}"
+                      th:errors="*{content}"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="number" class="form-control my-2" th:field="*{rating}" placeholder="Rating (1-5)" min="1"
+                       max="5"/>
+                <span class="text-danger" th:if="${#fields.hasErrors('rating')}"
+                      th:errors="*{rating}"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
+    </th:block>
+
+    <th:block th:if="${session.currentUser == null}">
+        <div class="alert alert-info">
+            <a href="/login">Đăng nhập</a> để viết review
+        </div>
+    </th:block>
 </div>
 
-<script>
+<script th:inline="javascript">
+    const reviewData = [[${reviewData}]];
+    console.log(reviewData);
+
+    const error = [[${error}]];
+    console.log(error);
+
+    const result = [[${result}]];
+    console.log(result);
+
+
     function addToCart(productId) {
         const url = '/api/cart/add';
         const data = {productId: productId, quantity: 1};

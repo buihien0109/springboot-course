@@ -74,4 +74,10 @@ public class CartService {
         return cartRepository.findByUserId(user.getId())
                 .orElse(new Cart());
     }
+
+    public void clearCart(User currentUser) {
+        Cart cart = cartRepository.findByUserId(currentUser.getId())
+                .orElseThrow(() -> new RuntimeException("Giỏ hàng không tồn tại"));
+        cart.getItems().clear();
+    }
 }

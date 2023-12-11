@@ -10,7 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +22,7 @@ import java.util.Optional;
 public class BlogService {
     private final BlogRepository blogRepository;
     private final HttpSession session;
+    private final FileService fileService;
 
     public List<Blog> findAll() {
         return blogRepository.findAll();
@@ -53,6 +56,41 @@ public class BlogService {
 
         blog.setAuthor(user);
         blogRepository.save(blog);
+    }
+
+    public void save(Blog blog, MultipartFile file) throws IOException {
+        // Lưu ảnh vào folder
+        String filePath = fileService.saveFile(file);
+        blog.setImageUrl(filePath);
+
+        // Lưu blog vào database
+        User user = (User) session.getAttribute("currentUser");
+        blog.setAuthor(user);
+        blogRepository.save(blog);
+    }
+
+    public void update(Blog blog, MultipartFile file) throws IOException {
+        log.info("Blog: {}", blog);
+
+        Blog existingBlog = blogRepository.findById(blog.getId()).orElse(null);
+        if (existingBlog != null) {
+            log.info("Existing Blog: {}", existingBlog);
+
+            existingBlog.setTitle(blog.getTitle());
+            existingBlog.setContent(blog.getContent());
+            existingBlog.setDescription(blog.getDescription());
+            existingBlog.setIsPublished(blog.getIsPublished());
+
+            // Kiểm tra xem có file ảnh mới không
+            if (file != null && !file.isEmpty()) {
+                log.info("New Image");
+                String filePath = fileService.saveFile(file);
+                existingBlog.setImageUrl(filePath);
+            }
+
+            // Lưu blog vào database
+            blogRepository.save(existingBlog);
+        }
     }
 
     public Optional<Blog> findById(Long id) {
