@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+// Controller này dùng để điều hướng các trang thymeleaf
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin")
