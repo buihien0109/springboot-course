@@ -12,4 +12,9 @@ public class Utils {
         }
         return totalMoney;
     }
+
+    // Tính tong 2 số a, b
+    public static Integer sum(Integer a, Integer b) {
+        return a + b;
+    }
 }
