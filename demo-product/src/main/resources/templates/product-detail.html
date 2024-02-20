@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.name}">Chi tiết sản phẩm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="course-container my-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div id="product-image">
+                    <img th:src="${product.thumbnail}" th:alt="${product.thumbnail}">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div>
+                    <h2 class="fs-3 mb-2" th:text="${product.name}"></h2>
+
+                    <p class="d-flex align-items-center">
+                        <span class="badge bg-secondary">
+                                <span th:text="${product.rating}">4.2</span>
+                                <span class="star-icon"><i class="fa-solid fa-star"></i></span>
+                            </span>
+                    </p>
+
+                    <div th:classappend="${product.priceDiscount != null ? 'has-discount' : ''}">
+                        <p class="price-discount" th:if="${product.priceDiscount != null}" th:text="|${#numbers.formatInteger(product.priceDiscount, 3, 'COMMA')}₫|">3,900,000đ</p>
+                        <p class="price" th:text="|${#numbers.formatInteger(product.price, 3, 'COMMA')}₫|">3,900,000đ</p>
+                    </div>
+
+                    <div>
+                        <p th:text="${product.description}">Bộ Đôi Báo Thủ – Ransomed (2023) tại Beirut năm 1986, trong cuộc
+                            nội chiến Lebanon, một nhà ngoại giao Hàn Quốc bị bắt làm con tin không dấu vết. Hai năm
+                            trôi qua và bị lãng quên từ lâu, nhà ngoại giao trẻ Min-jun nhận được một cuộc điện
+                            thoại chứng minh rằng con tin vẫn còn sống. Với nhiệm vụ được giao, Min-jun được phái
+                            đến Beirut để cứu con tin cùng một túi tiền chuộc.</p>
+                    </div>
+
+
+
+                    <div>
+                        <button class="btn btn-primary px-5 mt-3">Mua Hàng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

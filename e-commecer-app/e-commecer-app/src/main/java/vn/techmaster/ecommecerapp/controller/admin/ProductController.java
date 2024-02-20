@@ -23,7 +23,7 @@ public class ProductController {
 
     @GetMapping
     public String getProductPage(Model model) {
-        model.addAttribute("products", productService.findAll());
+        model.addAttribute("products", productService.getAllProductsAdmin());
         return "admin/product/index";
     }
 

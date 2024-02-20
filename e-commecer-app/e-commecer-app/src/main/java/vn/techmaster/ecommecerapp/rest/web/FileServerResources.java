@@ -19,22 +19,14 @@ public class FileServerResources {
         return ResponseEntity.ok(fileServerService.getAllFilesForLoggedInUser());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> readFile(@PathVariable Long id) {
-        FileServer fileServer = fileServerService.getFileById(id);
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(fileServer.getType()))
-                .body(fileServer.getData());
-    }
-
     @PostMapping
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(fileServerService.uploadFile(file));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFile(@PathVariable Long id) {
-        fileServerService.deleteFileById(id);
+    public ResponseEntity<?> deleteFile(@PathVariable String id) {
+        fileServerService.deleteFile(id);
         return ResponseEntity.ok().build();
     }
 }

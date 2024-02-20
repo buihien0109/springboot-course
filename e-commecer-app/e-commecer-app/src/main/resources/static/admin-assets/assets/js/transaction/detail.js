@@ -1,8 +1,8 @@
 let idUpdate = null;
 let products = transaction.transactionItems.map(item => {
     return {
-        productId: item.product.productId,
-        productName: item.product.name,
+        productId: item.productId,
+        productName: item.productName,
         quantity: item.quantity,
         purchasePrice: item.purchasePrice
     }

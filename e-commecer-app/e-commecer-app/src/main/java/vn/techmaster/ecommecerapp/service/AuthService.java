@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -55,8 +56,10 @@ public class AuthService {
 
             // Synchonize the user's wishlist with the wishlist in cookies
             wishListService.syncWishList();
+        } catch (DisabledException e) {
+            throw new BadRequestException("Tài khoản chưa được kích hoạt. Vui lòng kiểm tra email của bạn");
         } catch (AuthenticationException e) {
-            throw new BadRequestException(e.getMessage());
+            throw new BadRequestException("Email hoặc mật khẩu không chính xác");
         }
     }
 
@@ -86,9 +89,8 @@ public class AuthService {
                 wishListService.syncWishList();
             }
         } catch (AuthenticationException e) {
-            // log type of exception
-            log.error("Exception: {}", e.getClass());
-            throw new BadRequestException(e.getMessage());
+            log.error("Exception: {}", e.getMessage());
+            throw new BadRequestException("Email hoặc mật khẩu không chính xác");
         }
     }
 

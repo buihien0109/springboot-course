@@ -10,25 +10,18 @@ import vn.techmaster.ecommecerapp.utils.crawl.ImageCrawlerService;
 public class ImageCrawlerTests {
     @Autowired
     private ImageCrawlerService imageCrawlerService;
-    @Autowired
-    private ImageCrawler2Service imageCrawler2Service;
-
 
     @Test
     void crawl_images() {
         try {
             imageCrawlerService.crawlAndDownloadImages("food?license=free");
         } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @Test
-    void crawl_images2() {
-        try {
-            imageCrawler2Service.crawlAndDownloadImages("food?license=free");
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
-        }
+    void crawl_images_insert_image() {
+        imageCrawlerService.insertImageForProduct();
     }
 }

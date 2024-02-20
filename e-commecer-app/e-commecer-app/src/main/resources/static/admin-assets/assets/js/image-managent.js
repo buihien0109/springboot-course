@@ -31,8 +31,8 @@ function renderImages(imageList) {
     let html = ""
     imageList.forEach(image => {
         html += `
-            <div class="image-item" onclick="choseImage(this)" data-id="${image.id}">
-                <img src="/api/v1/files/${image.id}" alt="">
+            <div class="image-item" onclick="choseImage(this)" data-id="${image}">
+                <img src="${image}" alt="">
             </div>
         `
     })
@@ -72,13 +72,14 @@ function choseImage(ele) {
 btnDeleteImage.addEventListener("click", async () => {
     try {
         const imageSelected = document.querySelector(".image-item.selected");
-        const imageId = +imageSelected.dataset.id
+        const imageLink = imageSelected.dataset.id
+        const imageId = imageLink.split("/").pop();
 
         // Xóa trên server
         await axios.delete(`/api/v1/files/${imageId}`)
 
         // Xóa trong mảng ban đầu
-        imageList = imageList.filter(i => i.id !== imageId);
+        imageList = imageList.filter(i => i !== imageLink);
         renderPagination(imageList);
 
         // Disable 2 nút chức năng
@@ -115,7 +116,7 @@ inputImageEl.addEventListener("change", (event) => {
     // Gọi API
     axios.post(`/api/v1/files`, formData)
         .then(res => {
-            imageList.unshift(res.data);
+            imageList.unshift(res.data.url);
             renderPagination(imageList);
         })
         .catch(err => {

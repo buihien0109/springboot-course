@@ -16,7 +16,7 @@
                     <div th:each="banner : ${bannerSelected}">
                         <div class="banner__pic">
                             <a th:href="${banner.linkRedirect}" class="d-block">
-                                <img th:src="${banner.url}" th:alt="${banner.name}" class="img-fluid">
+                                <img th:src="${banner.url}" th:alt="${banner.name}" class="img-fluid" style="height: 350px; object-fit: cover">
                             </a>
                         </div>
                     </div>

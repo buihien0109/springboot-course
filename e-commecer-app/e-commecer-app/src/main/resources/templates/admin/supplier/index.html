@@ -45,7 +45,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover datatables-table">
                                 <thead>
                                 <tr>
                                     <th>Logo</th>
@@ -56,13 +56,20 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="supplier : ${suppliers}">
+                                    <td>
+                                        <img th:src="${supplier.thumbnail}" alt="" width="50px" height="50px"
+                                             class="border rounded-circle" style="object-fit: cover">
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/suppliers/{id}/detail(id=${supplier.supplierId})}"
+                                           th:text="${supplier.name}"></a>
+                                    </td>
+                                    <td th:text="${supplier.phone}"></td>
+                                    <td th:text="${supplier.email}"></td>
+                                    <td th:text="${supplier.address}"></td>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,11 +79,7 @@
 </div>
 
 <th:block id="js">
-    <script th:inline="javascript">
-        let suppliers = [[${suppliers}]];
-        console.log(suppliers);
-    </script>
-    <script th:src="@{/admin-assets/assets/js/supplier/index.js}"></script>
+
 </th:block>
 </body>
 

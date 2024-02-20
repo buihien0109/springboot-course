@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import vn.techmaster.ecommecerapp.entity.Blog;
 import vn.techmaster.ecommecerapp.entity.Tag;
 import vn.techmaster.ecommecerapp.entity.User;
-import vn.techmaster.ecommecerapp.model.dto.BlogDto;
 import vn.techmaster.ecommecerapp.repository.BlogRepository;
 import vn.techmaster.ecommecerapp.repository.TagRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
@@ -175,10 +174,5 @@ public class BlogTests {
     // generate link author avatar follow struct : https://placehold.co/200x200?text=[...]
     private String generateLinkImage(String authorName) {
         return "https://placehold.co/200x200?text=" + getCharacter(authorName);
-    }
-
-    @Test
-    void findAllBlogDtos() {
-        List<Blog> blogList = blogRepository.findAllBlogs();
     }
 }

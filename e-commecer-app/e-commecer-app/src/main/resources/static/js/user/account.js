@@ -2,7 +2,8 @@
 const togglePasswordBtns = document.querySelectorAll('.icon-toggle-password');
 const passwordInputs = document.querySelectorAll('input[type="password"]');
 togglePasswordBtns.forEach((btn, index) => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
         if (passwordInputs[index].type === 'password') {
             passwordInputs[index].type = 'text';
             btn.innerHTML = '<i class="fa fa-eye-slash" aria-hidden="true"></i>';

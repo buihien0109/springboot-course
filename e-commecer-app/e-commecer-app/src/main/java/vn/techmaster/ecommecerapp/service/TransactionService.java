@@ -8,6 +8,7 @@ import vn.techmaster.ecommecerapp.entity.Supplier;
 import vn.techmaster.ecommecerapp.entity.Transaction;
 import vn.techmaster.ecommecerapp.entity.TransactionItem;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.dto.TransactionNormalDto;
 import vn.techmaster.ecommecerapp.model.projection.TransactionPublic;
 import vn.techmaster.ecommecerapp.model.request.CreateTransactionRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdateTransactionRequest;
@@ -26,15 +27,20 @@ public class TransactionService {
     private final SupplierRepository supplierRepository;
 
 
-    public List<TransactionPublic> getAllTransactions() {
-        List<Transaction> transactions = transactionRepository.findAll();
-        return transactions.stream().map(TransactionPublic::of).toList();
+    public List<TransactionNormalDto> getAllTransactions() {
+        return transactionRepository.getAllTransactions();
     }
 
-    public TransactionPublic getTransactionById(Long id) {
-        Transaction transaction = transactionRepository.findById(id)
+    public TransactionNormalDto getTransactionById(Long id) {
+        return transactionRepository.getTransactionById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy giao dịch với id: " + id));
-        return TransactionPublic.of(transaction);
+    }
+
+    public List<TransactionNormalDto> getTransactionsBySupplierId(Long supplierId) {
+        if (!supplierRepository.existsById(supplierId)) {
+            throw new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id: " + supplierId);
+        }
+        return transactionRepository.getAllTransactionsBySupplier(supplierId);
     }
 
     public TransactionPublic createTransaction(CreateTransactionRequest request) {
@@ -74,13 +80,6 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         return TransactionPublic.of(transaction);
-    }
-
-    public List<TransactionPublic> getTransactionsBySupplierId(Long supplierId) {
-        Supplier supplier = supplierRepository.findById(supplierId)
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id: " + supplierId));
-        List<Transaction> transactions = transactionRepository.findBySupplier_SupplierIdOrderByTransactionDateDesc(supplierId);
-        return transactions.stream().map(TransactionPublic::of).toList();
     }
 
     public TransactionPublic updateTransaction(Long id, UpdateTransactionRequest request) {

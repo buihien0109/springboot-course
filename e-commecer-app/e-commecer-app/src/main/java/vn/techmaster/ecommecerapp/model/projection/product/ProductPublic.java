@@ -5,10 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
 import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.entity.ProductImage;
 import vn.techmaster.ecommecerapp.model.projection.CategoryPublic;
 import vn.techmaster.ecommecerapp.model.projection.ProductAttributePublic;
-import vn.techmaster.ecommecerapp.model.projection.ProductImageSeparatePublic;
 import vn.techmaster.ecommecerapp.model.projection.SupplierPublic;
 
 import java.util.List;
@@ -31,7 +29,9 @@ public interface ProductPublic {
 
     CategoryPublic getCategory();
 
-    ProductImageSeparatePublic getImages();
+    String getMainImage();
+
+    List<String> getSubImages();
 
     List<ProductAttributePublic> getAttributes();
 
@@ -86,9 +86,13 @@ public interface ProductPublic {
         }
 
         @Override
-        public ProductImageSeparatePublic getImages() {
-            List<ProductImage> productImages = product.getImages();
-            return ProductImageSeparatePublic.of(productImages);
+        public String getMainImage() {
+            return product.getMainImage();
+        }
+
+        @Override
+        public List<String> getSubImages() {
+            return product.getSubImages();
         }
 
         @Override

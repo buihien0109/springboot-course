@@ -54,8 +54,8 @@ public class WebController {
     public String getProduct(@PathVariable Long id, Model model) {
         ProductPublic product = productService.findById(id);
         model.addAttribute("product", product);
-        model.addAttribute("relatedProducts", productService.findAllProductByCategoryIdAndProductIdNot(product.getCategory().getCategoryId(), id, 4));
-        model.addAttribute("reviews", reviewService.getAllReviewsAvailableByProductId(id));
+        model.addAttribute("relatedProducts", productService.getRelatedProducts(product.getCategory().getCategoryId(), id, 4)); // done
+        model.addAttribute("reviews", reviewService.getAllReviewsAvailableByProductId(id)); // done
         return "web/product-detail";
     }
 
@@ -74,22 +74,23 @@ public class WebController {
             Model model,
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "6") Integer size,
-            @RequestParam(required = false, defaultValue = "") String tag
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false) String search
     ) {
         log.info("page: {}, size: {}, tag: {}", page, size, tag);
         model.addAttribute("currentPage", page);
         model.addAttribute("currentTag", tag);
-        model.addAttribute("recentBlogs", blogService.getAllBlogs(3));
-        model.addAttribute("pageData", blogService.getAllBlogs(tag, page, size));
-        model.addAttribute("tags", tagService.getAllTags());
+        model.addAttribute("recentBlogs", blogService.getLatestBlogs(3)); // done
+        model.addAttribute("pageData", blogService.searchBlog(tag, search, page, size)); // done
+        model.addAttribute("tags", tagService.getAllTags()); // done
         return "web/post";
     }
 
     @GetMapping("/bai-viet/{id}/{slug}")
     public String getPostDetail(@PathVariable Integer id, @PathVariable String slug, Model model) {
-        model.addAttribute("tags", tagService.getAllTags());
-        model.addAttribute("recentBlogs", blogService.getAllBlogs(3));
-        model.addAttribute("blog", blogService.getBlogByIdAndSlug(id, slug));
+        model.addAttribute("tags", tagService.getAllTags()); // done
+        model.addAttribute("recentBlogs", blogService.getRecommendBlogs(id, 3)); // done
+        model.addAttribute("blog", blogService.getBlogByIdAndSlug(id, slug)); // done
         model.addAttribute("relatedBlogs", blogService.getRelatedBlogs(id, slug));
         return "web/post-detail";
     }

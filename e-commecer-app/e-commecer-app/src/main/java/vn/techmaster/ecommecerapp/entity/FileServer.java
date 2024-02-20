@@ -23,11 +23,6 @@ public class FileServer {
 
     private String type;
 
-    @JsonIgnore
-    @Lob
-    @Column(name = "data", nullable = false, columnDefinition = "LONGBLOB")
-    private byte[] data;
-
     private Date createdAt;
 
     @JsonIgnore

@@ -10,17 +10,24 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.techmaster.ecommecerapp.entity.*;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.ProductAdminDto;
+import vn.techmaster.ecommecerapp.model.dto.CategorySeparateDto;
+import vn.techmaster.ecommecerapp.model.dto.ProductNormalAdminDto;
+import vn.techmaster.ecommecerapp.model.dto.ProductNormalDto;
 import vn.techmaster.ecommecerapp.model.projection.CategorySeparatePublic;
 import vn.techmaster.ecommecerapp.model.projection.ProductAttributePublic;
-import vn.techmaster.ecommecerapp.model.projection.ProductImagePublic;
 import vn.techmaster.ecommecerapp.model.projection.product.ProductNormalPublic;
 import vn.techmaster.ecommecerapp.model.projection.product.ProductPublic;
 import vn.techmaster.ecommecerapp.model.request.CreateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpsertProductAttributeRequest;
+import vn.techmaster.ecommecerapp.model.response.ImageResponse;
+import vn.techmaster.ecommecerapp.model.response.PageResponse;
+import vn.techmaster.ecommecerapp.model.response.PageResponseImpl;
 import vn.techmaster.ecommecerapp.repository.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,17 +42,22 @@ public class ProductService {
     private final Slugify slugify;
     private final ProductAttributeRepository productAttributeRepository;
     private final FileServerService fileServerService;
-    private final ProductImageRepository productImageRepository;
+
+    public List<ProductNormalAdminDto> getAllProductsAdmin() {
+        return productRepository.getAllProductsAdmin();
+    }
 
     public List<ProductPublic> findAll() {
         List<Product> products = productRepository.findAll();
         return products.stream().map(ProductPublic::of).toList();
     }
 
-    public List<ProductPublic> getAllProductsByStatus(List<Product.Status> statusList) {
-        List<Product> products = productRepository.findByStatusIn(statusList);
-        return products.stream()
-                .map(ProductPublic::of).toList();
+    public List<ProductAdminDto> getAllAvailabelProductsAdminDtoByAdmin() {
+        return productRepository.getAllAvailabelProductsAdminDtoByAdmin();
+    }
+
+    public List<ProductNormalAdminDto> getAllAvailabelProductsNormalAdminDtoByAdmin() {
+        return productRepository.getAllAvailabelProductsNormalAdminDtoByAdmin();
     }
 
     public ProductPublic findById(Long id) {
@@ -66,81 +78,59 @@ public class ProductService {
     }
 
     // get products list same category with product id and get by limit
-    public List<ProductNormalPublic> findAllProductByCategoryIdAndProductIdNot(Long categoryId, Long productId, int limit) {
-        List<Product> products = productRepository
-                .findByCategory_CategoryIdAndProductIdNotAndStatusIn(categoryId, productId, List.of(Product.Status.AVAILABLE));
-        return products.stream().map(ProductNormalPublic::of).limit(limit).toList();
-    }
-
-    // get all product by parent category name
-    public List<ProductPublic> findAllProductByParentCategoryName(String name) {
-        List<Product> products = productRepository.findByCategory_ParentCategory_NameIgnoreCase(name);
-        return products.stream().map(ProductPublic::of).toList();
+    public List<ProductNormalDto> getRelatedProducts(Long categoryId, Long productId, int limit) {
+        return productRepository.getRelatedProducts(categoryId, productId, limit);
     }
 
     // get all product by parent category slug, page, size, sub category
     // return Page<ProductPublic>
     // page, size, sub category can be null
-    public Page<ProductNormalPublic> findAllProductByParentCategorySlug(String slug, Integer page, Integer size, String sub) {
-        Page<Product> pageData;
-
+    public PageResponse<ProductNormalDto> findAllProductByParentCategorySlug(String slug, Integer page, Integer size, String sub) {
+        List<ProductNormalDto> productList;
         if (sub != null && !sub.isEmpty()) {
-            pageData = productRepository
-                    .findByCategory_ParentCategory_SlugIgnoreCaseAndCategory_SlugIgnoreCaseAndStatusIn(
-                            slug,
-                            sub,
-                            List.of(Product.Status.AVAILABLE),
-                            PageRequest.of(page - 1, size)
-                    );
+            productList = productRepository.getProductsByCategorySlug(sub);
         } else {
-            pageData = productRepository
-                    .findByCategory_ParentCategory_SlugIgnoreCaseAndStatusIn(
-                            slug,
-                            List.of(Product.Status.AVAILABLE),
-                            PageRequest.of(page - 1, size)
-                    );
+            productList = productRepository.getProductsByParentCategorySlug(slug);
         }
 
-        return pageData.map(ProductNormalPublic::of);
+        return new PageResponseImpl<>(productList, page, size);
     }
 
     // get all product has discount valid date (not expies) and pagination with param page and size
     public Map<String, Object> findAllProductHasDiscountValidDate(Integer page, Integer size) {
-        Page<Product> pageData = productRepository.findByDiscounts_StatusAndStatusIn(
-                DiscountCampaign.Status.ACTIVE,
-                List.of(Product.Status.AVAILABLE),
-                PageRequest.of(page - 1, size)
-        );
-        Page<ProductNormalPublic> pageDataNormal = pageData.map(ProductNormalPublic::of);
+        List<ProductNormalDto> productList = productRepository.getAllDiscountProducts();
+        int startIndex = (page - 1) * size;
+        int endIndex = page * size;
         return Map.of(
                 "name", "Sản phẩm giảm giá",
                 "slug", "",
-                "products", pageDataNormal.getContent(),
-                "totalElements", pageDataNormal.getTotalElements(),
-                "remain", pageDataNormal.getTotalElements() - (long) page * size < 0 ? 0 : pageDataNormal.getTotalElements() - (long) page * size,
-                "currentPage", pageDataNormal.getNumber() + 1
+                "products", productList.size() >= endIndex
+                        ? productList.subList(startIndex, endIndex)
+                        : productList.subList(startIndex, productList.size()),
+                "totalElements", productList.size(),
+                "remain", productList.size() - (long) page * size < 0 ? 0 : productList.size() - (long) page * size,
+                "currentPage", page
         );
     }
 
     // get all product by parent category and pagination with param page and size with product
     public List<Map<String, Object>> findAllProductCombineCategory(Integer page, Integer size) {
-        List<CategorySeparatePublic> categories = categoryService.findAllByParentCategoryIsNull();
+        List<CategorySeparateDto> categories = categoryService.findAllByParentCategoryIsNull();
         List<Map<String, Object>> data = new ArrayList<>();
         categories.forEach(category -> {
-            Page<Product> pageData = productRepository.findByCategory_ParentCategory_SlugIgnoreCaseAndStatusIn(
-                    category.getMainCategory().getSlug(),
-                    List.of(Product.Status.AVAILABLE),
-                    PageRequest.of(page - 1, size)
-            );
-            Page<ProductNormalPublic> pageDataNormal = pageData.map(ProductNormalPublic::of);
+            List<ProductNormalDto> productList = productRepository.getProductsByParentCategorySlug(category.getMainCategory().getSlug());
+            int startIndex = (page - 1) * size;
+            int endIndex = page * size;
             Map<String, Object> map = Map.of(
                     "id", category.getMainCategory().getCategoryId(),
                     "name", category.getMainCategory().getName(),
                     "slug", category.getMainCategory().getSlug(),
-                    "products", pageDataNormal.getContent(),
-                    "totalElements", pageDataNormal.getTotalElements(),
-                    "remain", pageDataNormal.getTotalElements() - (long) page * size < 0 ? 0 : pageDataNormal.getTotalElements() - (long) page * size,
-                    "currentPage", pageDataNormal.getNumber() + 1
+                    "products", productList.size() >= endIndex
+                            ? productList.subList(startIndex, endIndex)
+                            : productList.subList(startIndex, productList.size()),
+                    "totalElements", productList.size(),
+                    "remain", productList.size() - (long) page * size < 0 ? 0 : productList.size() - (long) page * size,
+                    "currentPage", page
             );
             data.add(map);
         });
@@ -161,18 +151,17 @@ public class ProductService {
         if (categorySlug == null || categorySlug.isEmpty()) {
             return findAllProductHasDiscountValidDate(page, size);
         }
-        Page<Product> pageData = productRepository.findByCategory_ParentCategory_SlugIgnoreCaseAndStatusIn(
-                categorySlug,
-                List.of(Product.Status.AVAILABLE),
-                PageRequest.of(page - 1, size)
-        );
-        Page<ProductNormalPublic> pageDataNormal = pageData.map(ProductNormalPublic::of);
+        List<ProductNormalDto> productList = productRepository.getProductsByParentCategorySlug(categorySlug);
+        int startIndex = (page - 1) * size;
+        int endIndex = page * size;
         return Map.of(
                 "slug", categorySlug,
-                "products", pageDataNormal.getContent(),
-                "totalElements", pageDataNormal.getTotalElements(),
-                "remain", pageDataNormal.getTotalElements() - (long) page * size < 0 ? 0 : pageDataNormal.getTotalElements() - (long) page * size,
-                "currentPage", pageDataNormal.getNumber() + 1
+                "products", productList.size() >= endIndex
+                        ? productList.subList(startIndex, endIndex)
+                        : productList.subList(startIndex, productList.size()),
+                "totalElements", productList.size(),
+                "remain", productList.size() - (long) page * size < 0 ? 0 : productList.size() - (long) page * size,
+                "currentPage", page
         );
     }
 
@@ -298,59 +287,34 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public ProductImagePublic uploadMainImage(Long productId, MultipartFile file) {
+    public ImageResponse uploadMainImage(Long productId, MultipartFile file) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm với id " + productId));
 
-        FileServer fileServer = fileServerService.uploadFile(file);
-        String url = "/api/v1/files/" + fileServer.getId();
-
-        // delete old main image
-        product.getImages().stream()
-                .filter(image -> image.getImageType().equals(ProductImage.ImageType.MAIN))
-                .findFirst()
-                .ifPresent(productImage -> {
-                    product.getImages().remove(productImage);
-                    productRepository.save(product);
-                });
-
-        ProductImage mainImage = new ProductImage();
-        mainImage.setImageUrl(url);
-        mainImage.setImageType(ProductImage.ImageType.MAIN);
-        mainImage.setProduct(product);
-
-        product.getImages().add(mainImage);
+        ImageResponse imageResponse = fileServerService.uploadFile(file);
+        product.setMainImage(imageResponse.getUrl());
         productRepository.save(product);
 
-        return ProductImagePublic.of(mainImage);
+        return imageResponse;
     }
 
-    public ProductImagePublic uploadSubImage(Long productId, MultipartFile file) {
+    public ImageResponse uploadSubImage(Long productId, MultipartFile file) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm với id " + productId));
 
-        FileServer fileServer = fileServerService.uploadFile(file);
-        String url = "/api/v1/files/" + fileServer.getId();
-
-        ProductImage subImage = new ProductImage();
-        subImage.setImageUrl(url);
-        subImage.setImageType(ProductImage.ImageType.SUB);
-        subImage.setProduct(product);
-
-        productImageRepository.save(subImage);
-        return ProductImagePublic.of(subImage);
+        ImageResponse imageResponse = fileServerService.uploadFile(file);
+        List<String> subImages = product.getSubImages() == null ? new ArrayList<>() : product.getSubImages();
+        subImages.add(imageResponse.getUrl());
+        product.setSubImages(subImages);
+        productRepository.save(product);
+        return imageResponse;
     }
 
-    public void deleteSubImage(Long productId, Long imageId) {
+    public void deleteSubImage(Long productId, String imageId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm với id " + productId));
 
-        ProductImage productImage = product.getImages().stream()
-                .filter(image -> image.getImageId().equals(imageId))
-                .findFirst()
-                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy ảnh với id " + imageId));
-
-        product.getImages().remove(productImage);
+        product.getSubImages().removeIf(image -> image.toLowerCase().contains(imageId.toLowerCase()));
         productRepository.save(product);
     }
 }

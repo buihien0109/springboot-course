@@ -10,40 +10,36 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.techmaster.ecommecerapp.entity.FileServer;
 import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.entity.ProductImage;
 import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
-import vn.techmaster.ecommecerapp.repository.FileServerRepository;
-import vn.techmaster.ecommecerapp.repository.ProductImageRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+
+import static vn.techmaster.ecommecerapp.service.FileServerService.uploadDir;
 
 @Slf4j
 @Service
 public class ImageCrawlerService {
     private final int MAX_SIZE_MB = 1;
     private final UserRepository userRepository;
-    private final FileServerRepository fileServerRepository;
     private final ProductRepository productRepository;
-    private final ProductImageRepository productImageRepository;
 
 
     // Khởi tạo trình duyệt Chrome
-    public ImageCrawlerService(UserRepository userRepository, FileServerRepository fileServerRepository, ProductRepository productRepository, ProductImageRepository productImageRepository) {
+    public ImageCrawlerService(UserRepository userRepository, ProductRepository productRepository) {
         WebDriverManager.chromedriver().setup();
         this.userRepository = userRepository;
-        this.fileServerRepository = fileServerRepository;
         this.productRepository = productRepository;
-        this.productImageRepository = productImageRepository;
     }
 
     // Crawl và lưu vào database
@@ -53,22 +49,19 @@ public class ImageCrawlerService {
         User user = userRepository.findByEmail("admin@gmail.com")
                 .orElseThrow(() -> new ResouceNotFoundException("Not found user"));
 
-        // get all products
-        // List<Product> products = productRepository.findAll();
-        List<Product> products = productRepository.findByProductIdBetween(78L, 177L);
-
         WebDriver driver = new ChromeDriver();
         driver.get("https://unsplash.com/s/photos/" + keyword);
 
 
         // Cuộn trang để kích hoạt lazy loading
         int downloadedImageCount = 0;
-        int maxImageCount = products.size() * 5;
+        int maxImageCount = 200;
         List<String> urls = new ArrayList<>();
 
         while (downloadedImageCount < maxImageCount) {
             // Lấy các phần tử hình ảnh
             List<WebElement> imageElements = driver.findElements(By.cssSelector("img.tB6UZ.a5VGX"));
+            log.info("Found " + imageElements.size() + " images");
 
             for (WebElement imageElement : imageElements) {
                 String imageUrl = imageElement.getAttribute("src");
@@ -93,39 +86,63 @@ public class ImageCrawlerService {
 
         for (String url : urls) {
             byte[] data = downloadImageAsBytes(url);
-            FileServer fileServer = new FileServer();
-            fileServer.setType("image/png");
-            fileServer.setData(data);
-            fileServer.setUser(user);
-            fileServerRepository.save(fileServer);
+            String fileName = String.valueOf(System.currentTimeMillis());
+            Path userPath = Path.of(uploadDir, user.getUserId().toString());
+            if (!userPath.toFile().exists()) {
+                userPath.toFile().mkdirs();
+            }
+            Path filePath = Path.of(userPath.toString(), fileName);
 
-            insertImageForProduct("/api/v1/files/" + fileServer.getId());
+            // Lưu file vào folder
+            try {
+                IOUtils.write(data, Files.newOutputStream(filePath));
+            } catch (IOException e) {
+                log.error("Không thể lưu file");
+                log.error(e.getMessage());
+            }
         }
 
         driver.quit(); // Đóng trình duyệt khi hoàn thành
     }
 
     // Thêm ảnh cho product
-    private void insertImageForProduct(String imageUrl) {
+    public void insertImageForProduct() {
         // get all products
-        // List<Product> products = productRepository.findAll();
-        List<Product> products = productRepository.findByProductIdBetween(78L, 177L);
+        List<Product> products = productRepository.findAll();
 
+        // Lấy đường dẫn file tương ứng với user_id
+        long userId = 1;
+        Path userPath = Path.of(uploadDir, String.valueOf(userId));
+
+        // Lấy ds file trong folder
+        List<File> files = List.of(Objects.requireNonNull(userPath.toFile().listFiles()));
+
+        // Tra về ds đường dẫn với từng file
+        List<String> filePaths =  files
+                .stream()
+                .map(File::getName)
+                .sorted(Comparator.reverseOrder())
+                .map(file -> "/" + uploadDir + "/" + userId + "/" + file)
+                .toList();
+
+        Random random = new Random();
         for (Product product : products) {
-            if (product.getImages().size() >= 5) {
-                continue;
+            String imageImage = filePaths.get(random.nextInt(filePaths.size()));
+            List<String> subImages = new ArrayList<>();
+            // Lấy 3 -> 5 ảnh ngẫu nhiên từ danh sách ảnh
+            for (int i = 0; i < random.nextInt(3) + 3; i++) {
+                if(subImages.isEmpty()) {
+                    subImages.add(imageImage);
+                } else {
+                    String subImage = filePaths.get(random.nextInt(filePaths.size()));
+                    if(!subImages.contains(subImage)) {
+                        subImages.add(subImage);
+                    }
+                }
             }
-            ProductImage productImage = new ProductImage();
-            if (product.getImages().isEmpty()) {
-                productImage.setImageType(ProductImage.ImageType.MAIN);
-            } else {
-                productImage.setImageType(ProductImage.ImageType.SUB);
-            }
-            productImage.setImageUrl(imageUrl);
-            productImage.setProduct(product);
-            product.getImages().add(productImage);
+            product.setMainImage(imageImage);
+            product.setSubImages(subImages);
             productRepository.save(product);
-            break;
         }
     }
 

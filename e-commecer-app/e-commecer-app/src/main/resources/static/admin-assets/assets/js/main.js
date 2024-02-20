@@ -104,3 +104,19 @@ function logout() {
         showError(err.response.data.message);
     })
 }
+
+$('.datatables-table').DataTable({
+    "paging": true,
+    "lengthChange": false,
+    "searching": false,
+    "ordering": true,
+    "info": true,
+    "autoWidth": false,
+    "responsive": true,
+    "order": []
+});
+
+window.addEventListener('load', function() {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    loadingOverlay.classList.add('d-none');
+});

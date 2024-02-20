@@ -141,8 +141,8 @@
                                                     <td>
                                                         <ul>
                                                             <li th:each="orderItem : ${order.orderItems}">
-                                                                <a th:href="@{/admin/products/{id}/detail(id=${orderItem.product.productId})}"
-                                                                   th:text="${orderItem.product.name}"></a>
+                                                                <a th:href="@{/admin/products/{id}/detail(id=${orderItem.productId})}"
+                                                                   th:text="${orderItem.productName}"></a>
                                                                 <span th:text="|(x ${orderItem.quantity})|"></span>
                                                             </li>
                                                         </ul>

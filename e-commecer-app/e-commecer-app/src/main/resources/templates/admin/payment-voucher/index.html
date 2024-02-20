@@ -45,7 +45,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover datatables-table">
                                 <thead>
                                 <tr>
                                     <th style="width: 10%">Mã phiếu</th>
@@ -57,13 +57,22 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="paymentVoucher : ${paymentVouchers}">
+                                    <td>
+                                        <a th:href="@{/admin/payment_vouchers/{id}/detail(id=${paymentVoucher.id})}"
+                                           th:text="${paymentVoucher.id}"></a>
+                                    </td>
+                                    <td th:text="${#dates.format(paymentVoucher.createdAt, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="${paymentVoucher.purpose}"></td>
+                                    <td th:text="${#numbers.formatInteger(paymentVoucher.amount,3,'COMMA')}"></td>
+                                    <td>
+                                        <a th:href="@{/admin/users/{id}/detail(id=${paymentVoucher.user.userId})}"
+                                           th:text="${paymentVoucher.user.username}"></a>
+                                    </td>
+                                    <td th:text="${paymentVoucher.note}"></td>
+                                </tr>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -73,11 +82,7 @@
 </div>
 
 <th:block id="js">
-    <script th:inline="javascript">
-        let paymentVouchers = [[${paymentVouchers}]];
-        console.log(paymentVouchers);
-    </script>
-    <script th:src="@{/admin-assets/assets/js/payment-voucher/index.js}"></script>
+
 </th:block>
 </body>
 

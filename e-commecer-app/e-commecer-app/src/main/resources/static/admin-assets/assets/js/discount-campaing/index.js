@@ -1,15 +1,23 @@
 
 // Generate status discount
-const generateStatus = (status) => {
-    switch (status) {
-        case "ACTIVE":
-            return `<span class="badge badge-success">Đang kích hoạt</span>`;
-        case "INACTIVE":
-            return `<span class="badge badge-secondary">Đã hết hạn</span>`;
-        case "PENDING":
-            return `<span class="badge badge-warning">Chưa kích hoạt</span>`;
-        default:
-            return `<span class="badge badge-danger">Unknown</span>`;
+// Compare 2 date string
+const compareDate = (date1, date2) => {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    return d1.getTime() - d2.getTime();
+}
+
+// Generate status discount
+const generateStatus = (validFrom, validTo) => {
+    const now = new Date();
+    const from = new Date(validFrom);
+    const to = new Date(validTo);
+    if (compareDate(now, from) < 0) {
+        return `<span class="badge badge-warning">Chưa kích hoạt</span>`;
+    } else if (compareDate(now, to) > 0) {
+        return `<span class="badge badge-secondary">Đã hết hạn</span>`;
+    } else {
+        return `<span class="badge badge-success">Đang kích hoạt</span>`;
     }
 }
 
@@ -39,11 +47,11 @@ const renderDiscountCampaings = (discountCampaingList) => {
                             ${discountCampaing.name}
                         </a>
                     </td>
-                    <td>${generateStatus(discountCampaing.status)}</td>
+                    <td>${generateStatus(discountCampaing.startDate, discountCampaing.endDate)}</td>
                     <td>${discountCampaing.discountType}</td>
                     <td>${renderDiscountValue(discountCampaing.discountType, discountCampaing.discountValue)}</td>
                     <td>${formatDate(discountCampaing.startDate)} - ${formatDate(discountCampaing.endDate)}</td>
-                    <td>${discountCampaing.products.length}</td>
+                    <td>${discountCampaing.productCount}</td>
                 </tr>
                 `
     })

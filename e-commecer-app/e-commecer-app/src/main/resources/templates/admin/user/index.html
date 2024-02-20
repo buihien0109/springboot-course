@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover datatables-table">
                                 <thead>
                                 <tr>
                                     <th>Họ tên</th>
@@ -55,13 +55,24 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="user : ${users}">
+                                    <td>
+                                        <a th:href="@{/admin/users/{id}/detail(id=${user.userId})}"
+                                           th:text="${user.username}"></a>
+                                    </td>
+                                    <td th:text="${user.email}"></td>
+                                    <td th:text="${user.phone}"></td>
+                                    <td>
+                                        <span class="badge bg-success" th:if="${user.enabled}">Kích hoạt</span>
+                                        <span class="badge bg-secondary" th:if="not ${user.enabled}">Chưa kích hoạt</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info mr-1" th:each="role : ${user.roles}"
+                                              th:text="${role.name}"></span>
+                                    </td>
+                                    <td th:text="${#dates.format(user.createdAt, 'dd/MM/yyyy')}">Ngày tạo</td>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -71,11 +82,7 @@
 </div>
 
 <th:block id="js">
-    <script th:inline="javascript">
-        const users = [[${users}]];
-        console.log({users})
-    </script>
-    <script th:src="@{/admin-assets/assets/js/user/index.js}"></script>
+
 </th:block>
 </body>
 

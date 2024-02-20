@@ -35,8 +35,6 @@ public class CartService {
     // create method get cart by user id
     // user info get from SecurityUtils
     public CartPublic getCartForLoggedInUser() {
-        log.info("getCartForLoggedInUser");
-
         User user = SecurityUtils.getCurrentUserLogin();
         if (user == null) {
             return null;
@@ -48,26 +46,16 @@ public class CartService {
 
     // get cart by anonymous user
     public CartPublic getCartForGuestUser() {
-        log.info("getCartForGuestUser");
-
         List<CartItemInCookie> cartItemInCookies = CartUtils.getCartFromCookie(httpServletRequest);
-        log.info("cartItemInCookies: {}", cartItemInCookies);
-
         return getCartItemInCookieToCartPublic(cartItemInCookies);
     }
 
     public Cart getCartForLoggedInUser(Long userId) {
-        log.info("getCartForLoggedInUser");
-        log.info("userId: {}", userId);
-
         return cartRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy giỏ hàng"));
     }
 
     public CartPublic addToCart(AddToCartRequest request) {
-        log.info("addToCart");
-        log.info("request: {}", request);
-
         // find product by id, if product not found, throw exception
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm"));
@@ -87,9 +75,6 @@ public class CartService {
     }
 
     private CartPublic addToCartForGuestUser(AddToCartRequest request, Product product) {
-        log.info("addToCartForGuestUser");
-        log.info("request: {}", request);
-
         List<CartItemInCookie> cartItemInCookies = CartUtils.getCartFromCookie(httpServletRequest);
         log.info("cartItemInCookies Before Add: {}", cartItemInCookies);
 

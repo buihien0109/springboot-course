@@ -44,7 +44,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover datatables-table">
                                 <thead>
                                 <tr>
                                     <th>Mã phiếu nhập</th>
@@ -56,13 +56,21 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="transaction : ${transactions}">
+                                    <td>
+                                        <a th:href="@{/admin/transactions/{id}/detail(id=${transaction.id})}"
+                                           th:text="${transaction.id}"></a>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/suppliers/{id}/detail(id=${transaction.supplier.supplierId})}"
+                                           th:text="${transaction.supplier.name}"></a>
+                                    </td>
+                                    <td th:text="${#dates.format(transaction.transactionDate, 'dd/MM/yyyy')}"></td>
+                                    <td th:text="${transaction.receiverName}"></td>
+                                    <td th:text="${transaction.senderName}"></td>
+                                    <td th:text="${#numbers.formatInteger(transaction.totalAmount,3,'COMMA')}"></td>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,11 +80,7 @@
 </div>
 
 <th:block id="js">
-    <script th:inline="javascript">
-        let transactions = [[${transactions}]];
-        console.log(transactions);
-    </script>
-    <script th:src="@{/admin-assets/assets/js/transaction/index.js}"></script>
+
 </th:block>
 </body>
 

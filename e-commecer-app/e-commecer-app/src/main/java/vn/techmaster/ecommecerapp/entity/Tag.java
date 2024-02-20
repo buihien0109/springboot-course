@@ -5,9 +5,35 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import vn.techmaster.ecommecerapp.model.dto.PaymentVoucherDto;
+import vn.techmaster.ecommecerapp.model.dto.TagUsedDto;
 
 import java.util.ArrayList;
 import java.util.List;
+
+@SqlResultSetMapping(
+        name = "TagUsedDtoResultMapping",
+        classes = @ConstructorResult(
+                targetClass = TagUsedDto.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Integer.class),
+                        @ColumnResult(name = "name", type = String.class),
+                        @ColumnResult(name = "slug", type = String.class),
+                        @ColumnResult(name = "used", type = Integer.class),
+                }
+        )
+)
+
+@NamedNativeQuery(
+        name = "getAllTagsUsedDto",
+        resultSetMapping = "TagUsedDtoResultMapping",
+        query = """
+                SELECT t.id, t.name, t.slug, COUNT(bt.blog_id) AS used
+                FROM tag t
+                LEFT JOIN blog_tag bt ON t.id = bt.tag_id
+                GROUP BY t.id
+                """
+)
 
 @Builder
 @AllArgsConstructor

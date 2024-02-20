@@ -7,7 +7,7 @@ const renderCart = (cartItems) => {
         html += `
                     <tr>
                         <td class="shoping__cart__item">
-                            <img src="${ct.product.images.mainImage != null ? ct.product.images.mainImage.imageUrl : '/img/image-placeholder.png'}" alt="">
+                            <img src="${ct.product.mainImage != null ? ct.product.mainImage : '/img/image-placeholder.png'}" alt="">
                             <h5>
                                 <a href="/san-pham/${ct.product.productId}">${ct.product.name}</a>
                             </h5>

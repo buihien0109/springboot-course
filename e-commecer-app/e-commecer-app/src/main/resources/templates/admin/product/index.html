@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover datatables-table">
                                 <thead>
                                 <tr>
                                     <th>Tên sản phẩm</th>
@@ -55,13 +55,27 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                <tr th:each="product : ${products}">
+                                    <td>
+                                        <a th:href="@{/admin/products/{id}/detail(id=${product.productId})}"
+                                           th:text="${product.name}"></a>
+                                    </td>
+                                    <td th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')}"></td>
+                                    <td th:text="${product.stockQuantity}"></td>
+                                    <td>
+                                        <span th:if="${product.status.toString() == 'AVAILABLE'}" class="badge badge-success">Còn hàng</span>
+                                        <span th:if="${product.status.toString() == 'UNAVAILABLE'}" class="badge badge-danger">Hết hàng</span>
+                                        <span th:if="${product.status.toString() == 'CEASE'}" class="badge badge-warning">Ngừng kinh doanh</span>
+                                        <span th:if="${product.status.toString() == 'NOT_YET_SOLD'}" class="badge badge-secondary">Chưa mở bán</span>
 
+                                    </td>
+                                    <td th:text="${product.category.name}"></td>
+                                    <td>
+                                        <a th:href="@{/admin/suppliers/{id}/detail(id=${product.supplier.supplierId})}"
+                                           th:text="${product.supplier.name}"></a>
+                                    </td>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -71,11 +85,7 @@
 </div>
 
 <th:block id="js">
-    <script th:inline="javascript">
-        const products = [[${products}]];
-        console.log({products})
-    </script>
-    <script th:src="@{/admin-assets/assets/js/product/index.js}"></script>
+
 </th:block>
 </body>
 </html>

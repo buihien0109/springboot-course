@@ -13,7 +13,7 @@ inputUploadMainImage.addEventListener('change', function (e) {
     axios.post(`/api/v1/admin/products/${product.productId}/images/upload-main-image`, formData)
         .then(res => {
             if (res.status === 200) {
-                mainImagePreview.src = res.data.imageUrl;
+                mainImagePreview.src = res.data.url;
                 toastr.success('Cập nhật ảnh đại diện thành công');
             } else {
                 toastr.error('Cập nhật ảnh đại diện thất bại');
@@ -41,7 +41,7 @@ inputUploadSubImage.addEventListener('change', function (e) {
                 const productImageItemUploadSubImage = document.querySelector('.product-image-item-upload-sub-image');
                 productImageItemUploadSubImage.insertAdjacentHTML('beforebegin', `
                     <div class="product-image-item product-sub-image-item mr-4 mb-4" data-image-sub-id="${res.data.imageId}">
-                        <img src="${res.data.imageUrl}" alt="Ảnh mô tả" class="img-fluid">
+                        <img src="${res.data.url}" alt="Ảnh mô tả" class="img-fluid">
                         <span class="btn-action btn-action-delete" onclick="deleteSubImage(${res.data.imageId})"><i class="fas fa-times-circle"></i></span>
                     </div>
                 `);
@@ -57,14 +57,15 @@ inputUploadSubImage.addEventListener('change', function (e) {
 });
 
 // delete sub image
-const deleteSubImage = (imageId) => {
+const deleteSubImage = (imageLink) => {
     const isConfirm = confirm('Bạn có chắc chắn muốn xóa ảnh này?');
     if (isConfirm) {
+        const imageId = imageLink.split('/')[imageLink.split('/').length - 1];
         axios.delete(`/api/v1/admin/products/${product.productId}/images/${imageId}`)
             .then(res => {
                 if (res.status === 200) {
-                    const productSubImageItem = document.querySelector(`.product-sub-image-item[data-image-sub-id="${imageId}"]`);
-                    productSubImageItem.remove();
+                    const productSubImageItem = document.querySelector(`.product-sub-image-item[data-image-sub-id="${imageLink}"]`);
+                    productSubImageItem.parentElement.removeChild(productSubImageItem);
                     toastr.success('Xóa ảnh mô tả thành công');
                 } else {
                     toastr.error('Xóa ảnh mô tả thất bại');

@@ -36,17 +36,12 @@ public class GlobalDataInit {
                     @Override
                     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
                         if (modelAndView != null && !Objects.requireNonNull(modelAndView.getViewName()).startsWith("admin")) {
-                            log.info("View name: {}", modelAndView.getViewName());
-                            log.info("Add global data to web/user");
                             User user = SecurityUtils.getCurrentUserLogin();
                             modelAndView.addObject("categories", categoryService.findAllByParentCategoryIsNull());
                             modelAndView.addObject("cart", user != null ? cartService.getCartForLoggedInUser() : cartService.getCartForGuestUser());
                             modelAndView.addObject("wishList", user != null ? wishListService.getAllWishListForLoggedInUser() : wishListService.getAllWishListForGuestUser());
                             modelAndView.addObject("currentUser", user);
                             modelAndView.addObject("isLogin", user != null);
-                        } else if (modelAndView != null && Objects.requireNonNull(modelAndView.getViewName()).startsWith("admin")) {
-                            log.info("View name: {}", modelAndView.getViewName());
-                            log.info("Add global data to admin");
                         }
                     }
                 });

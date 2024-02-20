@@ -46,7 +46,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover datatables-table">
                                 <thead>
                                 <tr>
                                     <th>Tên banner</th>
@@ -56,13 +56,22 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="banner : ${banners}">
+                                    <td>
+                                        <a th:href="@{/admin/banners/{id}/detail(id=${banner.id})}"
+                                           th:text="${banner.name}">Banner 1</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success" th:if="${banner.status}">Kích hoạt</span>
+                                        <span class="badge bg-secondary" th:if="not ${banner.status}">Vô hiệu hóa</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="${banner.linkRedirect}" th:text="${banner.linkRedirect}">https://www.google.com</a>
+                                    </td>
+                                    <td th:text="${#dates.format(banner.createdAt, 'dd/MM/yyyy')}">Ngày tạo</td>
+                                </tr>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,11 +81,7 @@
 </div>
 
 <th:block id="js">
-    <script th:inline="javascript">
-        const banners = [[${banners}]];
-        console.log({banners})
-    </script>
-    <script th:src="@{/admin-assets/assets/js/banner/index.js}"></script>
+
 </th:block>
 </body>
 

@@ -1,49 +1,87 @@
 package vn.techmaster.ecommecerapp.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import vn.techmaster.ecommecerapp.entity.FileServer;
 import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
-import vn.techmaster.ecommecerapp.repository.FileServerRepository;
-import vn.techmaster.ecommecerapp.repository.UserRepository;
+import vn.techmaster.ecommecerapp.model.response.ImageResponse;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
+import vn.techmaster.ecommecerapp.utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor
 public class FileServerService {
-    private final FileServerRepository fileServerRepository;
-    private final UserRepository userRepository;
+    public static final String uploadDir = "image_uploads";
 
-    public List<FileServer> getAllFilesForLoggedInUser() {
-        User user = SecurityUtils.getCurrentUserLogin();
-        return fileServerRepository.findByUser_UserIdOrderByCreatedAtDesc(user.getUserId());
+    public FileServerService() {
+        FileUtils.createDirectory(uploadDir);
     }
 
-    public FileServer uploadFile(MultipartFile file) {
+    public List<String> getAllFilesForLoggedInUser() {
         User user = SecurityUtils.getCurrentUserLogin();
         if (user == null) {
             throw new BadRequestException("Lỗi xác thực");
         }
+
+        // Lấy đường dẫn file tương ứng với user_id
+        Path userPath = Path.of(uploadDir, String.valueOf(user.getUserId()));
+
+        // Kiểm tra đường dẫn file có tồn tại hay không
+        // Nếu không tồn tại -> user chưa upload ảnh -> trả về danh sách rỗng
+        if (!Files.exists(userPath)) {
+            return new ArrayList<>();
+        }
+
+        // Lấy ds file trong folder
+        List<File> files = List.of(Objects.requireNonNull(userPath.toFile().listFiles()));
+
+        // Tra về ds đường dẫn với từng file
+        return files
+                .stream()
+                .map(File::getName)
+                .sorted(Comparator.reverseOrder())
+                .map(file -> "/" + uploadDir + "/" + user.getUserId() + "/" + file)
+                .toList();
+    }
+
+    public ImageResponse uploadFile(MultipartFile file) {
+        User user = SecurityUtils.getCurrentUserLogin();
+        if (user == null) {
+            throw new BadRequestException("Lỗi xác thực");
+        }
+        // Tạo folder tương ứng với userId
+        Path userPath = Path.of(uploadDir, user.getUserId().toString());
+        FileUtils.createDirectory(userPath.toString());
+
+        // Validate file
         validateFile(file);
 
-        try {
-            FileServer fileServer = new FileServer();
-            fileServer.setType(file.getContentType());
-            fileServer.setData(file.getBytes());
-            fileServer.setUser(user);
-            fileServerRepository.save(fileServer);
+        // Lưu file vào folder
+        String fileName = String.valueOf(System.currentTimeMillis());
 
-            return fileServer;
+
+        try (InputStream inputStream = file.getInputStream()) {
+            Path filePath = Path.of(userPath.toString(), fileName);
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            return new ImageResponse("/" + uploadDir + "/" + user.getUserId() + "/" + fileName);
         } catch (IOException e) {
-            throw new RuntimeException("Có lỗi xảy ra");
+            log.error("Không thể lưu file");
+            log.error(e.getMessage());
         }
+        return null;
     }
 
     private void validateFile(MultipartFile file) {
@@ -80,35 +118,29 @@ public class FileServerService {
         return fileExtensions.contains(fileExtension);
     }
 
-    public FileServer getFileById(Long id) {
-        return fileServerRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Not found file"));
-    }
-
-    public void deleteFileById(Long id) {
-        FileServer fileServer = fileServerRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Not found file"));
-        fileServerRepository.delete(fileServer);
-    }
-
-    public List<FileServer> getFilesOfCurrentUser() {
+    public void deleteFile(String fileId) {
         User user = SecurityUtils.getCurrentUserLogin();
-        return fileServerRepository.findByUser_UserIdOrderByCreatedAtDesc(user.getUserId());
-    }
+        if (user == null) {
+            throw new BadRequestException("Lỗi xác thực");
+        }
 
-    public List<FileServer> getFilesOfUserId(Long userId) {
-        return fileServerRepository.findByUser_UserIdOrderByCreatedAtDesc(userId);
-    }
+        // Lấy ra đường dẫn file tương ứng với user_id
+        Path userPath = Path.of(uploadDir, String.valueOf(user.getUserId()));
 
-    public FileServer saveFile(byte[] data) {
-        User user = userRepository.findByEmail("admin@gmail.com")
-                .orElseThrow(() -> new ResouceNotFoundException("Not found user"));
-        FileServer fileServer = new FileServer();
-        fileServer.setType("image/png");
-        fileServer.setData(data);
-        fileServer.setUser(user);
-        fileServerRepository.save(fileServer);
-        return fileServer;
-    }
+        // Kiểm tra folder chứa file có tồn tại hay không
+        if (!Files.exists(userPath)) {
+            throw new ResouceNotFoundException("File " + fileId + " không tồn tại");
+        }
 
+        // Lấy ra đường dẫn file tương ứng với user_id và file_id
+        Path file = userPath.resolve(fileId);
+
+        // Kiểm tra file có tồn tại hay không
+        if (!file.toFile().exists()) {
+            throw new ResouceNotFoundException("File " + fileId + " không tồn tại");
+        }
+
+        // Tiến hành xóa file
+        file.toFile().delete();
+    }
 }

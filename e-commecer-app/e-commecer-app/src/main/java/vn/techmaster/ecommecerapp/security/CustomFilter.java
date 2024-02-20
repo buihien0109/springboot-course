@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -24,25 +26,37 @@ public class CustomFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // Lấy ra email trong session
-        String userEmail = (String) request.getSession().getAttribute("MY_SESSION");
-        if (userEmail == null) {
+        String requestURI = request.getRequestURI();
+
+        // Danh sách các đường dẫn permitAll
+        List<String> permitAllPaths = Arrays.asList("/css/", "/js/", "/img/", "/admin-assets/", "/image_uploads", "/fonts/");
+
+        // Kiểm tra xem requestURI có nằm trong danh sách permitAll không
+        boolean isPermitAllPath = permitAllPaths.stream().anyMatch(requestURI::startsWith);
+
+        if (isPermitAllPath) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Lấy ra thông tin của user
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+        // Lấy ra email trong session
+        log.info("RequestURI: " + requestURI);
+        String userEmail = (String) request.getSession().getAttribute("MY_SESSION");
 
-        // Tạo đối tượng phân quyền
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities()
-        );
+        if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // Lấy ra thông tin của user
+            UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
 
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            // Tạo đối tượng phân quyền
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+            );
+
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
         filterChain.doFilter(request, response);
     }
 }

@@ -30,7 +30,7 @@ public class SupplierController {
     @GetMapping("{id}/detail")
     public String getSupplierPage(Model model, @PathVariable Long id) {
         model.addAttribute("supplier", supplierService.getSupplierById(id));
-        model.addAttribute("transactions", transactionService.getTransactionsBySupplierId(id));
+        model.addAttribute("transactions", transactionService.getTransactionsBySupplierId(id)); // done
         return "admin/supplier/detail";
     }
 }

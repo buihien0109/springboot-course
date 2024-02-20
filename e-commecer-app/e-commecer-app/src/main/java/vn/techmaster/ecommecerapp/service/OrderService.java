@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.*;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.dto.OrderDto;
+import vn.techmaster.ecommecerapp.model.dto.OrderUserDto;
 import vn.techmaster.ecommecerapp.model.projection.OrderTablePublic;
 import vn.techmaster.ecommecerapp.model.request.AdminCreateOrderRequest;
 import vn.techmaster.ecommecerapp.model.request.AdminUpdateOrderRequest;
@@ -32,9 +34,8 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final HttpServletResponse httpServletResponse;
 
-    public List<OrderTablePublic> getAllOrders() {
-        List<OrderTable> orderTables = orderTableRepository.findAll(Sort.by(Sort.Direction.DESC, "orderDate"));
-        return orderTables.stream().map(OrderTablePublic::of).toList();
+    public List<OrderDto> getAllOrdersDtoAdmin() {
+        return orderTableRepository.getAllOrdersDtoAdmin();
     }
 
     public String createOrder(OrderRequest orderRequest) {
@@ -171,16 +172,11 @@ public class OrderService {
         });
     }
 
-    public List<OrderTablePublic> getOrdersByUserId(Long userId) {
-        // check user id is exist
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResouceNotFoundException("User not found"));
-
-        List<OrderTable> orderTables = orderTableRepository.findByUser_UserIdOrderByOrderDateDesc(userId);
-
-        return orderTables.stream()
-                .map(OrderTablePublic::of)
-                .toList();
+    public List<OrderUserDto> getOrdersByUserId(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResouceNotFoundException("Không tìm thấy user");
+        }
+        return orderTableRepository.getAllOrdersByUser(userId);
     }
 
     public String createOrderByAdmin(AdminCreateOrderRequest orderRequest) {

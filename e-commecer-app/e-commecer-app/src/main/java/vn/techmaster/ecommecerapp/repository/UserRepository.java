@@ -1,7 +1,9 @@
 package vn.techmaster.ecommecerapp.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import vn.techmaster.ecommecerapp.entity.User;
+import vn.techmaster.ecommecerapp.model.dto.UserNormalDto;
 
 import java.util.Collection;
 import java.util.Date;
@@ -16,4 +18,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByCreatedAtBetween(Date start, Date end);
 
     List<User> findByCreatedAtBetween(Date start, Date end);
+
+    @Query(nativeQuery = true, name = "getAllAvailabelUsersNormalDtoByAdmin")
+    List<UserNormalDto> getAllAvailabelUsersNormalDtoByAdmin();
+
+    @Query(nativeQuery = true, name = "getAllUsersNormalDtoInRangeTime")
+    List<UserNormalDto> getAllUsersNormalDtoInRangeTime(Date start, Date end);
 }

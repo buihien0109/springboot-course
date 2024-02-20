@@ -2,7 +2,6 @@ package vn.techmaster.ecommecerapp.utils.crawl;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -10,14 +9,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.techmaster.ecommecerapp.entity.FileServer;
 import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.entity.ProductImage;
-import vn.techmaster.ecommecerapp.repository.ProductImageRepository;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,11 +23,9 @@ import java.util.List;
 public class ImageCrawler2Service {
     private final int MAX_SIZE_MB = 1;
     private final ProductRepository productRepository;
-    private final ProductImageRepository productImageRepository;
 
-    public ImageCrawler2Service(ProductRepository productRepository, ProductImageRepository productImageRepository) {
+    public ImageCrawler2Service(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.productImageRepository = productImageRepository;
         WebDriverManager.chromedriver().setup();
     }
 
@@ -85,26 +78,7 @@ public class ImageCrawler2Service {
 
     // Thêm ảnh cho product
     private void insertImageForProduct(String imageUrl) {
-        // get all products
-        // List<Product> products = productRepository.findAll();
-        List<Product> products = productRepository.findByProductIdBetween(1L, 177L);
-
-        for (Product product : products) {
-            if (product.getImages().size() >= 5) {
-                continue;
-            }
-            ProductImage productImage = new ProductImage();
-            if (product.getImages().isEmpty()) {
-                productImage.setImageType(ProductImage.ImageType.MAIN);
-            } else {
-                productImage.setImageType(ProductImage.ImageType.SUB);
-            }
-            productImage.setImageUrl(imageUrl);
-            productImage.setProduct(product);
-            product.getImages().add(productImage);
-            productRepository.save(product);
-            break;
-        }
+        log.info("Inserting image: " + imageUrl);
     }
 
     // Kiểm tra kích thước ảnh

@@ -7,10 +7,79 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import vn.techmaster.ecommecerapp.model.dto.TransactionNormalDto;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+@SqlResultSetMappings(
+        value = {
+                @SqlResultSetMapping(
+                        name = "TransactionNormalDtoMapping",
+                        classes = @ConstructorResult(
+                                targetClass = TransactionNormalDto.class,
+                                columns = {
+                                        @ColumnResult(name = "id", type = Long.class),
+                                        @ColumnResult(name = "transaction_date", type = String.class),
+                                        @ColumnResult(name = "sender_name", type = String.class),
+                                        @ColumnResult(name = "receiver_name", type = String.class),
+                                        @ColumnResult(name = "supplier", type = String.class),
+                                        @ColumnResult(name = "transaction_items", type = String.class)
+                                }
+                        )
+                )
+        }
+)
+
+@NamedNativeQuery(
+        name = "getAllTransactions",
+        resultSetMapping = "TransactionNormalDtoMapping",
+        query = """
+                SELECT t.id, t.transaction_date as transaction_date, t.sender_name, t.receiver_name,
+                JSON_OBJECT('supplierId', s.supplier_id, 'name', s.name) as supplier,
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', ti.id, 'quantity', ti.quantity, 'purchasePrice', ti.purchase_price, 'productId', ti.product_id, 'productName', p.name))
+                FROM transaction_item ti
+                JOIN product p ON ti.product_id = p.product_id
+                WHERE ti.transaction_id = t.id) as transaction_items
+                FROM transaction t
+                JOIN supplier s ON t.supplier_id = s.supplier_id
+                ORDER BY t.transaction_date DESC
+                """
+)
+
+@NamedNativeQuery(
+        name = "getAllTransactionsBySupplier",
+        resultSetMapping = "TransactionNormalDtoMapping",
+        query = """
+                SELECT t.id, t.transaction_date as transaction_date, t.sender_name, t.receiver_name,
+                JSON_OBJECT('supplierId', s.supplier_id, 'name', s.name) as supplier,
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', ti.id, 'quantity', ti.quantity, 'purchasePrice', ti.purchase_price, 'productId', ti.product_id, 'productName', p.name))
+                FROM transaction_item ti
+                JOIN product p ON ti.product_id = p.product_id
+                WHERE ti.transaction_id = t.id) as transaction_items
+                FROM transaction t
+                JOIN supplier s ON t.supplier_id = s.supplier_id
+                WHERE s.supplier_id = ?1
+                ORDER BY t.transaction_date DESC
+                """
+)
+
+@NamedNativeQuery(
+        name = "getTransactionById",
+        resultSetMapping = "TransactionNormalDtoMapping",
+        query = """
+                SELECT t.id, t.transaction_date as transaction_date, t.sender_name, t.receiver_name,
+                JSON_OBJECT('supplierId', s.supplier_id, 'name', s.name) as supplier,
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', ti.id, 'quantity', ti.quantity, 'purchasePrice', ti.purchase_price, 'productId', ti.product_id, 'productName', p.name))
+                FROM transaction_item ti
+                JOIN product p ON ti.product_id = p.product_id
+                WHERE ti.transaction_id = t.id) as transaction_items
+                FROM transaction t
+                JOIN supplier s ON t.supplier_id = s.supplier_id
+                WHERE t.id = ?1
+                """
+)
 
 @AllArgsConstructor
 @NoArgsConstructor

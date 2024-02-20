@@ -19,14 +19,11 @@ import java.util.List;
 @Slf4j
 public class CartUtils {
     public static List<CartItemInCookie> getCartFromCookie(HttpServletRequest request) {
-        log.info("getCartFromCookie");
-
         List<CartItemInCookie> cartItemInCookies = new ArrayList<>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
             String cookieValue = CookieUtils.getCookieValue(request, ConstantValue.CART_COOKIE_NAME);
-            log.info("Cart cookie: {}", cookieValue);
             if (cookieValue != null) {
                 cartItemInCookies = objectMapper.readValue(cookieValue, new TypeReference<List<CartItemInCookie>>() {});
             }
@@ -38,12 +35,9 @@ public class CartUtils {
     }
 
     public static void setCartToCookie(HttpServletResponse response, List<CartItemInCookie> cartItems) {
-        log.info("setCartToCookie");
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String originalCart = objectMapper.writeValueAsString(cartItems);
-            log.info("Cart: {}", originalCart);
-            log.info("Cart Items Size: {}", cartItems.size());
             Cookie cookie = new Cookie(ConstantValue.CART_COOKIE_NAME, objectMapper.writeValueAsString(URLEncoder.encode(originalCart, StandardCharsets.UTF_8)));
             cookie.setPath("/");
             response.addCookie(cookie);

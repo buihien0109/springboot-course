@@ -1,9 +1,14 @@
 // Init global variables
-let productSelected = discountCampaign.products.map(product => {
+let productsSelected = discountCampaign.products.map(product => {
     return {...product, isChecked: false}
 })
 let currentType = discountCampaign.discountType
 let currentValue = discountCampaign.discountValue
+
+const setValuesToProductSelect = (products) => {
+    $("#product-select").val(products.map(product => product.productId)).trigger('change');
+}
+setValuesToProductSelect(productsSelected)
 
 // init daterangepicker
 $('#date').daterangepicker({
@@ -12,21 +17,33 @@ $('#date').daterangepicker({
 })
 
 // init select2
-$('#product').select2({
-    theme: 'bootstrap4',
+$('#product-select').select2({
     placeholder: 'Chọn sản phẩm'
 })
 
 $('#category').select2({
-    theme: 'bootstrap4',
     placeholder: 'Chọn danh mục'
 })
 
-// validate form
+// add event to select2
+$('#product-select').on('select2:select', function (e) {
+    const {id} = e.params.data
+    const product = productList.find(product => product.productId === Number(id))
+    productsSelected = [...productsSelected, {...product, isChecked: false}]
+    renderProducts(productsSelected)
+})
+
+$('#product-select').on('select2:unselect', function (e) {
+    const {id} = e.params.data
+    productsSelected = productsSelected.filter(p => p.productId !== Number(id))
+    renderProducts(productsSelected)
+})
+
 const formatPrice = (price) => {
     return parseInt(price.replace(/,/g, ""));
 }
 
+// validate form
 $.validator.addMethod(
     "validateMinValue",
     function (value, element) {
@@ -76,10 +93,7 @@ $('#form-update-discount-campaing').validate({
             validateMinValue: true,
             validateMaxValue: true,
             validateInteger: true
-        },
-        status: {
-            required: true
-        },
+        }
     },
     messages: {
         name: {
@@ -96,10 +110,7 @@ $('#form-update-discount-campaing').validate({
             validateMinValue: "Giá trị giảm phải lớn hơn 0",
             validateMaxValue: "Giá trị giảm phải nhỏ hơn 100",
             validateInteger: "Giá trị giảm phải là số nguyên"
-        },
-        status: {
-            required: "Trạng thái không được để trống"
-        },
+        }
     },
     errorElement: 'span',
     errorPlacement: function (error, element) {
@@ -115,29 +126,44 @@ $('#form-update-discount-campaing').validate({
 });
 
 // format value when user input
-const input = document.getElementById('value')
-input.addEventListener('input', () => {
-    const value = input.value
+const valueInputEl = document.getElementById('value')
+valueInputEl.addEventListener('input', () => {
+    const value = valueInputEl.value
     const type = document.getElementById('type').value
     if (type === 'PERCENT') {
         if (formatPrice(value) > 100) {
-            input.value = 100
+            valueInputEl.value = 100
         } else {
             if (formatPrice(value) < 0) {
-                input.value = 0
+                valueInputEl.value = 0
             }
         }
     } else {
         if (formatPrice(value) < 0) {
-            input.value = 0
+            valueInputEl.value = 0
         }
     }
 
     // format price with type is AMOUNT or SAME_PRICE
     if (type === 'AMOUNT' || type === 'SAME_PRICE') {
-        input.value = input.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+        valueInputEl.value = valueInputEl.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
 })
+
+// clear value when change type
+const typeInputEl = document.getElementById('type')
+typeInputEl.addEventListener('change', () => {
+    valueInputEl.value = ''
+})
+
+// format value with type
+const formatValue = (type, value) => {
+    if (type === 'PERCENT') {
+        return parseInt(value)
+    } else {
+        return formatPrice(value)
+    }
+}
 
 // calculate discount price with type and value
 const calculateDiscountPrice = (price) => {
@@ -154,7 +180,7 @@ const calculateDiscountPrice = (price) => {
 
 // check enable button delete all product
 const checkEnableBtnDeleteAllProduct = () => {
-    const productChecked = productSelected.filter(product => product.isChecked)
+    const productChecked = productsSelected.filter(product => product.isChecked)
     return productChecked.length > 0;
 }
 
@@ -187,28 +213,30 @@ btnOpenModalCategory.addEventListener('click', () => {
 // Delete product when click button
 const btnDeleteAllProduct = document.getElementById('btn-delete-all-product');
 btnDeleteAllProduct.addEventListener('click', () => {
-    productSelected = productSelected.filter(product => !product.isChecked)
-    if (productSelected.length === 0) {
+    productsSelected = productsSelected.filter(product => !product.isChecked)
+    if (productsSelected.length === 0) {
         inputCheckAll.checked = false
     }
     btnDeleteAllProduct.disabled = !checkEnableBtnDeleteAllProduct();
-    renderProducts(productSelected)
+    setValuesToProductSelect(productsSelected)
+    renderProducts(productsSelected)
 })
 
 // Select all product when click button
 const btnSelectAllProduct = document.getElementById('btn-select-all-product');
 btnSelectAllProduct.addEventListener('click', () => {
-    productSelected = productList.map(product => {
+    productsSelected = productList.map(product => {
         return {...product, isChecked: false}
     });
-    renderProducts(productSelected)
+    setValuesToProductSelect(productsSelected)
+    renderProducts(productsSelected)
 })
 
 // when change discount value
 const inputDiscountValue = document.getElementById('value')
 inputDiscountValue.addEventListener('change', (e) => {
     currentValue = formatPrice(e.target.value)
-    renderProducts(productSelected)
+    renderProducts(productsSelected)
 })
 
 // when change discount type
@@ -228,13 +256,14 @@ btnChoseCategory.addEventListener('click', () => {
     })
 
     // remove duplicate product
-    const productIds = productSelected.map(product => product.productId)
+    const productIds = productsSelected.map(product => product.productId)
     const newProducts = products.filter(product => !productIds.includes(product.productId)).map(product => {
         return {...product, isChecked: false}
     })
-    productSelected = [...productSelected, ...newProducts]
+    productsSelected = [...productsSelected, ...newProducts]
 
-    renderProducts(productSelected)
+    setValuesToProductSelect(productsSelected)
+    renderProducts(productsSelected)
     $('#modal-category').modal('hide')
 })
 
@@ -242,29 +271,29 @@ btnChoseCategory.addEventListener('click', () => {
 const inputCheckAll = document.getElementById('input-check-all')
 inputCheckAll.addEventListener('change', (e) => {
     if (e.target.checked) {
-        productSelected = productSelected.map(product => {
+        productsSelected = productsSelected.map(product => {
             return {...product, isChecked: true}
         })
     } else {
-        productSelected = productSelected.map(product => {
+        productsSelected = productsSelected.map(product => {
             return {...product, isChecked: false}
         })
     }
     btnDeleteAllProduct.disabled = !checkEnableBtnDeleteAllProduct();
-    renderProducts(productSelected)
+    renderProducts(productsSelected)
 })
 
 // handle change checkbox when click checkbox
 const selectProductDelete = (productId) => {
-    productSelected = productSelected.map(product => {
+    productsSelected = productsSelected.map(product => {
         if (product.productId === productId) {
             return {...product, isChecked: !product.isChecked}
         }
         return product
     })
-    inputCheckAll.checked = productSelected.every(product => product.isChecked)
+    inputCheckAll.checked = productsSelected.every(product => product.isChecked)
     btnDeleteAllProduct.disabled = !checkEnableBtnDeleteAllProduct();
-    renderProducts(productSelected)
+    renderProducts(productsSelected)
 }
 
 // handle create discount campaign when click button using vanilla javascript and axios
@@ -278,7 +307,6 @@ btnUpdate.addEventListener('click', () => {
     const description = document.getElementById('description').value
     const type = document.getElementById('type').value
     const value = document.getElementById('value').value
-    const status = document.getElementById('status').value
     const date = document.getElementById('date').value
 
     // get date from daterangepicker
@@ -290,11 +318,10 @@ btnUpdate.addEventListener('click', () => {
         name: name,
         description: description,
         discountType: type,
-        discountValue: value,
-        status: status,
+        discountValue: formatValue(type, value),
         startDate: new Date(startDate),
         endDate: new Date(endDate),
-        productIds: productSelected.map(product => product.productId),
+        productIds: productsSelected.map(product => product.productId),
     }
     console.log(data)
 
@@ -312,4 +339,4 @@ btnUpdate.addEventListener('click', () => {
         })
 })
 
-renderProducts(productSelected)
+renderProducts(productsSelected)

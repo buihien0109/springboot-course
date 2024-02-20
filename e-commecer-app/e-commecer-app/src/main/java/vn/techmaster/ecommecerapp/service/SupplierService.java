@@ -7,6 +7,7 @@ import vn.techmaster.ecommecerapp.entity.FileServer;
 import vn.techmaster.ecommecerapp.entity.Supplier;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.SupplierPublic;
+import vn.techmaster.ecommecerapp.model.response.ImageResponse;
 import vn.techmaster.ecommecerapp.repository.SupplierRepository;
 
 import java.util.List;
@@ -56,8 +57,8 @@ public class SupplierService {
         Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id: " + id));
 
-        FileServer fileServer = fileServerService.uploadFile(file);
-        String thumbnail = "/api/v1/files/" + fileServer.getId();
+        ImageResponse imageResponse = fileServerService.uploadFile(file);
+        String thumbnail = imageResponse.getUrl();
         supplier.setThumbnail(thumbnail);
         supplierRepository.save(supplier);
         return supplier.getThumbnail();

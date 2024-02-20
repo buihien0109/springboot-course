@@ -54,10 +54,7 @@ $('#form-create-discount-campaing').validate({
             validateMinValue: true,
             validateMaxValue: true,
             validateInteger: true
-        },
-        status: {
-            required: true
-        },
+        }
     },
     messages: {
         name: {
@@ -74,10 +71,7 @@ $('#form-create-discount-campaing').validate({
             validateMinValue: "Giá trị giảm phải lớn hơn 0",
             validateMaxValue: "Giá trị giảm phải nhỏ hơn 100",
             validateInteger: "Giá trị giảm phải là số nguyên"
-        },
-        status: {
-            required: "Trạng thái không được để trống"
-        },
+        }
     },
     errorElement: 'span',
     errorPlacement: function (error, element) {
@@ -93,29 +87,44 @@ $('#form-create-discount-campaing').validate({
 });
 
 // format value when user input
-const input = document.getElementById('value')
-input.addEventListener('input', () => {
-    const value = input.value
+const valueInputEl = document.getElementById('value')
+valueInputEl.addEventListener('input', () => {
+    const value = valueInputEl.value
     const type = document.getElementById('type').value
     if (type === 'PERCENT') {
         if (formatPrice(value) > 100) {
-            input.value = 100
+            valueInputEl.value = 100
         } else {
             if (formatPrice(value) < 0) {
-                input.value = 0
+                valueInputEl.value = 0
             }
         }
     } else {
         if (formatPrice(value) < 0) {
-            input.value = 0
+            valueInputEl.value = 0
         }
     }
 
     // format price with type is AMOUNT or SAME_PRICE
     if (type === 'AMOUNT' || type === 'SAME_PRICE') {
-        input.value = input.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+        valueInputEl.value = valueInputEl.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
 })
+
+// clear value when change type
+const typeInputEl = document.getElementById('type')
+typeInputEl.addEventListener('change', () => {
+    valueInputEl.value = ''
+})
+
+// format value with type
+const formatValue = (type, value) => {
+    if (type === 'PERCENT') {
+        return parseInt(value)
+    } else {
+        return formatPrice(value)
+    }
+}
 
 // handle create discount campaign when click button using vanilla javascript and axios
 const btnCreate = document.getElementById('btn-create')
@@ -128,7 +137,6 @@ btnCreate.addEventListener('click', () => {
     const description = document.getElementById('description').value
     const type = document.getElementById('type').value
     const value = document.getElementById('value').value
-    const status = document.getElementById('status').value
     const date = document.getElementById('date').value
 
     // get date from daterangepicker
@@ -140,8 +148,7 @@ btnCreate.addEventListener('click', () => {
         name: name,
         description: description,
         discountType: type,
-        discountValue: value,
-        status: status,
+        discountValue: formatValue(type, value),
         startDate: new Date(startDate),
         endDate: new Date(endDate)
     }

@@ -18,6 +18,5 @@ public class UpdateDiscountCampaingRequest {
     private Integer discountValue;
     private Date startDate;
     private Date endDate;
-    private DiscountCampaign.Status status;
     private List<Long> productIds;
 }

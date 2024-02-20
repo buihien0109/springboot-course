@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover datatables-table">
                                 <thead>
                                 <tr>
                                     <th>Tiêu đề</th>
@@ -54,13 +54,24 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="blog : ${blogs}">
+                                    <td>
+                                        <a th:href="@{/admin/blogs/{id}/detail(id=${blog.id})}"
+                                           th:text="${blog.title}"></a>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/users/{id}/detail(id=${blog.user.userId})}"
+                                           th:text="${blog.user.username}"></a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info mr-1" th:each="tag : ${blog.tags}"
+                                              th:text="${tag.name}"></span>
+                                    </td>
+                                    <td th:text="${blog.status ? 'Công khai' : 'Nháp'}">Trạng thái</td>
+                                    <td th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}">Ngày tạo</td>
+                                </tr>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,11 +81,7 @@
 </div>
 
 <th:block id="js">
-    <script th:inline="javascript">
-        const blogs = [[${blogs}]];
-        console.log({blogs})
-    </script>
-    <script th:src="@{/admin-assets/assets/js/blog/index.js}"></script>
+
 </th:block>
 </body>
 

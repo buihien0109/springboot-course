@@ -99,21 +99,6 @@ public class ProductTests {
         productRepository.save(product);
     }
 
-    @Transactional
-    @Test
-    void insert_an_product_image_to_product() {
-        // Insert an image to an existing product
-        Product product = productRepository.findById(1L).get();
-        ProductImage image = new ProductImage();
-        image.setImageUrl("https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fvn%2Fphotos%2F%25C4%2591%25E1%25BB%2591i-h%25E1%25BB%258Dc&psig=AOvVaw0QZ3Z3Z2Z2Z2Z2Z2Z2Z2Z2&ust=1629788450008000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCJjQ1ZqBzvICFQAAAAAdAAAAABAD");
-        image.setImageType(ProductImage.ImageType.MAIN);
-        image.setProduct(product);
-        product.getImages().add(image);
-
-        System.out.println(image);
-        productRepository.save(product);
-    }
-
     @Test
     void update_slug() {
         // update all slug of products
@@ -178,6 +163,15 @@ public class ProductTests {
         price = price / 1000;
         price = price * 1000;
         return price;
+    }
+
+    @Test
+    void get_all_products() {
+        List<Product> products = productRepository.getAllProducts();
+        products.forEach(System.out::println);
+
+        List<Product> products1 = productRepository.findAll();
+        products1.forEach(System.out::println);
     }
 
     // crawl image from unsplash.com with keyword = food

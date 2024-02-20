@@ -26,26 +26,26 @@ public class OrderController {
 
     @GetMapping
     public String getOrderPage(Model model) {
-        model.addAttribute("orders", orderService.getAllOrders());
+        model.addAttribute("orders", orderService.getAllOrdersDtoAdmin());
         return "admin/order/index";
     }
 
     @GetMapping("/create")
     public String getOrderCreatePage(Model model) {
-        model.addAttribute("products", productService.getAllProductsByStatus(List.of(Product.Status.AVAILABLE)));
+        model.addAttribute("products", productService.getAllAvailabelProductsAdminDtoByAdmin());
         model.addAttribute("paymentMethodList", OrderTable.PaymentMethod.values());
         model.addAttribute("shippingMethodList", OrderTable.ShippingMethod.values());
-        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("users", userService.getAllAvailabelUsersNormalDtoByAdmin());
         model.addAttribute("coupons", couponService.getAllCouponValid());
         return "admin/order/create";
     }
 
     @GetMapping("/{orderNumber}/detail")
     public String getOrderDetailPage(@PathVariable String orderNumber, Model model) {
-        model.addAttribute("products", productService.getAllProductsByStatus(List.of(Product.Status.AVAILABLE)));
+        model.addAttribute("products", productService.getAllAvailabelProductsAdminDtoByAdmin());
         model.addAttribute("paymentMethodList", OrderTable.PaymentMethod.values());
         model.addAttribute("shippingMethodList", OrderTable.ShippingMethod.values());
-        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("users", userService.getAllAvailabelUsersNormalDtoByAdmin());
         model.addAttribute("coupons", couponService.getAllCouponValid());
         model.addAttribute("order", orderService.getOrderByOrderNumber(orderNumber));
         return "admin/order/detail";

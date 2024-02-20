@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover datatables-table">
                                 <thead>
                                 <tr>
                                     <th>Order Number</th>
@@ -55,13 +55,29 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="order : ${orders}">
+                                    <td>
+                                        <a th:href="@{/admin/orders/{orderNumber}/detail(orderNumber=${order.orderNumber})}"
+                                           th:text="${order.orderNumber}"></a>
+                                    </td>
+                                    <td>
+                                        <a th:if="${order.userId != null}" th:href="@{/admin/users/{id}/detail(id=${order.userId})}"
+                                           th:text="${order.username}"></a>
+                                        <th:block th:if="${order.userId == null}" th:text="${order.username}"></th:block>
+                                    </td>
+                                    <td th:text="${order.email}"></td>
+                                    <td th:text="${order.phone}"></td>
+                                    <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy')}">Ngày tạo</td>
+                                    <td>
+                                        <span class="badge badge-warning" th:if="${order.status.toString() == 'WAIT'}">Chờ xác nhận</span>
+                                        <span class="badge badge-dark" th:if="${order.status.toString() == 'WAIT_DELIVERY'}">Chờ giao hàng</span>
+                                        <span class="badge badge-primary" th:if="${order.status.toString() == 'DELIVERY'}">Đang giao</span>
+                                        <span class="badge badge-success" th:if="${order.status.toString() == 'COMPLETE'}">Đã giao</span>
+                                        <span class="badge badge-secondary" th:if="${order.status.toString() == 'CANCELED'}">Đã hủy</span>
+                                        <span class="badge badge-danger" th:if="${order.status.toString() == 'RETURNED'}">Đã trả hàng</span>
+                                    </td>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -71,11 +87,7 @@
 </div>
 
 <th:block id="js">
-    <script th:inline="javascript">
-        const orders = [[${orders}]];
-        console.log({orders})
-    </script>
-    <script th:src="@{/admin-assets/assets/js/order/index.js}"></script>
+
 </th:block>
 </body>
 

@@ -7,6 +7,8 @@ import vn.techmaster.ecommecerapp.entity.OrderItem;
 import vn.techmaster.ecommecerapp.entity.OrderTable;
 import vn.techmaster.ecommecerapp.entity.PaymentVoucher;
 import vn.techmaster.ecommecerapp.entity.Product;
+import vn.techmaster.ecommecerapp.model.dto.OrderUserDto;
+import vn.techmaster.ecommecerapp.model.dto.UserNormalDto;
 import vn.techmaster.ecommecerapp.model.projection.OrderTablePublic;
 import vn.techmaster.ecommecerapp.model.projection.UserPublic;
 import vn.techmaster.ecommecerapp.repository.BlogRepository;
@@ -75,30 +77,22 @@ public class DashboardService {
                 .sum();
     }
 
-    public List<OrderTablePublic> getOrderLatestInRangeTime(Date start, Date end) {
-        return orderTableRepository.findByOrderDateBetween(start, end)
-                .stream().sorted((o1, o2) -> o2.getOrderDate().compareTo(o1.getOrderDate()))
-                .map(OrderTablePublic::of)
-                .toList();
+    public List<OrderUserDto> getOrderLatestInRangeTime(Date start, Date end) {
+        return orderTableRepository.getAllOrdersInRangeTime(start, end);
     }
 
-    public List<UserPublic> getUserLatestInRangeTime(Date start, Date end) {
-        return userRepository.findByCreatedAtBetween(start, end)
-                .stream().sorted((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()))
-                .map(UserPublic::of)
-                .toList();
+    public List<UserNormalDto> getUserLatestInRangeTime(Date start, Date end) {
+        return userRepository.getAllUsersNormalDtoInRangeTime(start, end);
     }
 
     public List<Map<String, Object>> getBestSellingProductInRangeTime(Date start, Date end) {
         // get all orders in current month has status COMPLETED
         List<OrderTable> orderTables = orderTableRepository
                 .findByOrderDateBetweenAndStatus(start, end, OrderTable.Status.COMPLETE);
-        log.info("orderTables size: {}", orderTables.size());
 
         // get all order items in orders
         List<OrderItem> orderItems = orderTables.stream()
                 .flatMap(orderTable -> orderTable.getOrderItems().stream()).toList();
-        log.info("orderItems size: {}", orderItems.size());
 
         // group by product id and sum quantity
         Map<Long, Integer> productQuantityMap = orderItems.stream()
@@ -170,14 +164,14 @@ public class DashboardService {
     }
 
     // Get N order latest by current month
-    public List<OrderTablePublic> getOrderLatestByCurrentMonth(Integer limit) {
+    public List<OrderUserDto> getOrderLatestByCurrentMonth(Integer limit) {
         Map<String, Date> timeRange = getTimeRangeInCurrentMonth();
         return getOrderLatestInRangeTime(timeRange.get("start"), timeRange.get("end"))
                 .stream().limit(limit).toList();
     }
 
     // Get N user latest by current month
-    public List<UserPublic> getUserLatestByCurrentMonth(Integer limit) {
+    public List<UserNormalDto> getUserLatestByCurrentMonth(Integer limit) {
         Map<String, Date> timeRange = getTimeRangeInCurrentMonth();
         return getUserLatestInRangeTime(timeRange.get("start"), timeRange.get("end"))
                 .stream().limit(limit).toList();

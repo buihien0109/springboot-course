@@ -5,9 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
 import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.entity.ProductImage;
 
-import java.util.List;
 import java.util.Set;
 
 public interface ProductNormalPublic {
@@ -58,13 +56,7 @@ public interface ProductNormalPublic {
 
         @Override
         public String getImageUrl() {
-            List<ProductImage> productImages = product.getImages();
-            ProductImage mainImage = productImages.stream()
-                    .filter(image -> image.getImageType().equals(ProductImage.ImageType.MAIN)).findFirst().orElse(null);
-            if (mainImage == null) {
-                return null;
-            }
-            return mainImage.getImageUrl();
+            return product.getMainImage();
         }
 
         @Override

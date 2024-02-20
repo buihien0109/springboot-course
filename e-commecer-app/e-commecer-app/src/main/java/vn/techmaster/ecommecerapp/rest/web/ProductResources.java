@@ -68,7 +68,7 @@ public class ProductResources {
     }
 
     @DeleteMapping("/admin/products/{productId}/images/{imageId}")
-    public ResponseEntity<?> deleteSubImage(@PathVariable Long productId, @PathVariable Long imageId) {
+    public ResponseEntity<?> deleteSubImage(@PathVariable Long productId, @PathVariable String imageId) {
         productService.deleteSubImage(productId, imageId);
         return ResponseEntity.ok().build();
     }

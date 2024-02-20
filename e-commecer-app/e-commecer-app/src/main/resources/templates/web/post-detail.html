@@ -33,8 +33,8 @@
                 <div class="col-lg-4 col-md-5 order-md-1 order-2">
                     <div class="blog__sidebar">
                         <div class="blog__sidebar__search">
-                            <form action="#">
-                                <input type="text" placeholder="Tìm kiếm...">
+                            <form id="blog-form-search">
+                                <input type="text" placeholder="Tìm kiếm..." id="search-input">
                                 <button type="submit"><span class="icon_search"></span></button>
                             </form>
                         </div>
@@ -58,7 +58,8 @@
                                         <img th:src="${blog.thumbnail}" alt="">
                                     </div>
                                     <div class="blog__sidebar__recent__item__text">
-                                        <h6 th:text="${blog.title}">09 Kinds Of Vegetables<br/> Protect The Liver</h6>
+                                        <h6 th:text="${blog.title}" class="line-clamp-2">09 Kinds Of Vegetables<br/>
+                                            Protect The Liver</h6>
                                         <span th:text="${#dates.format(blog.publishedAt, 'dd/MM/yyyy')}">MAR 05, 2019</span>
                                     </div>
                                 </a>
@@ -88,9 +89,10 @@
                                     <ul>
                                         <li>
                                             <span>Danh mục:</span>
-                                            <a th:href="@{/bai-viet (tag=${tag.slug})}" class="text-primary d-inline-block mr-1 font-weight-normal"
-                                                  th:each="tag, state : ${blog.tags}"
-                                                  th:text="${state.last ? tag.name : tag.name + ', '}"></a></li>
+                                            <a th:href="@{/bai-viet (tag=${tag.slug})}"
+                                               class="text-primary d-inline-block mr-1 font-weight-normal"
+                                               th:each="tag, state : ${blog.tags}"
+                                               th:text="${state.last ? tag.name : tag.name + ', '}"></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -127,13 +129,9 @@
                                 </li>
                             </ul>
                             <h5><a th:href="@{/bai-viet/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}"
-                                   th:text="${blog.title}">6 ways to prepare breakfast for 30</a></h5>
-                            <p th:if="${#strings.length(blog.description) >= 50}"
-                               th:text="|${#strings.substring(blog.description, 0, 50)} ...|">Sed quia non
-                                numquam modi tempora indunt ut labore et dolore magnam aliquam
-                                quaerat </p>
-                            <p th:if="${#strings.length(blog.description) < 50}" th:text="${blog.description}">
-                                Sed quia non
+                                   th:text="${blog.title}" class="line-clamp-2">6 ways to prepare breakfast for 30</a>
+                            </h5>
+                            <p th:text="${blog.description}" class="line-clamp-2">Sed quia non
                                 numquam modi tempora indunt ut labore et dolore magnam aliquam
                                 quaerat </p>
                         </div>
@@ -145,7 +143,21 @@
     <!-- Related Blog Section End -->
 </th:block>
 <th:block id="js">
+    <script>
+        // Xu lý tìm kiếm blog
+        const searchForm = document.getElementById('blog-form-search');
+        const searchInput = document.getElementById('search-input');
+        searchForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const searchValue = searchInput.value;
+            if (searchValue.trim() === '') {
+                alert('Vui lòng nhập từ khóa tìm kiếm');
+                return;
+            }
 
+            window.location.href = `/bai-viet?search=${searchValue}`;
+        })
+    </script>
 </th:block>
 </body>
 

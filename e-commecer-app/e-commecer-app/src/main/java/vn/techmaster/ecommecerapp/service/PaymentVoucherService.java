@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.PaymentVoucher;
 import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.dto.PaymentVoucherDto;
 import vn.techmaster.ecommecerapp.model.projection.PaymentVoucherPublic;
 import vn.techmaster.ecommecerapp.model.request.UpsertPaymentVoucherRequest;
 import vn.techmaster.ecommecerapp.repository.PaymentVoucherRepository;
@@ -17,18 +18,13 @@ import java.util.List;
 public class PaymentVoucherService {
     private final PaymentVoucherRepository paymentVoucherRepository;
 
-    public List<PaymentVoucherPublic> getAllPaymentVouchers() {
-        return paymentVoucherRepository.findAll()
-                .stream()
-                .sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))
-                .map(PaymentVoucherPublic::of)
-                .toList();
+    public List<PaymentVoucherDto> getAllPaymentVouchers() {
+        return paymentVoucherRepository.getAllPaymentVouchersDto();
     }
 
-    public PaymentVoucherPublic getPaymentVoucherById(Long id) {
-        PaymentVoucher paymentVoucher = paymentVoucherRepository.findById(id)
+    public PaymentVoucherDto getPaymentVoucherById(Long id) {
+        return paymentVoucherRepository.getPaymentVoucherDtoById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy phiếu chi với id: " + id));
-        return PaymentVoucherPublic.of(paymentVoucher);
     }
 
     public PaymentVoucherPublic createPaymentVoucher(UpsertPaymentVoucherRequest request) {

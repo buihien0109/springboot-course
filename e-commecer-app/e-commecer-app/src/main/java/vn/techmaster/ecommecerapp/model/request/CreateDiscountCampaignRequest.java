@@ -17,5 +17,4 @@ public class CreateDiscountCampaignRequest {
     private Integer discountValue;
     private Date startDate;
     private Date endDate;
-    private DiscountCampaign.Status status;
 }

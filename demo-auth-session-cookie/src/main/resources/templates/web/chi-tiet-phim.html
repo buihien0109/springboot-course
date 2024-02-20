@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết phim</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="/web/css/style.css">
+</head>
+<body>
+<th:block th:replace="~{web/fragments/header :: .header}"></th:block>
+
+<section class="py-4">
+    <div class="container">
+        <h3 class="mb-3" th:text="${movie.title}">Danh sách phim</h3>
+        <div class="border-bottom"></div>
+    </div>
+</section>
+
+<section class="py-4">
+    <div class="container">
+        <div>
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-3">Bình luận</h3>
+                <button class="btn btn-primary" id="btn-open-modal-review">
+                    Viết đánh giá
+                </button>
+            </div>
+            <p>Vui lòng <a href="/dang-nhap" class="text-primary text-decoration-underline">đăng
+                nhập</a> để viết bình luận</p>
+            <div class="review-list">
+                <div class="rating-item d-flex align-items-center mb-3 pb-3" th:each="review : ${reviewList}">
+                    <div class="rating-info">
+                        <div class="d-flex align-items-center">
+                            <p class="rating-name mb-0">
+                                <strong th:text="${review.user.name}">Bùi Hiên</strong>
+                            </p>
+                            <p class="rating-time mb-0 ms-2" th:text="${#dates.format(review.updatedAt, 'dd/MM/yyyy')}">
+                                09/01/2024</p>
+                        </div>
+                        <p class="rating-content mt-1 mb-0 text-muted" th:text="${review.content}">Phim xem ổn. Điểm
+                            nhấn chính là sự hài hước và
+                            tiết tấu. Kết phim chưa thực sự hài lòng. 1 số nhân vật hoành tráng ở đầu và giữa phim, thì
+                            cuối phim mờ nhạt. Diễn biến phim hoặc chưa dành đủ thời gian, hoặc chưa nhấn mạnh đủ để dẫn
+                            đến các kết quả ở cuối phim.</p>
+
+                        <div class="rating-action mt-2">
+                            <a href="javascript:void(0)" class="text-primary text-decoration-underline me-2" th:onclick="|openModalUpdate(${review.id})|">Sửa</a>
+                            <a href="javascript:void(0)" class="text-danger text-decoration-underline"
+                               th:onclick="|deleteReview(${review.id})|">Xóa</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="modal-review" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Viết đánh giá</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <h5 class="text-center" th:text="${movie.title}"></h5>
+                    <div class="rating-container my-3 d-flex justify-content-center align-items-center">
+                        <span class="rating-item fs-5" data-rating="1"><i class="fa fa-star"></i></span>
+                        <span class="rating-item fs-5" data-rating="2"><i class="fa fa-star"></i></span>
+                        <span class="rating-item fs-5" data-rating="3"><i class="fa fa-star"></i></span>
+                        <span class="rating-item fs-5" data-rating="4"><i class="fa fa-star"></i></span>
+                        <span class="rating-item fs-5" data-rating="5"><i class="fa fa-star"></i></span>
+                        <span class="rating-item fs-5" data-rating="6"><i class="fa fa-star"></i></span>
+                        <span class="rating-item fs-5" data-rating="7"><i class="fa fa-star"></i></span>
+                        <span class="rating-item fs-5" data-rating="8"><i class="fa fa-star"></i></span>
+                        <span class="rating-item fs-5" data-rating="9"><i class="fa fa-star"></i></span>
+                        <span class="rating-item fs-5" data-rating="10"><i class="fa fa-star"></i></span>
+                    </div>
+                    <p id="rating-value" class="text-center fst-italic mt-2"></p>
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" id="rating-content" rows="5" placeholder="Viết đánh giá"></textarea>
+                </div>
+
+                <div class="d-flex justify-content-center align-items-center">
+                    <button type="button" class="btn btn-primary px-5" id="btn-handle-review">Hoàn tất</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

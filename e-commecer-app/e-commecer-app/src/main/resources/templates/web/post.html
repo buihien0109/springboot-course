@@ -32,8 +32,8 @@
                 <div class="col-lg-4 col-md-5">
                     <div class="blog__sidebar">
                         <div class="blog__sidebar__search">
-                            <form action="#">
-                                <input type="text" placeholder="Tìm kiếm...">
+                            <form id="blog-form-search">
+                                <input type="text" placeholder="Tìm kiếm..." id="search-input">
                                 <button type="submit"><span class="icon_search"></span></button>
                             </form>
                         </div>
@@ -41,7 +41,7 @@
                             <h4>Danh mục</h4>
                             <ul>
                                 <li th:each="tag : ${tags}">
-                                    <a th:href="@{/bai-viet?tag={slug} (slug=${tag.slug})}"
+                                    <a th:href="@{/bai-viet (tag=${tag.slug})}"
                                        th:classappend="${tag.slug == currentTag ? 'active' : ''}" th:text="${tag.name}">Làm
                                         đẹp</a>
                                 </li>
@@ -57,7 +57,7 @@
                                         <img th:src="${blog.thumbnail}" alt="">
                                     </div>
                                     <div class="blog__sidebar__recent__item__text">
-                                        <h6 th:text="${blog.title}">09 Kinds Of Vegetables<br/> Protect The Liver</h6>
+                                        <h6 th:text="${blog.title}" class="line-clamp-2">09 Kinds Of Vegetables<br/> Protect The Liver</h6>
                                         <span th:text="${#dates.format(blog.publishedAt, 'dd/MM/yyyy')}">MAR 05, 2019</span>
                                     </div>
                                 </a>
@@ -67,52 +67,52 @@
                 </div>
                 <div class="col-lg-8 col-md-7">
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6" th:each="blog : ${pageData.getContent()}">
-                            <div class="blog__item">
-                                <div class="blog__item__pic">
-                                    <img th:src="${blog.thumbnail}" alt="">
-                                </div>
-                                <div class="blog__item__text">
-                                    <ul>
-                                        <li><i class="fa fa-calendar-o"></i>
-                                            <th:block th:text="${#dates.format(blog.publishedAt, 'dd/MM/yyyy')}">May
-                                                4,2019
-                                            </th:block>
-                                        </li>
-                                    </ul>
-                                    <h5><a th:href="@{/bai-viet/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}"
-                                           th:text="${blog.title}">6 ways to prepare breakfast for 30</a></h5>
-                                    <p th:if="${#strings.length(blog.description) >= 50}"
-                                       th:text="|${#strings.substring(blog.description, 0, 50)} ...|">Sed quia non
-                                        numquam modi tempora indunt ut labore et dolore magnam aliquam
-                                        quaerat </p>
-                                    <p th:if="${#strings.length(blog.description) < 50}" th:text="${blog.description}">
-                                        Sed quia non
-                                        numquam modi tempora indunt ut labore et dolore magnam aliquam
-                                        quaerat </p>
+                        <th:block th:if="${#lists.isEmpty(pageData.getContent())}">
+                            <h4>Không tìm thấy bài viết phù hợp</h4>
+                        </th:block>
+                        <th:block th:if="not ${#lists.isEmpty(pageData.getContent())}">
+                            <div class="col-lg-6 col-md-6 col-sm-6" th:each="blog : ${pageData.getContent()}">
+                                <div class="blog__item">
+                                    <div class="blog__item__pic">
+                                        <img th:src="${blog.thumbnail}" alt="">
+                                    </div>
+                                    <div class="blog__item__text">
+                                        <ul>
+                                            <li><i class="fa fa-calendar-o"></i>
+                                                <th:block th:text="${#dates.format(blog.publishedAt, 'dd/MM/yyyy')}">May
+                                                    4,2019
+                                                </th:block>
+                                            </li>
+                                        </ul>
+                                        <h5><a th:href="@{/bai-viet/{id}/{slug} (id=${blog.id}, slug=${blog.slug})}"
+                                               th:text="${blog.title}" class="line-clamp-2">6 ways to prepare breakfast for 30</a></h5>
+                                        <p th:text="${blog.description}" class="line-clamp-2">Sed quia non
+                                            numquam modi tempora indunt ut labore et dolore magnam aliquam
+                                            quaerat </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="blog__pagination">
-                                <button class="pagination-button-previos pagination-button" th:if="${currentPage != 1}"
-                                        th:data-page="${currentPage - 1}">
-                                    <i class="fa fa-long-arrow-left"></i>
-                                </button>
-                                <th:block th:if="${pageData.getTotalPages() != 1}">
-                                    <button class="pagination-button"
-                                            th:each="page : ${#numbers.sequence(1, pageData.getTotalPages())}"
-                                            th:classappend="${currentPage == page ? 'active' : ''}" th:text="${page}"
-                                            th:data-page="${page}">1
+                            <div class="col-lg-12">
+                                <div class="blog__pagination">
+                                    <button class="pagination-button-previos pagination-button" th:if="${currentPage != 1}"
+                                            th:data-page="${currentPage - 1}">
+                                        <i class="fa fa-long-arrow-left"></i>
                                     </button>
-                                </th:block>
-                                <button class="pagination-button-next pagination-button"
-                                        th:if="${currentPage != pageData.getTotalPages()}"
-                                        th:data-page="${currentPage + 1}">
-                                    <i class="fa fa-long-arrow-right"></i>
-                                </button>
+                                    <th:block th:if="${pageData.getTotalPages() != 1}">
+                                        <button class="pagination-button"
+                                                th:each="page : ${#numbers.sequence(1, pageData.getTotalPages())}"
+                                                th:classappend="${currentPage == page ? 'active' : ''}" th:text="${page}"
+                                                th:data-page="${page}">1
+                                        </button>
+                                    </th:block>
+                                    <button class="pagination-button-next pagination-button"
+                                            th:if="${currentPage != pageData.getTotalPages()}"
+                                            th:data-page="${currentPage + 1}">
+                                        <i class="fa fa-long-arrow-right"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        </th:block>
                     </div>
                 </div>
             </div>
@@ -122,13 +122,6 @@
 </th:block>
 
 <th:block id="js">
-    <script th:inline="javascript">
-        const pageData = [[${pageData}]];
-        const tags = [[${tags}]];
-        const recentBlogs = [[${recentBlogs}]];
-        const currentPage = [[${currentPage}]];
-        console.log({pageData, tags, recentBlogs, currentPage});
-    </script>
     <script src="/js/web/post.js"></script>
 </th:block>
 </body>

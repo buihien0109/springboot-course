@@ -7,6 +7,7 @@ import vn.techmaster.ecommecerapp.entity.Review;
 import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.dto.ReviewDto;
 import vn.techmaster.ecommecerapp.model.projection.ReviewPublic;
 import vn.techmaster.ecommecerapp.model.request.CreateReviewAnonymousRequest;
 import vn.techmaster.ecommecerapp.model.request.UpsertReviewRequest;
@@ -32,24 +33,12 @@ public class ReviewService {
                 .toList();
     }
 
-    public List<ReviewPublic> getAllReviewsAvailableByProductId(Long productId) {
-        List<Review> reviews = reviewRepository
-                .findByProduct_ProductIdAndStatusOrderByUpdatedAtDesc(productId, Review.Status.ACCEPTED);
-
-        // covert reviews to List<ReviewPublic> and sort items by updatedAt desc using stream
-        return reviews.stream()
-                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
-                .map(ReviewPublic::of)
-                .toList();
+    public List<ReviewDto> getAllReviewsAvailableByProductId(Long productId) {
+        return reviewRepository.getAllReviewsAvailableByProductId(productId, Review.Status.ACCEPTED.toString());
     }
 
-    public List<ReviewPublic> getAllReviewsByProductIdByAdmin(Long productId) {
-        List<Review> reviews = reviewRepository.getAllReviewsByProductId(productId);
-
-        // covert reviews to List<ReviewPublic> and sort items by updatedAt desc using stream
-        return reviews.stream()
-                .map(ReviewPublic::of)
-                .toList();
+    public List<ReviewDto> getAllReviewsByProductIdByAdmin(Long productId) {
+        return reviewRepository.getAllReviewsByProductId(productId);
     }
 
     public ReviewPublic createReview(UpsertReviewRequest request) {

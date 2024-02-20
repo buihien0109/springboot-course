@@ -7,10 +7,188 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import vn.techmaster.ecommecerapp.model.dto.OrderDto;
+import vn.techmaster.ecommecerapp.model.dto.OrderUserDetailDto;
+import vn.techmaster.ecommecerapp.model.dto.OrderUserDto;
+import vn.techmaster.ecommecerapp.model.dto.ReviewDto;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+@SqlResultSetMappings(
+        value = {
+                @SqlResultSetMapping(
+                        name = "OrderUserDtoResultMapping",
+                        classes = @ConstructorResult(
+                                targetClass = OrderUserDto.class,
+                                columns = {
+                                        @ColumnResult(name = "order_id", type = Long.class),
+                                        @ColumnResult(name = "order_number", type = String.class),
+                                        @ColumnResult(name = "order_date", type = String.class),
+                                        @ColumnResult(name = "status", type = String.class),
+                                        @ColumnResult(name = "order_items", type = String.class),
+                                        @ColumnResult(name = "coupon_discount", type = Integer.class)
+                                }
+                        )
+                ),
+                @SqlResultSetMapping(
+                        name = "OrderDtoResultMapping",
+                        classes = @ConstructorResult(
+                                targetClass = OrderDto.class,
+                                columns = {
+                                        @ColumnResult(name = "order_id", type = Long.class),
+                                        @ColumnResult(name = "order_number", type = String.class),
+                                        @ColumnResult(name = "order_date", type = String.class),
+                                        @ColumnResult(name = "username", type = String.class),
+                                        @ColumnResult(name = "email", type = String.class),
+                                        @ColumnResult(name = "phone", type = String.class),
+                                        @ColumnResult(name = "status", type = String.class),
+                                        @ColumnResult(name = "user_id", type = Long.class)
+                                }
+                        )
+                ),
+                @SqlResultSetMapping(
+                        name = "OrderUserDetailDtoResultMapping",
+                        classes = @ConstructorResult(
+                                targetClass = OrderUserDetailDto.class,
+                                columns = {
+                                        @ColumnResult(name = "order_id", type = Long.class),
+                                        @ColumnResult(name = "order_number", type = String.class),
+                                        @ColumnResult(name = "order_date", type = String.class),
+                                        @ColumnResult(name = "status", type = String.class),
+                                        @ColumnResult(name = "order_items", type = String.class),
+                                        @ColumnResult(name = "coupon_discount", type = Integer.class),
+                                        @ColumnResult(name = "username", type = String.class),
+                                        @ColumnResult(name = "phone", type = String.class),
+                                        @ColumnResult(name = "email", type = String.class)
+                                }
+                        )
+                ),
+
+        }
+
+)
+
+@NamedNativeQuery(
+        name = "getAllOrdersByUser",
+        resultSetMapping = "OrderUserDtoResultMapping",
+        query = """
+                SELECT
+                    o.order_id AS order_id,
+                    o.order_number AS order_number,
+                    o.order_date AS order_date,
+                    o.status AS status,
+                    o.coupon_discount AS coupon_discount,
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', oi.order_item_id,
+                            'productId', p.product_id,
+                            'productName', p.name,
+                            'quantity', oi.quantity,
+                            'price', oi.price
+                        )
+                    ) AS order_items
+                FROM
+                    order_table o
+                    JOIN order_item oi ON o.order_id = oi.order_id
+                    JOIN product p ON oi.product_id = p.product_id
+                WHERE
+                    o.user_id = :userId
+                GROUP BY
+                    o.order_id, o.order_number, o.order_date, o.status
+                ORDER BY
+                    o.order_date DESC
+                """
+)
+
+@NamedNativeQuery(
+        name = "getAllOrdersInRangeTime",
+        resultSetMapping = "OrderUserDtoResultMapping",
+        query = """
+                SELECT
+                    o.order_id AS order_id,
+                    o.order_number AS order_number,
+                    o.order_date AS order_date,
+                    o.status AS status,
+                    o.coupon_discount AS coupon_discount,
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', oi.order_item_id,
+                            'productId', p.product_id,
+                            'productName', p.name,
+                            'quantity', oi.quantity,
+                            'price', oi.price
+                        )
+                    ) AS order_items
+                FROM
+                    order_table o
+                    JOIN order_item oi ON o.order_id = oi.order_id
+                    JOIN product p ON oi.product_id = p.product_id
+                WHERE
+                    o.order_date BETWEEN ?1 AND ?2
+                GROUP BY
+                    o.order_id, o.order_number, o.order_date, o.status
+                ORDER BY
+                    o.order_date DESC
+                """
+)
+
+@NamedNativeQuery(
+        name = "getAllOrdersInRangeTimeByStatus",
+        resultSetMapping = "OrderUserDetailDtoResultMapping",
+        query = """
+                SELECT
+                    o.order_id AS order_id,
+                    o.order_number AS order_number,
+                    o.order_date AS order_date,
+                    o.status AS status,
+                    o.coupon_discount AS coupon_discount,
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', oi.order_item_id,
+                            'productId', p.product_id,
+                            'productName', p.name,
+                            'quantity', oi.quantity,
+                            'price', oi.price
+                        )
+                    ) AS order_items,
+                    o.username AS username,
+                    o.email AS email,
+                    o.phone AS phone
+                FROM
+                    order_table o
+                    JOIN order_item oi ON o.order_id = oi.order_id
+                    JOIN product p ON oi.product_id = p.product_id
+                WHERE
+                    o.order_date BETWEEN ?1 AND ?2
+                    AND o.status = ?3
+                GROUP BY
+                    o.order_id, o.order_number, o.order_date, o.status
+                ORDER BY
+                    o.order_date DESC
+                """
+)
+
+@NamedNativeQuery(
+        name = "getAllOrdersDtoAdmin",
+        resultSetMapping = "OrderDtoResultMapping",
+        query = """
+                SELECT
+                    o.order_id AS order_id,
+                    o.order_number AS order_number,
+                    o.order_date AS order_date,
+                    o.username AS username,
+                    o.email AS email,
+                    o.phone AS phone,
+                    o.status AS status,
+                    o.user_id AS user_id
+                FROM
+                    order_table o
+                ORDER BY
+                    o.order_date DESC
+                """
+)
 
 @AllArgsConstructor
 @NoArgsConstructor

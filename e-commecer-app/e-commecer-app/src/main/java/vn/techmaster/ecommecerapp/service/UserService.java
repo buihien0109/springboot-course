@@ -11,12 +11,14 @@ import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.entity.UserAddress;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.dto.UserNormalDto;
 import vn.techmaster.ecommecerapp.model.projection.UserAddressPublic;
 import vn.techmaster.ecommecerapp.model.projection.UserPublic;
 import vn.techmaster.ecommecerapp.model.request.CreateUserRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdatePasswordRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdateProfileUserRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdateUserRequest;
+import vn.techmaster.ecommecerapp.model.response.ImageResponse;
 import vn.techmaster.ecommecerapp.repository.RoleRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
@@ -41,6 +43,10 @@ public class UserService {
                 .map(UserPublic::of).toList();
     }
 
+    public List<UserNormalDto> getAllAvailabelUsersNormalDtoByAdmin() {
+        return userRepository.getAllAvailabelUsersNormalDtoByAdmin();
+    }
+
     // get user by id
     public UserPublic getUserById(Long id) {
         User user = userRepository.findById(id)
@@ -55,9 +61,8 @@ public class UserService {
 
     public String updateAvatar(MultipartFile file) {
         User user = SecurityUtils.getCurrentUserLogin();
-        FileServer fileServer = fileServerService.uploadFile(file);
-        String avatar = "/api/v1/files/" + fileServer.getId();
-        user.setAvatar(avatar);
+        ImageResponse imageResponse = fileServerService.uploadFile(file);
+        user.setAvatar(imageResponse.getUrl());
         userRepository.save(user);
         return user.getAvatar();
     }
@@ -66,9 +71,8 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy user"));
 
-        FileServer fileServer = fileServerService.uploadFile(file);
-        String avatar = "/api/v1/files/" + fileServer.getId();
-        user.setAvatar(avatar);
+        ImageResponse imageResponse = fileServerService.uploadFile(file);
+        user.setAvatar(imageResponse.getUrl());
         userRepository.save(user);
         return user.getAvatar();
     }

@@ -41,13 +41,13 @@
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
                             <img class="product__details__pic__item--large"
-                                 th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'}"
+                                 th:src="${product.mainImage != null ? product.mainImage : '/img/image-placeholder.png'}"
                                  alt="">
                         </div>
                         <div class="product__details__pic__slider owl-carousel">
-                            <th:block th:if="not ${#lists.isEmpty(product.images.subImages)}">
-                                <img th:each="image : ${product.images.subImages}" th:data-imgbigurl="${image.imageUrl}"
-                                     th:src="${image.imageUrl}" alt="">
+                            <th:block th:if="not ${#lists.isEmpty(product.subImages)}">
+                                <img th:each="image : ${product.subImages}" th:data-imgbigurl="${image}"
+                                     th:src="${image}" alt="">
                             </th:block>
                         </div>
                     </div>
@@ -195,7 +195,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="review-product-info text-center">
-                        <img th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'}"
+                        <img th:src="${product.mainImage != null ? product.mainImage : '/img/image-placeholder.png'}"
                              alt="">
                         <p th:text="${product.name}"></p>
                     </div>

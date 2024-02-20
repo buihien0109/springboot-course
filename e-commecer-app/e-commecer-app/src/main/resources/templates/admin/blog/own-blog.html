@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-bordered table-hover">
+                            <table class="table table-bordered table-hover datatables-table">
                                 <thead>
                                 <tr>
                                     <th>Tiêu đề</th>
@@ -53,13 +53,20 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
+                                <tr th:each="blog : ${blogs}">
+                                    <td>
+                                        <a th:href="@{/admin/blogs/{id}/detail(id=${blog.id})}"
+                                           th:text="${blog.title}"></a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info mr-1" th:each="tag : ${blog.tags}"
+                                              th:text="${tag.name}"></span>
+                                    </td>
+                                    <td th:text="${blog.status ? 'Công khai' : 'Nháp'}">Trạng thái</td>
+                                    <td th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}">Ngày tạo</td>
+                                </tr>
                                 </tbody>
                             </table>
-
-                            <div class="d-flex justify-content-center mt-3" id="pagination">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,44 +76,7 @@
 </div>
 
 <th:block id="js">
-    <script th:inline="javascript">
-        const blogs = [[${blogs}]];
-        console.log({blogs})
 
-        // render blogs from blogs to body of table
-        const tableBody = document.querySelector('table tbody');
-        const renderBlogs = (blogList) => {
-            let html = '';
-            blogList.forEach(blog => {
-                html += `
-                    <tr>
-                        <td>
-                            <a href="/admin/blogs/${blog.id}/detail">${blog.title}</a>
-                        </td>
-                        <td>
-                            ${blog.tags.map(tag => `<span class="badge bg-info mr-1">${tag.name}</span>`).join('')}
-                        </td>
-                        <td>${blog.status ? 'Công khai' : 'Nháp'}</td>
-                        <td>${formatDate(blog.createdAt)}</td>
-                    </tr>
-                `;
-            })
-            tableBody.innerHTML = html;
-        }
-
-        // render pagination using pagination.js
-        const renderPagination = (blogList) => {
-            $('#pagination').pagination({
-                dataSource: blogList,
-                className: 'paginationjs-theme-blue paginationjs-big',
-                callback: function (data, pagination) {
-                    renderBlogs(data);
-                },
-                hideOnlyOnePage : true
-            })
-        }
-        renderPagination(blogs);
-    </script>
 </th:block>
 </body>
 

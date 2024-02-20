@@ -145,7 +145,7 @@
                                             <label>Ảnh đại diện</label>
                                             <div class="d-flex align-items-center">
                                                 <div class="product-image-item product-main-image-item mr-4">
-                                                    <img th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : 'https://placehold.co/600x400'}"
+                                                    <img th:src="${product.mainImage != null ? product.mainImage : 'https://placehold.co/600x400'}"
                                                          alt="Ảnh đại diện"
                                                          class="img-fluid">
                                                 </div>
@@ -167,14 +167,14 @@
                                             <div class="d-flex align-items-center flex-wrap">
                                                 <div class="d-flex align-items-center flex-wrap"
                                                      id="list-product-sub-image-item">
-                                                    <div th:if="not ${#lists.isEmpty(product.images.subImages)}"
-                                                         th:each="image : ${product.images.subImages}"
+                                                    <div th:if="not ${#lists.isEmpty(product.subImages)}"
+                                                         th:each="image : ${product.subImages}"
                                                          class="product-image-item product-sub-image-item mr-4 mb-4"
-                                                         th:data-image-sub-id="${image.imageId}">
-                                                        <img th:src="${image.imageUrl}" alt="Ảnh mô tả"
+                                                         th:data-image-sub-id="${image}">
+                                                        <img th:src="${image}" alt="Ảnh mô tả"
                                                              class="img-fluid">
                                                         <span class="btn-action btn-action-delete"
-                                                              th:onclick="|deleteSubImage(${image.imageId})|"><i
+                                                              th:attr="onclick=|deleteSubImage('${image}')|"><i
                                                                 class="fas fa-times-circle"></i></span>
                                                     </div>
                                                     <div class="product-image-item product-image-item-upload-sub-image mr-4 mb-4">

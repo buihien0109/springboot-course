@@ -36,9 +36,9 @@ const renderPagination = (orderList) => {
 const orderStatus = status => {
     switch (status) {
         case 'WAIT':
-            return '<span class="badge badge-warning">Chờ xác nhận</span></>';
+            return '<span class="badge badge-warning">Chờ xác nhận</span>';
         case 'WAIT_DELIVERY':
-            return '<span class="badge badge-dark">Chờ giao hàng</span></>';
+            return '<span class="badge badge-dark">Chờ giao hàng</span>';
         case 'DELIVERY':
             return '<span class="badge badge-primary">Đang giao</span>';
         case 'COMPLETE':

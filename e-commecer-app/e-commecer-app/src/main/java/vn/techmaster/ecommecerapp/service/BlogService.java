@@ -12,6 +12,8 @@ import vn.techmaster.ecommecerapp.entity.Blog;
 import vn.techmaster.ecommecerapp.entity.Tag;
 import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.dto.BlogDto;
+import vn.techmaster.ecommecerapp.model.dto.BlogWebDto;
 import vn.techmaster.ecommecerapp.model.projection.BlogPublic;
 import vn.techmaster.ecommecerapp.model.request.UpsertBlogRequest;
 import vn.techmaster.ecommecerapp.repository.BlogRepository;
@@ -30,15 +32,9 @@ public class BlogService {
     private final Slugify slugify;
 
     // get all blogs have status = 1 and sort by published_at desc and pagination by page and limit
-    public Page<BlogPublic> getAllBlogs(String tagSlug, Integer page, Integer limit) {
+    public Page<BlogWebDto> searchBlog(String tagSlug, String seachTerm, Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("publishedAt").descending());
-        Page<Blog> pageData;
-        if (tagSlug == null || tagSlug.isEmpty()) {
-            pageData = blogRepository.findByStatus(true, pageable);
-        } else {
-            pageData = blogRepository.findByStatusAndTags_Slug(true, tagSlug, pageable);
-        }
-        return pageData.map(BlogPublic::of);
+        return blogRepository.searchBlog(true, tagSlug, seachTerm, pageable);
     }
 
     public List<BlogPublic> getAllBlogs() {
@@ -46,8 +42,14 @@ public class BlogService {
         return blogs.stream().map(BlogPublic::of).toList();
     }
 
-    public List<BlogPublic> getAllBlogs(Integer limit) {
-        return getAllBlogs().stream().limit(limit).toList();
+    public List<BlogWebDto> getLatestBlogs(Integer limit) {
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("publishedAt").descending());
+        return blogRepository.findLatestBlog(true, pageable).getContent();
+    }
+
+    public List<BlogWebDto> getRecommendBlogs(Integer blogId, Integer limit) {
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("publishedAt").descending());
+        return blogRepository.getRecommendBlogs(blogId, true, pageable).getContent();
     }
 
     public Page<BlogPublic> getAllBlogs(Integer page, Integer limit) {
@@ -66,27 +68,20 @@ public class BlogService {
     }
 
     // admin get all blogs
-    public List<BlogPublic> getAllBlogsAdmin() {
-        log.info("Get all blogs admin");
-
-        List<Blog> blogs = blogRepository.findAllBlogs();
-        return blogs.stream()
-                .sorted((b1, b2) -> b2.getCreatedAt().compareTo(b1.getCreatedAt()))
-                .map(BlogPublic::of).toList();
+    public List<BlogDto> getAllBlogsAdmin() {
+        return blogRepository.getAllBlogAdmin();
     }
 
     // admin get all blog of logged user
-    public List<BlogPublic> getAllOwnBlogAdmin() {
+    public List<BlogDto> getAllOwnBlogAdmin() {
         User user = SecurityUtils.getCurrentUserLogin();
-        List<Blog> blogs = blogRepository.findByUser_UserIdOrderByCreatedAtDesc(user.getUserId());
-        return blogs.stream().map(BlogPublic::of).toList();
+        return blogRepository.getAllOwnBlogAdmin(user.getUserId());
     }
 
     // get blog by id and slug
-    public BlogPublic getBlogByIdAndSlug(Integer id, String slug) {
-        Blog blog = blogRepository.findByIdAndSlugAndStatus(id, slug, true)
+    public BlogDto getBlogByIdAndSlug(Integer id, String slug) {
+        return blogRepository.findBlogDtoByIdAndSlugAndStatus(id, slug, true)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bài viết với id = " + id + " và slug = " + slug));
-        return BlogPublic.of(blog);
     }
 
     // Get all posts related to main post by id, slug
@@ -102,10 +97,9 @@ public class BlogService {
                 .toList();
     }
 
-    public BlogPublic getBlogById(Integer id) {
-        Blog blog = blogRepository.findById(id)
+    public BlogDto getBlogById(Integer id) {
+        return blogRepository.getBlogDtoById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy bài viết với id = " + id));
-        return BlogPublic.of(blog);
     }
 
     public BlogPublic createBlog(UpsertBlogRequest request) {

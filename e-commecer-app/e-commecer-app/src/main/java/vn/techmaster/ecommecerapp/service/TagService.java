@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.Tag;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.dto.TagDto;
+import vn.techmaster.ecommecerapp.model.dto.TagUsedDto;
 import vn.techmaster.ecommecerapp.model.projection.BlogPublic;
 import vn.techmaster.ecommecerapp.model.projection.TagAdminPublic;
 import vn.techmaster.ecommecerapp.model.projection.TagPublic;
@@ -22,8 +24,8 @@ public class TagService {
     private final TagRepository tagRepository;
     private final Slugify slugify;
 
-    public List<TagPublic> getAllTags() {
-        return tagRepository.findAll().stream().map(TagPublic::of).toList();
+    public List<TagDto> getAllTags() {
+        return tagRepository.getAllTags();
     }
 
     public Page<TagPublic> getAllTags(Integer page, Integer limit) {
@@ -31,8 +33,8 @@ public class TagService {
         return pageData.map(TagPublic::of);
     }
 
-    public List<TagAdminPublic> getAllTagsAdmin() {
-        return tagRepository.findAll().stream().map(TagAdminPublic::of).toList();
+    public List<TagUsedDto> getAllTagsAdmin() {
+        return tagRepository.getAllTagsUsedDto();
     }
 
     public TagAdminPublic createTag(UpsertTagRequest request) {

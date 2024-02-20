@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.Category;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
+import vn.techmaster.ecommecerapp.model.dto.CategoryDto;
+import vn.techmaster.ecommecerapp.model.dto.CategorySeparateDto;
 import vn.techmaster.ecommecerapp.model.projection.CategoryPublic;
 import vn.techmaster.ecommecerapp.model.projection.CategorySeparatePublic;
 import vn.techmaster.ecommecerapp.model.request.UpsertParentCategory;
@@ -62,29 +64,25 @@ public class CategoryService {
         }
     }
 
-    public List<CategorySeparatePublic> findAllByParentCategoryIsNull() {
-        List<Category> categories = categoryRepository.findByParentCategoryIsNull();
-        return categories.stream().map(CategorySeparatePublic::of).toList();
+    public List<CategorySeparateDto> findAllByParentCategoryIsNull() {
+        return categoryRepository.getAllCategorySeparateDto();
     }
 
-    public List<CategoryPublic> findAllParentCategory() {
-        List<Category> categories = categoryRepository.findByParentCategoryIsNull();
-        return categories.stream().map(CategoryPublic::of).toList();
+    public List<CategoryDto> findAllParentCategory() {
+        return categoryRepository.getAllCategoryIsParent();
     }
 
-    public List<CategoryPublic> findAllSubCategory() {
-        List<Category> categories = categoryRepository.findByParentCategoryIsNotNull();
-        return categories.stream().map(CategoryPublic::of).toList();
+    public List<CategoryDto> findAllSubCategory() {
+        return categoryRepository.findAllSubCategory();
     }
 
     // find all sub category by parent category slug
-    public List<CategoryPublic> findAllByParentCategorySlug(String slug) {
-        List<Category> categories = categoryRepository.findByParentCategory_SlugIgnoreCase(slug);
-        return categories.stream().map(CategoryPublic::of).toList();
+    public List<CategoryDto> findAllByParentCategorySlug(String slug) {
+        return categoryRepository.findAllSubCategoryByParentCategorySlug(slug);
     }
 
     public CategoryPublic findBySlug(String categorySlug) {
-        Category category = categoryRepository.findBySlug(categorySlug)
+        Category category =  categoryRepository.findBySlug(categorySlug)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy category với slug " + categorySlug));
         return CategoryPublic.of(category);
     }

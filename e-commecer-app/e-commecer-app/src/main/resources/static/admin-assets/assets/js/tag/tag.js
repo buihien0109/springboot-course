@@ -33,19 +33,23 @@ const renderTags = (tagList, pagination) => {
     let html = "";
     tagList.forEach((tag, index) => {
         html += `
-                    <tr>
-                        <td>${pagination.pageSize * (pagination.pageNumber - 1) + (index + 1)}</td>
-                        <td>${tag.name}</td>
-                        <td>
-                            <span class="mr-2">${tag.used}</span>
-                            ${tag.used > 0 ? `(<a href="javascript:void(0)" onclick="showBlogList(${tag.id})">Xem danh sách</a>)` : ''}
-                        </td>
-                        <td>
-                            <button class="btn btn-warning" onclick="openModalUpdate(${tag.id})">Edit</button>
-                            <button class="btn btn-danger" onclick="deletetag(${tag.id})">Delete</button>
-                        </td>
-                    </tr>
-                `
+            <tr>
+                <td>${pagination.pageSize * (pagination.pageNumber - 1) + (index + 1)}</td>
+                <td>${tag.name}</td>
+                <td>
+                    <span class="mr-2">${tag.used}</span>
+                    ${tag.used > 0 ? `(<a href="javascript:void(0)" onclick="showBlogList(${tag.id})">Xem danh sách</a>)` : ''}
+                </td>
+                <td>
+                    <button class="btn btn-success btn-sm" onclick="openModalUpdate(${tag.id})">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="deletetag(${tag.id})">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+        `
     })
     tableContent.innerHTML = html;
 }
@@ -204,8 +208,8 @@ const showBlogList = (id) => {
             $('#modal-blog-list').modal('show');
         })
         .catch(e => {
-            toastr.error(e.response.data.message);
             console.log(e);
+            toastr.error(e.response.data.message);
         })
 }
 

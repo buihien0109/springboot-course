@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import vn.techmaster.ecommecerapp.entity.OrderTable;
-import vn.techmaster.ecommecerapp.entity.PaymentVoucher;
 import vn.techmaster.ecommecerapp.exception.BadRequestException;
-import vn.techmaster.ecommecerapp.model.projection.OrderTablePublic;
-import vn.techmaster.ecommecerapp.model.projection.PaymentVoucherPublic;
+import vn.techmaster.ecommecerapp.model.dto.OrderUserDetailDto;
+import vn.techmaster.ecommecerapp.model.dto.PaymentVoucherDto;
 import vn.techmaster.ecommecerapp.repository.OrderTableRepository;
 import vn.techmaster.ecommecerapp.repository.PaymentVoucherRepository;
 
@@ -92,22 +91,20 @@ public class ReportService {
         return Map.of("start", startDate, "end", endDate);
     }
 
-    public List<OrderTablePublic> getAllOrders(String startDateString, String endDateString) {
+    public List<OrderUserDetailDto> getAllOrders(String startDateString, String endDateString) {
         Map<String, Date> dateMap = getDate(startDateString, endDateString);
         Date start = dateMap.get("start");
         Date end = dateMap.get("end");
 
-        List<OrderTable> orderTables = orderTableRepository.findByOrderDateBetweenAndStatus(start, end, OrderTable.Status.COMPLETE);
-        return orderTables.stream().map(OrderTablePublic::of).toList();
+        return orderTableRepository.getAllOrdersInRangeTimeByStatus(start, end, OrderTable.Status.COMPLETE.toString());
     }
 
-    public List<PaymentVoucherPublic> getAllPaymentVouchers(String startDateString, String endDateString) {
+    public List<PaymentVoucherDto> getAllPaymentVouchers(String startDateString, String endDateString) {
         Map<String, Date> dateMap = getDate(startDateString, endDateString);
         Date start = dateMap.get("start");
         Date end = dateMap.get("end");
 
-        List<PaymentVoucher> paymentVouchers = paymentVoucherRepository.findByCreatedAtBetween(start, end);
-        return paymentVouchers.stream().map(PaymentVoucherPublic::of).toList();
+        return paymentVoucherRepository.getAllPaymentVouchersDtoInRangeTime(start, end);
     }
 
     public Integer calculateOrderRevenueAmount(String startDateString, String endDateString) {
@@ -128,9 +125,15 @@ public class ReportService {
         Date end = dateMap.get("end");
 
         return paymentVoucherRepository
-                .findByCreatedAtBetween(start, end)
+                .getAllPaymentVouchersDtoInRangeTime(start, end)
                 .stream()
-                .mapToInt(PaymentVoucher::getAmount)
+                .mapToInt(PaymentVoucherDto::getAmount)
+                .sum();
+    }
+
+    public Integer calculateTotalPaymentVoucherAmount(List<PaymentVoucherDto> paymentVouchers) {
+        return paymentVouchers.stream()
+                .mapToInt(PaymentVoucherDto::getAmount)
                 .sum();
     }
 }

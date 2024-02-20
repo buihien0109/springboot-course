@@ -36,7 +36,7 @@ public class SecurityConfig {
             auth.requestMatchers("/", "/danh-muc/**", "/san-pham/**", "/gio-hang", "/yeu-thich", "/bai-viet", "/bai-viet/**", "/thanh-toan", "/dang-nhap", "/dang-ky", "/quen-mat-khau", "/xac-nhan-don-hang/**", "/xac-thuc-tai-khoan", "/dat-lai-mat-khau").permitAll();
             auth.requestMatchers("/api/v1/public/**").permitAll();
             auth.requestMatchers("/admin/login", "/api/v1/admin/auth/login").permitAll();
-            auth.requestMatchers(HttpMethod.GET, "/api/v1/files/{id}").permitAll();
+            auth.requestMatchers(HttpMethod.GET, "/image_uploads/**").permitAll();
             auth.requestMatchers("/admin/**", "/api/v1/admin/**").hasRole("ADMIN");
             auth.requestMatchers("/khach-hang/**").hasAnyRole("ADMIN", "USER");
             auth.requestMatchers("/api/v1/users/**").hasAnyRole("ADMIN", "USER");

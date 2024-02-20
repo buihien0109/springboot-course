@@ -24,9 +24,9 @@ public class WishListUtils {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
             String cookieValue = CookieUtils.getCookieValue(request, ConstantValue.WISHLIST_COOKIE_NAME);
-            log.info("cookieValue: {}", cookieValue);
             if (cookieValue != null) {
-                wishListInCookies = objectMapper.readValue(cookieValue, new TypeReference<List<WishListInCookie>>() {});
+                wishListInCookies = objectMapper.readValue(cookieValue, new TypeReference<List<WishListInCookie>>() {
+                });
             }
             return wishListInCookies;
         } catch (JsonProcessingException e) {
@@ -39,8 +39,6 @@ public class WishListUtils {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String originalWishList = objectMapper.writeValueAsString(wishLists);
-            log.info("WishList: {}", originalWishList);
-            log.info("WishList Size: {}", wishLists.size());
             Cookie cookie = new Cookie(ConstantValue.WISHLIST_COOKIE_NAME, objectMapper.writeValueAsString(URLEncoder.encode(originalWishList, StandardCharsets.UTF_8)));
             cookie.setPath("/");
             response.addCookie(cookie);
