@@ -33,20 +33,26 @@
                 </th:block>
 
                 <th:block th:if="not ${#lists.isEmpty(wishList)}">
-                    <div class="col-lg-6 col-md-6 col-sm-6 wishlist__item__container" th:each="wishListItem : ${wishList}"
+                    <div class="col-lg-6 col-md-6 col-sm-6 wishlist__item__container"
+                         th:each="wishListItem : ${wishList}"
                          th:with="product=${wishListItem.product}" th:data-id="${wishListItem.wishlistId}">
                         <div class="wishlist__item">
                             <div class="wishlist__item__item__pic set-bg">
-                                <img th:src="${product.images.mainImage != null ? product.images.mainImage.imageUrl : '/img/image-placeholder.png'}" alt="">
+                                <img th:src="${product.mainImage != null ? product.mainImage : '/img/image-placeholder.png'}"
+                                     alt="">
                             </div>
                             <div class="wishlist-info d-flex flex-column justify-content-center">
-                                <h6><a th:href="@{/san-pham/{id} (id=${product.productId})}" th:text="${product.name}">Sản
-                                    phẩm 1</a></h6>
+                                <h6>
+                                    <a th:href="@{/san-pham/{id}/{slug} (id=${product.productId}, slug=${product.slug})}"
+                                       th:text="${product.name}">Sản
+                                        phẩm 1</a></h6>
                                 <div class="product-item-price d-flex align-items-center"
                                      th:classappend="${product.discountPrice != null} ? 'has-discount' : ''">
                                     <h5 th:if="${product.discountPrice != null}"
-                                        th:text="${product.discountPrice}" class="discount-price currency"></h5>
-                                    <h5 th:text="${product.price}" class="original-price currency">$100</h5>
+                                        th:text="|${#numbers.formatInteger(product.discountPrice, 3, 'POINT')}đ|"
+                                        class="discount-price"></h5>
+                                    <h5 th:text="|${#numbers.formatInteger(product.price, 3, 'POINT')}đ|"
+                                        class="original-price">$100</h5>
                                 </div>
                             </div>
                             <div class="wishlist-btn d-flex flex-column">

@@ -74,7 +74,7 @@ btnCreate.addEventListener("click", async () => {
             toastr.error("Tạo nhà cung cấp thất bại");
         }
     } catch (e) {
-        toastr.error(e.response.data.message);
         console.log(e);
+        toastr.error(e.response.data.message);
     }
 })

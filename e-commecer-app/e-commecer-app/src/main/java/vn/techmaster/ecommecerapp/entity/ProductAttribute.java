@@ -3,25 +3,27 @@ package vn.techmaster.ecommecerapp.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name = "product_attribute")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductAttribute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long attributeId;
+    Long attributeId;
 
-    @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    private Product product;
+    Product product;
 
-    private String attributeName;
-    private String attributeValue;
+    String attributeName;
+
+    @Column(columnDefinition = "TEXT")
+    String attributeValue;
 }

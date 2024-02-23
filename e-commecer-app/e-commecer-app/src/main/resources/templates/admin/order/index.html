@@ -61,9 +61,16 @@
                                            th:text="${order.orderNumber}"></a>
                                     </td>
                                     <td>
-                                        <a th:if="${order.userId != null}" th:href="@{/admin/users/{id}/detail(id=${order.userId})}"
-                                           th:text="${order.username}"></a>
-                                        <th:block th:if="${order.userId == null}" th:text="${order.username}"></th:block>
+                                        <div th:if="${order.userId != null}" class="d-flex align-items-center">
+                                            <a th:href="@{/admin/users/{id}/detail(id=${order.userId})}"
+                                               th:text="${order.username}"></a>
+                                            <span class="badge badge-success ml-2">Khách hàng</span>
+                                        </div>
+
+                                        <div th:if="${order.userId == null}" class="d-flex align-items-center">
+                                            <span th:text="${order.username}"></span>
+                                            <span class="badge badge-warning ml-2">Khách vãng lai</span>
+                                        </div>
                                     </td>
                                     <td th:text="${order.email}"></td>
                                     <td th:text="${order.phone}"></td>

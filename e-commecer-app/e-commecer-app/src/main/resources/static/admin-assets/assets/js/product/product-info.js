@@ -8,9 +8,9 @@ $.validator.addMethod(
     "validateMinValue",
     function (value, element) {
         // get value of type
-        return formatPrice(value) > 0
+        return formatPrice(value) >= 0
     },
-    "Giá trị giảm phải lớn hơn 0"
+    "Giá trị phải >= 0"
 );
 
 $.validator.addMethod(
@@ -19,7 +19,7 @@ $.validator.addMethod(
         // check if value is number
         return Number.isInteger(Number(formatPrice(value)))
     },
-    "Giá trị giảm phải là số nguyên"
+    "Giá trị phải là số nguyên"
 );
 
 // validate form
@@ -30,6 +30,11 @@ $('#form-update-product').validate({
         },
         description: {
             required: true
+        },
+        stockQuantity: {
+            required: true,
+            validateMinValue: true,
+            validateInteger: true
         },
         price: {
             required: true,
@@ -46,14 +51,23 @@ $('#form-update-product').validate({
         sub: {
             required: true,
             validateInteger: true
+        },
+        supplier: {
+            required: true,
+            validateInteger: true
         }
     },
     messages: {
         name: {
-            required: "Tên chiến dịch giảm giá không được để trống"
+            required: "Tên không được để trống"
         },
         description: {
             required: "Mô tả không được để trống",
+        },
+        stockQuantity: {
+            required: "Số lượng không được để trống",
+            validateMinValue: "Số lượng phải lớn hơn 0",
+            validateInteger: "Số lượng phải là số nguyên"
         },
         price: {
             required: "Giá không được để trống",
@@ -70,6 +84,10 @@ $('#form-update-product').validate({
         sub: {
             required: "Danh mục con không được để trống",
             validateInteger: "Danh mục con không được để trống"
+        },
+        supplier: {
+            required: "Nhà cung cấp không được để trống",
+            validateInteger: "Nhà cung cấp không được để trống"
         }
     },
     errorElement: 'span',
@@ -134,11 +152,12 @@ btnUpdate.addEventListener(("click"), () => {
     const status = document.getElementById('status').value;
     const categoryId = Number(document.getElementById('sub-category').value);
     const supplierId = Number(document.getElementById('supplier').value);
+    const stockQuantity = Number(document.getElementById('stock-quantity').value);
     const attributes = product.attributes;
 
-    // create product object
+    // update product object
     const data = {
-        name, price, description, status, categoryId, supplierId, attributes
+        name, price, description, status, categoryId, supplierId, attributes, stockQuantity
     }
 
     axios.put(`/api/v1/admin/products/${product.productId}`, data)

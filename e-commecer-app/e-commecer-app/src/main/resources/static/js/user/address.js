@@ -90,11 +90,11 @@ const renderProvince = (provinces) => {
     wardSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Xã/Phường</option>';
 
     provinces.forEach(province => {
-        const {ProvinceID, ProvinceName} = province;
+        const {code, name} = province;
         const option = document.createElement('option');
-        option.value = ProvinceID;
-        option.innerText = ProvinceName;
-        option.setAttribute('data-province-name', ProvinceName);
+        option.value = code;
+        option.innerText = name;
+        option.setAttribute('data-province-name', name);
         provinceSelect.appendChild(option);
     });
 }
@@ -102,11 +102,11 @@ const renderProvince = (provinces) => {
 const renderDistrict = (districts) => {
     districtSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Quận/Huyện</option>';
     districts.forEach(district => {
-        const {DistrictID, DistrictName} = district;
+        const {code, name} = district;
         const option = document.createElement('option');
-        option.value = DistrictID;
-        option.innerText = DistrictName;
-        option.setAttribute('data-district-name', DistrictName);
+        option.value = code;
+        option.innerText = name;
+        option.setAttribute('data-district-name', name);
         districtSelect.appendChild(option);
     });
 }
@@ -114,20 +114,20 @@ const renderDistrict = (districts) => {
 const renderWard = (wards) => {
     wardSelect.innerHTML = '<option hidden="hidden" value="">-- Chọn Xã/Phường</option>';
     wards.forEach(ward => {
-        const {WardCode, WardName} = ward;
+        const {code, name} = ward;
         const option = document.createElement('option');
-        option.value = WardCode;
-        option.innerText = WardName;
-        option.setAttribute('data-ward-name', WardName);
+        option.value = code;
+        option.innerText = name;
+        option.setAttribute('data-ward-name', name);
         wardSelect.appendChild(option);
     });
 }
 
 const getProvinces = async () => {
     try {
-        const response = await axios.get('/api/v1/public/address/provinces');
+        const response = await axios.get('/api/v2/public/address/provinces');
         if (response.status === 200) {
-            const {data} = response.data;
+            const {data} = response;
             renderProvince(data);
             districtSelect.disabled = true;
             wardSelect.disabled = true;
@@ -148,9 +148,9 @@ provinceSelect.addEventListener('change', (event) => {
 
 const getDistricts = async (provinceId) => {
     try {
-        const response = await axios.get(`/api/v1/public/address/districts?province_id=${provinceId}`);
+        const response = await axios.get(`/api/v2/public/address/districts?provinceCode=${provinceId}`);
         if (response.status === 200) {
-            const {data} = response.data;
+            const {data} = response;
             renderDistrict(data);
         }
     } catch (error) {
@@ -167,9 +167,9 @@ districtSelect.addEventListener('change', (event) => {
 
 const getWards = async (districtId) => {
     try {
-        const response = await axios.get(`/api/v1/public/address/wards?district_id=${districtId}`);
+        const response = await axios.get(`/api/v2/public/address/wards?districtCode=${districtId}`);
         if (response.status === 200) {
-            const {data} = response.data;
+            const {data} = response;
             renderWard(data);
         }
     } catch (error) {

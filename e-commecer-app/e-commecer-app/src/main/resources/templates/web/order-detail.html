@@ -37,7 +37,8 @@
                         </div>
                         <div class="text-left">
                             <h4 class="mt-0">Đặt hàng thành công</h4>
-                            <p style="margin-bottom: 10px">Mã đơn hàng : <span th:text="'#' + ${order.orderNumber}" class="font-weight-bold"></span></p>
+                            <p style="margin-bottom: 10px">Mã đơn hàng : <span th:text="'#' + ${order.orderNumber}"
+                                                                               class="font-weight-bold"></span></p>
                             <p class="mb-0">Cám ơn bạn đã mua hàng!</p>
                         </div>
                     </div>
@@ -52,10 +53,14 @@
                         <div class="order-detail__title">
                             <h4>Thông tin giao hàng</h4>
                             <ul>
-                                <li><span class="font-weight-bold">Họ tên:</span> <span th:text="${order.username}">Bùi Hiên</span></li>
-                                <li><span class="font-weight-bold">SĐT:</span> <span th:text="${order.phone}">0344005816</span></li>
-                                <li><span class="font-weight-bold">Email:</span> <span th:text="${order.email}">hien@gmail.com</span></li>
-                                <th:block th:with="addressDetail=|${order.address} - ${order.ward} - ${order.district} - ${order.province}|">
+                                <li><span class="font-weight-bold">Họ tên:</span> <span th:text="${order.username}">Bùi Hiên</span>
+                                </li>
+                                <li><span class="font-weight-bold">SĐT:</span> <span
+                                        th:text="${order.phone}">0344005816</span></li>
+                                <li><span class="font-weight-bold">Email:</span> <span th:text="${order.email}">hien@gmail.com</span>
+                                </li>
+                                <th:block
+                                        th:with="addressDetail=|${order.address} - ${order.ward} - ${order.district} - ${order.province}|">
                                     <li><span class="font-weight-bold">Địa chỉ:</span> <span th:text="${addressDetail}">Xóm 9 Thôn Vân - Thụy Ninh - Thái Thụy - Thái Bình</span>
                                     </li>
                                 </th:block>
@@ -67,14 +72,18 @@
                         <div class="order-detail__title">
                             <h4>Phương thức vận chuyển</h4>
                             <ul>
-                                <li th:if="${order.shippingMethod == T(vn.techmaster.ecommecerapp.entity.OrderTable.ShippingMethod).STANDARD}">Giao hàng tận nơi</li>
+                                <li th:if="${order.shippingMethod == T(vn.techmaster.ecommecerapp.entity.OrderTable.ShippingMethod).STANDARD}">
+                                    Giao hàng tận nơi
+                                </li>
                             </ul>
                         </div>
 
                         <div class="order-detail__title">
                             <h4>Phương thức thanh toán</h4>
                             <ul>
-                                <li th:if="${order.paymentMethod == T(vn.techmaster.ecommecerapp.entity.OrderTable.PaymentMethod).COD}">Thanh toán khi giao hàng (COD)</li>
+                                <li th:if="${order.paymentMethod == T(vn.techmaster.ecommecerapp.entity.OrderTable.PaymentMethod).COD}">
+                                    Thanh toán khi giao hàng (COD)
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -87,16 +96,23 @@
                         <ul>
                             <li th:each="orderItem : ${order.orderItems}">
                                 <th:block>
-                                    <th:block th:text="${orderItem.product.name}"></th:block> (x <th:block th:text="${orderItem.quantity}"></th:block>)
+                                    <th:block th:text="${orderItem.product.name}"></th:block>
+                                    (x <th:block th:text="${orderItem.quantity}"></th:block>)
                                 </th:block>
-                                <span class="currency" th:text="${orderItem.quantity * orderItem.price}">21690</span>
+                                <span th:text="|${#numbers.formatInteger(orderItem.quantity * orderItem.price, 3, 'POINT')}đ|">21690</span>
                             </li>
                         </ul>
-                        <div class="checkout__order__subtotal">Thành tiền <span class="temporary-amount currency" th:text="${order.getTemporaryAmount()}">181456</span>
+                        <div class="checkout__order__subtotal">
+                            Thành tiền <span class="temporary-amount"
+                                             th:text="|${#numbers.formatInteger(order.getTemporaryAmount(), 3, 'POINT')}đ|">181456</span>
                         </div>
-                        <div class="checkout__order__discount">Giảm giá <span class="discount-amount currency" th:text="${order.getDiscountAmount()}">0</span>
+                        <div class="checkout__order__discount">
+                            Giảm giá <span class="discount-amount"
+                                           th:text="|${#numbers.formatInteger(order.getDiscountAmount(), 3, 'POINT')}đ|">0</span>
                         </div>
-                        <div class="checkout__order__total">Tổng tiền <span class="total-amount currency" th:text="${order.getTotalAmount()}">181456</span>
+                        <div class="checkout__order__total">
+                            Tổng tiền <span class="total-amount"
+                                            th:text="|${#numbers.formatInteger(order.getTotalAmount(), 3, 'POINT')}đ|">181456</span>
                         </div>
                     </div>
                 </div>

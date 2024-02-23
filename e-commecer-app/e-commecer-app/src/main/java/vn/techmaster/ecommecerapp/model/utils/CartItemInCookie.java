@@ -1,6 +1,7 @@
 package vn.techmaster.ecommecerapp.model.utils;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -8,8 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartItemInCookie {
-    private Long cartItemId;
-    private Long productId;
-    private Integer quantity;
+    Long cartItemId;
+    Long productId;
+    Integer quantity;
 }

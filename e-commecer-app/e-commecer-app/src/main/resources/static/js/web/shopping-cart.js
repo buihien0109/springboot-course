@@ -9,7 +9,7 @@ const renderCart = (cartItems) => {
                         <td class="shoping__cart__item">
                             <img src="${ct.product.mainImage != null ? ct.product.mainImage : '/img/image-placeholder.png'}" alt="">
                             <h5>
-                                <a href="/san-pham/${ct.product.productId}">${ct.product.name}</a>
+                                <a href="/san-pham/${ct.product.productId}/${ct.product.slug}">${ct.product.name}</a>
                             </h5>
                         </td>
                         <td class="shoping__cart__price ${ct.product.discountPrice != null ? 'has-discount' : ''}">

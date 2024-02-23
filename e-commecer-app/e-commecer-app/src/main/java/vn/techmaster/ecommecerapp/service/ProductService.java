@@ -3,20 +3,19 @@ package vn.techmaster.ecommecerapp.service;
 import com.github.slugify.Slugify;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import vn.techmaster.ecommecerapp.entity.*;
+import vn.techmaster.ecommecerapp.entity.Category;
+import vn.techmaster.ecommecerapp.entity.Product;
+import vn.techmaster.ecommecerapp.entity.ProductAttribute;
+import vn.techmaster.ecommecerapp.entity.Supplier;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
-import vn.techmaster.ecommecerapp.model.ProductAdminDto;
 import vn.techmaster.ecommecerapp.model.dto.CategorySeparateDto;
+import vn.techmaster.ecommecerapp.model.dto.ProductAdminDto;
 import vn.techmaster.ecommecerapp.model.dto.ProductNormalAdminDto;
 import vn.techmaster.ecommecerapp.model.dto.ProductNormalDto;
-import vn.techmaster.ecommecerapp.model.projection.CategorySeparatePublic;
 import vn.techmaster.ecommecerapp.model.projection.ProductAttributePublic;
-import vn.techmaster.ecommecerapp.model.projection.product.ProductNormalPublic;
 import vn.techmaster.ecommecerapp.model.projection.product.ProductPublic;
 import vn.techmaster.ecommecerapp.model.request.CreateProductRequest;
 import vn.techmaster.ecommecerapp.model.request.UpdateProductRequest;
@@ -24,10 +23,13 @@ import vn.techmaster.ecommecerapp.model.request.UpsertProductAttributeRequest;
 import vn.techmaster.ecommecerapp.model.response.ImageResponse;
 import vn.techmaster.ecommecerapp.model.response.PageResponse;
 import vn.techmaster.ecommecerapp.model.response.PageResponseImpl;
-import vn.techmaster.ecommecerapp.repository.*;
+import vn.techmaster.ecommecerapp.repository.CategoryRepository;
+import vn.techmaster.ecommecerapp.repository.ProductAttributeRepository;
+import vn.techmaster.ecommecerapp.repository.ProductRepository;
+import vn.techmaster.ecommecerapp.repository.SupplierRepository;
+import vn.techmaster.ecommecerapp.utils.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +68,12 @@ public class ProductService {
         return ProductPublic.of(product);
     }
 
+    public ProductPublic findByIdAndSlug(Long id, String slug) {
+        Product product = productRepository.findByProductIdAndSlug(id, slug)
+                .orElseThrow(() -> new ResouceNotFoundException("Cannot find product by id " + id + " and slug " + slug));
+        return ProductPublic.of(product);
+    }
+
     public ProductPublic save(Product product) {
         Product productSaved = productRepository.save(product);
         return ProductPublic.of(productSaved);
@@ -88,11 +96,14 @@ public class ProductService {
     public PageResponse<ProductNormalDto> findAllProductByParentCategorySlug(String slug, Integer page, Integer size, String sub) {
         List<ProductNormalDto> productList;
         if (sub != null && !sub.isEmpty()) {
+            log.info("Sub category: {}", sub);
             productList = productRepository.getProductsByCategorySlug(sub);
         } else {
+            log.info("Parent category: {}", slug);
             productList = productRepository.getProductsByParentCategorySlug(slug);
         }
 
+        log.info("Product list size: {}", productList.size());
         return new PageResponseImpl<>(productList, page, size);
     }
 
@@ -170,14 +181,20 @@ public class ProductService {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy danh mục với id " + request.getCategoryId()));
 
+        // check supplier id is existed
+        Supplier supplier = supplierRepository.findById(request.getSupplierId())
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id " + request.getSupplierId()));
+
         Product product = new Product();
         product.setName(request.getName());
         product.setSlug(slugify.slugify(request.getName()));
         product.setDescription(request.getDescription());
+        product.setStockQuantity(request.getStockQuantity());
         product.setPrice(request.getPrice());
-        product.setStockQuantity(0);
+        product.setMainImage(StringUtils.generateLinkImage(request.getName()));
         product.setStatus(request.getStatus());
         product.setCategory(category);
+        product.setSupplier(supplier);
 
         productRepository.save(product);
         return ProductPublic.of(product);
@@ -194,6 +211,7 @@ public class ProductService {
         product.setName(request.getName());
         product.setSlug(slugify.slugify(request.getName()));
         product.setDescription(request.getDescription());
+        product.setStockQuantity(request.getStockQuantity());
         product.setPrice(request.getPrice());
         product.setStatus(request.getStatus());
         product.setCategory(category);
@@ -291,6 +309,8 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm với id " + productId));
 
+        // TODO: Xóa ảnh cũ
+
         ImageResponse imageResponse = fileServerService.uploadFile(file);
         product.setMainImage(imageResponse.getUrl());
         productRepository.save(product);
@@ -313,6 +333,8 @@ public class ProductService {
     public void deleteSubImage(Long productId, String imageId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy sản phẩm với id " + productId));
+
+        // TODO: Xóa ảnh cũ
 
         product.getSubImages().removeIf(image -> image.toLowerCase().contains(imageId.toLowerCase()));
         productRepository.save(product);

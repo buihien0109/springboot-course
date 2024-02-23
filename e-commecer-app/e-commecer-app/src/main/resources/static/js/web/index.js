@@ -46,28 +46,28 @@ const renderLoadMore = (categorySlug) => {
     let html = '';
     dataItem.products.forEach(product => {
         html += `
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg" style="background-image: url(${product.imageUrl != null ? product.imageUrl : '/img/image-placeholder.png'})">
-                                <ul class="product__item__pic__hover">
-                                    <li><a href="javascript:void(0)" onclick="addToWishList(${product.productId})"><i class="fa fa-heart"></i></a></li>
-                                    <li><a href="javascript:void(0)" onclick="addToCart(${product.productId}, 1)"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="/san-pham/${product.productId}">${product.name}</a></h6>
-                                <div class="${product.discountPrice != null ? 'product-item-price' : ''}">
-                                    ${
-            product.discountPrice != null ?
-                `<h5 class="discount-price currency">${formatCurrency(product.discountPrice)}</h5>
-                                            <h5 class="original-price currency">${formatCurrency(product.price)}</h5>`
-                :
-                `<h5 class="currency">${formatCurrency(product.price)}</h5>`
-        }
-                                </div>
-                            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="product__item">
+                    <div class="product__item__pic set-bg" style="background-image: url(${product.imageUrl != null ? product.imageUrl : '/img/image-placeholder.png'})">
+                        <ul class="product__item__pic__hover">
+                            <li><a href="javascript:void(0)" onclick="addToWishList(${product.productId})"><i class="fa fa-heart"></i></a></li>
+                            <li><a href="javascript:void(0)" onclick="addToCart(${product.productId}, 1)"><i class="fa fa-shopping-cart"></i></a></li>
+                        </ul>
+                    </div>
+                    <div class="product__item__text">
+                        <h6><a href="/san-pham/${product.productId}/${product.slug}">${product.name}</a></h6>
+                        <div class="${product.discountPrice != null ? 'product-item-price' : ''}">
+                            ${
+                                product.discountPrice != null ?
+                                    `<h5 class="discount-price currency">${formatCurrency(product.discountPrice)}</h5>
+                                                                <h5 class="original-price currency">${formatCurrency(product.price)}</h5>`
+                                    :
+                                    `<h5 class="currency">${formatCurrency(product.price)}</h5>`
+                            }
                         </div>
                     </div>
+                </div>
+            </div>
                 `
     })
     const productContainer = document.querySelector(`[data-name="${dataItem.name}"] .product-list`);

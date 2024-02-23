@@ -24,4 +24,6 @@ public class AdminUpdateOrderRequest {
     private OrderTable.PaymentMethod paymentMethod;
     private String couponCode;
     private Integer couponDiscount;
+    private OrderTable.Status status;
+    private String adminNote;
 }

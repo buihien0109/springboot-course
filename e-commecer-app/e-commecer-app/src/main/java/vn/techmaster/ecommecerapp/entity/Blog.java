@@ -2,6 +2,7 @@ package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import vn.techmaster.ecommecerapp.model.dto.BlogDto;
@@ -101,36 +102,37 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "blog")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    Integer id;
 
-    private String title;
-    private String slug;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String description;
+    String title;
+    String slug;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+    String description;
 
-    private String thumbnail;
-    private Date createdAt;
-    private Date updatedAt;
-    private Date publishedAt;
-    private Boolean status;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    String content;
+
+    String thumbnail;
+    Date createdAt;
+    Date updatedAt;
+    Date publishedAt;
+    Boolean status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    User user;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "blog_tag",
             joinColumns = @JoinColumn(name = "blog_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private List<Tag> tags = new ArrayList<>();
+    List<Tag> tags = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {

@@ -1,15 +1,12 @@
 package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import vn.techmaster.ecommecerapp.model.dto.DiscountCampaignDto;
 import vn.techmaster.ecommecerapp.model.dto.DiscountCampaignNormalDto;
-import vn.techmaster.ecommecerapp.model.dto.TagUsedDto;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -93,7 +90,6 @@ import java.util.Set;
                                 JSON_OBJECT(
                                     'productId', p.product_id,
                                     'name', p.name,
-                                    'slug', p.slug,
                                     'price', p.price,
                                     'stockQuantity', p.stock_quantity,
                                     'status', p.status,
@@ -117,7 +113,7 @@ import java.util.Set;
                     LEFT JOIN category c ON p.category_id = c.category_id
                     LEFT JOIN supplier s ON p.supplier_id = s.supplier_id
                 WHERE
-                    dc.campaign_id = 3
+                    dc.campaign_id = ?1
                 GROUP BY
                     dc.campaign_id
                 """
@@ -129,28 +125,29 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "discount_campaign")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class DiscountCampaign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long campaignId;
+    Long campaignId;
 
-    private String name;
-    private String slug;
-    private String description;
+    String name;
+    String slug;
+    String description;
 
     @Enumerated(EnumType.STRING)
-    private DiscountType discountType;
-    private Integer discountValue;
+    DiscountType discountType;
 
-    private Date startDate;
-    private Date endDate;
+    Integer discountValue;
+    Date startDate;
+    Date endDate;
 
     @Transient
-    private Status status;
+    Status status;
 
     @ManyToMany(mappedBy = "discounts", fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
-    private Set<Product> products = new LinkedHashSet<>();
+    Set<Product> products = new LinkedHashSet<>();
 
     public void removeProduct(Product product) {
         products.remove(product);

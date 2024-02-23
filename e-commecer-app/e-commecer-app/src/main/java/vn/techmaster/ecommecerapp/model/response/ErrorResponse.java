@@ -1,16 +1,15 @@
 package vn.techmaster.ecommecerapp.model.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ErrorResponse {
-    private HttpStatus status;
-    private Object message;
+    HttpStatus status;
+    Object message;
 }

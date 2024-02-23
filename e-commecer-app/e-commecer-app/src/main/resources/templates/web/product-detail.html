@@ -59,17 +59,15 @@
                             <div class="rating mr-1">
 
                             </div>
-                            <span>(<span class="review-count d-inline-block m-0">18</span> đánh giá)</span>
+                            <span>(<span class="review-count d-inline-block m-0"></span> đánh giá)</span>
                         </div>
                         <div class="product__details__price"
                              th:classappend="${product.discountPrice != null} ? 'has-discount' : ''">
                             <span th:if="${product.discountPrice != null}"
-                                  class="currency"
                                   th:classappend="${product.discountPrice != null} ? 'discount-price' : ''"
-                                  th:text="${product.discountPrice}"></span>
-                            <span class="currency"
-                                  th:classappend="${product.discountPrice != null} ? 'original-price' : ''"
-                                  th:text="${product.price}"></span>
+                                  th:text="|${#numbers.formatInteger(product.discountPrice, 3, 'POINT')}đ|"></span>
+                            <span th:classappend="${product.discountPrice != null} ? 'original-price' : ''"
+                                  th:text="|${#numbers.formatInteger(product.price, 3, 'POINT')}đ|"></span>
                         </div>
                         <p th:text="${product.description}">Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.
                             Vestibulum ac diam sit amet quam
@@ -259,7 +257,7 @@
     </div>
 
     <!-- Related Product Section Begin -->
-    <section class="related-product">
+    <section class="related-product" th:if="not ${#lists.isEmpty(relatedProducts)}">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -281,13 +279,12 @@
                             </ul>
                         </div>
                         <div class="product__item__text">
-                            <h6><a th:href="@{/san-pham/{id} (id=${rProduct.productId})}" th:text="${rProduct.name}">Sản
+                            <h6><a th:href="@{/san-pham/{id}/{slug} (id=${rProduct.productId}, slug=${rProduct.slug})}" th:text="${rProduct.name}">Sản
                                 phẩm 1</a></h6>
                             <div th:classappend="${rProduct.discountPrice != null} ? 'product-item-price' : ''">
-                                <h5 th:if="${rProduct.discountPrice != null}" th:text="${rProduct.discountPrice}"
-                                    class="discount-price currency"></h5>
-                                <h5 th:text="${rProduct.price}"
-                                    class="currency"
+                                <h5 th:if="${rProduct.discountPrice != null}" th:text="|${#numbers.formatInteger(rProduct.discountPrice, 3, 'POINT')}đ|"
+                                    class="discount-price"></h5>
+                                <h5 th:text="|${#numbers.formatInteger(rProduct.price, 3, 'POINT')}đ|"
                                     th:classappend="${rProduct.discountPrice != null ? 'original-price' : ''}">$100</h5>
                             </div>
                         </div>

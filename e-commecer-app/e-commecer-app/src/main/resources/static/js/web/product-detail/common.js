@@ -2,7 +2,7 @@
     Product Details Pic Slider
 ----------------------------------*/
 $(".product__details__pic__slider").owlCarousel({
-    margin: 20, items: 4, dots: true, smartSpeed: 1200, autoHeight: false, autoplay: true, center: true, loop: true,
+    margin: 20, items: 4, dots: true, smartSpeed: 1200, autoHeight: false, autoplay: true, center: true, loop: true
 });
 
 /*------------------
@@ -16,6 +16,8 @@ $('.product__details__pic__slider img').on('click', function () {
             src: imgurl
         });
     }
+    $(".product__details__pic__slider.owl-carousel.owl-drag .owl-item.selected").removeClass("selected");
+    $(this).parent().addClass('selected');
 });
 
 /*-------------------
@@ -113,11 +115,11 @@ const renderReview = review => {
                     <div class="rating mb-2 d-flex align-items-center">
                         ${ratingHtml}
                     </div>
-                    <p class="content">${review.comment}</p>
+                    <p class="content" style="margin-bottom: 8px">${review.comment}</p>
                     ${isLogin && currentUser.userId === review.authorId ? `
                             <div>
-                                <button class="border-0 bg-transparent btn-edit-review text-primary" onclick="openModalToUpdateReview(${review.reviewId})">Sửa</button>
-                                <button class="border-0 bg-transparent btn-delete-review text-primary" onclick="deleteReview(${review.reviewId})">Xóa</button>
+                                <button class="p-0 border-0 bg-transparent btn-edit-review text-primary mr-2" style="text-decoration: underline" onclick="openModalToUpdateReview(${review.reviewId})">Sửa</button>
+                                <button class="p-0 border-0 bg-transparent btn-delete-review text-danger" style="text-decoration: underline" onclick="deleteReview(${review.reviewId})">Xóa</button>
                             </div>
                             ` : ""}
                 </div>

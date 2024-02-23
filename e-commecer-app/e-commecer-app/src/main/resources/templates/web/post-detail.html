@@ -42,7 +42,7 @@
                             <h4>Danh mục</h4>
                             <ul>
                                 <li th:each="tag : ${tags}">
-                                    <a th:href="@{/bai-viet?tag={slug} (slug=${tag.slug})}"
+                                    <a th:href="@{/bai-viet (tag=${tag.slug})}"
                                        th:classappend="${tag.slug == currentTag ? 'active' : ''}" th:text="${tag.name}">Làm
                                         đẹp</a>
                                 </li>

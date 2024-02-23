@@ -19,6 +19,7 @@ import vn.techmaster.ecommecerapp.model.request.UpsertBlogRequest;
 import vn.techmaster.ecommecerapp.repository.BlogRepository;
 import vn.techmaster.ecommecerapp.repository.TagRepository;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
+import vn.techmaster.ecommecerapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +114,7 @@ public class BlogService {
                 .slug(slugify.slugify(request.getTitle()))
                 .content(request.getContent())
                 .description(request.getDescription())
-                .thumbnail(request.getThumbnail())
+                .thumbnail(StringUtils.generateLinkImage(request.getTitle()))
                 .status(request.getStatus())
                 .tags(tags)
                 .user(user)

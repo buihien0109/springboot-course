@@ -78,6 +78,11 @@ const createReview = () => {
         return;
     }
 
+    if (currentRating === 0) {
+        toastr.warning("Vui lòng chọn số sao");
+        return;
+    }
+
     const review = {
         authorName : authorName.value,
         authorEmail : authorEmail.value,

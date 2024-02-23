@@ -56,11 +56,15 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Mô tả ngắn</label>
-                                            <textarea id="description" class="form-control" rows="8" name="description"></textarea>
+                                            <textarea id="description" class="form-control" rows="16" name="description"></textarea>
                                         </div>
                                     </div>
 
                                     <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Số lượng</label>
+                                            <input type="text" class="form-control" id="stock-quantity" name="stockQuantity" value="0"/>
+                                        </div>
                                         <div class="form-group">
                                             <label>Giá sản phẩm</label>
                                             <input type="text" class="form-control" id="price" name="price"/>
@@ -85,6 +89,15 @@
                                             <label>Danh mục con</label>
                                             <select id="sub-category" class="form-control" disabled name="sub">
                                                 <option hidden="hidden">Chọn danh mục con</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Nhà cung cấp</label>
+                                            <select id="supplier" class="form-control" name="supplier">
+                                                <option hidden="hidden">Chọn nhà cung cấp</option>
+                                                <option th:each="supplier : ${supplierList}"
+                                                        th:value="${supplier.supplierId}"
+                                                        th:text="${supplier.name}"></option>
                                             </select>
                                         </div>
                                     </div>

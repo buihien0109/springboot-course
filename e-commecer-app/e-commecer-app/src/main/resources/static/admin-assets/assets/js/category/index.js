@@ -188,8 +188,8 @@ const createParentCategory = () => {
             toastr.success("Tạo thành công")
         })
         .catch(e => {
-            toastr.error(e.response.data.message);
             console.log(e);
+            toastr.error(e.response.data.message);
         })
 }
 
@@ -216,8 +216,8 @@ const updateParentCategory = () => {
             idParentUpdate = null;
         })
         .catch(e => {
-            toastr.error(e.response.data.message);
             console.log(e);
+            toastr.error(e.response.data.message);
         })
 }
 
@@ -295,8 +295,8 @@ const createSubCategory = () => {
             toastr.success("Tạo thành công")
         })
         .catch(e => {
-            toastr.error(e.response.data.message);
             console.log(e);
+            toastr.error(e.response.data.message);
         })
 }
 
@@ -345,8 +345,8 @@ const updateSubCategory = () => {
             idSubUpdate = null;
         })
         .catch(e => {
-            toastr.error(e.response.data.message);
             console.log(e);
+            toastr.error(e.response.data.message);
         })
 }
 

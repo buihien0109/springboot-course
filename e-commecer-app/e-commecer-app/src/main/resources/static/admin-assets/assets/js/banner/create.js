@@ -36,7 +36,7 @@ btnCreate.addEventListener('click', function () {
     const name = document.getElementById('name').value;
     const linkRedirect = document.getElementById('link-redirect').value;
     const status = document.getElementById('status').value;
-    const url = document.getElementById('image').src;
+    const url = document.getElementById('image').getAttribute('src');
 
     const data = {
         name: name,

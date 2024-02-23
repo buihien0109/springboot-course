@@ -1,4 +1,3 @@
-
 //Initialize Select2 Elements
 $(".select2").select2({
     placeholder: "Chọn role",
@@ -72,7 +71,6 @@ btnUpdate.addEventListener("click", async () => {
         phone: userPhone.value,
         roleIds: userRoles.val().map(e => Number(e))
     }
-    console.log(data);
 
     try {
         let res = await axios.put(`/api/v1/admin/users/${user.userId}`, data)
@@ -81,8 +79,8 @@ btnUpdate.addEventListener("click", async () => {
             toastr.success("Cập nhật thành công");
         }
     } catch (e) {
-        toastr.error(e.response.data.message);
         console.log(e);
+        toastr.error(e.response.data.message);
     }
 })
 
@@ -106,7 +104,7 @@ avatarInput.addEventListener('change', (e) => {
         })
         .catch(err => {
             console.log(err)
-            toastr.error('Cập nhật avatar thất bại');
+            toastr.error(err.response.data.message);
         });
 });
 
@@ -119,8 +117,30 @@ btnResetPassword.addEventListener('click', async () => {
         let res = await axios.put(`/api/v1/admin/users/${user.userId}/reset-password`);
         if (res.status === 200) {
             toastr.success(`Reset mật khẩu thành công. Mật khẩu mới là: ${res.data}`);
+        } else {
+            toastr.error('Reset mật khẩu thất bại');
         }
     } catch (e) {
-        toastr.error('Reset mật khẩu thất bại');
+        console.log(e)
+        toastr.error(e.response.data.message);
+    }
+})
+
+// Enable User
+const btnEnable = document.getElementById('btn-enable-user');
+btnEnable.addEventListener('click', async () => {
+    const isConfirm = confirm('Bạn có chắc chắn muốn kích hoạt tài khoản này?');
+    if (!isConfirm) return;
+    try {
+        let res = await axios.post(`/api/v1/admin/users/${user.userId}/enable`);
+        if (res.status === 204) {
+            toastr.success('Kích hoạt tài khoản thành công');
+            btnEnable.classList.add('d-none');
+        } else {
+            toastr.error('Kích hoạt tài khoản thất bại');
+        }
+    } catch (e) {
+        console.log(e)
+        toastr.error(e.response.data.message);
     }
 })

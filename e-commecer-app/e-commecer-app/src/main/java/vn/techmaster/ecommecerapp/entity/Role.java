@@ -1,10 +1,8 @@
 package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
@@ -15,13 +13,14 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "role")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roleId;
+    Long roleId;
 
     @Column(nullable = false, unique = true)
-    private String name;
+    String name;
 
     public Role(String name) {
         this.name = name;

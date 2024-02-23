@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 public class BeanConfig {
     @Bean
     public Slugify slugify() {
-        return Slugify.builder().build();
+        return Slugify.builder()
+                .customReplacement("đ", "d")
+                .customReplacement("Đ", "D")
+                .build();
     }
 }

@@ -31,6 +31,7 @@ public class ProductController {
     public String getProductCreatePage(Model model) {
         model.addAttribute("statusList", Product.Status.values());
         model.addAttribute("categoryList", categoryService.findAllByParentCategoryIsNull());
+        model.addAttribute("supplierList", supplierService.getAllSuppliers());
         return "admin/product/create";
     }
 

@@ -71,10 +71,28 @@ btnUpdate.addEventListener("click", async () => {
             toastr.error("Cập nhật nhà cung cấp thất bại");
         }
     } catch (e) {
-        toastr.error(e.response.data.message);
         console.log(e);
+        toastr.error(e.response.data.message);
     }
 })
+
+const btnDelete = document.getElementById("btn-delete");
+btnDelete.addEventListener("click", () => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa nhà cung cấp này?")) {
+        axios.delete(`/api/v1/admin/suppliers/${supplier.supplierId}`)
+            .then(res => {
+                toastr.success("Xóa thành công");
+                setTimeout(() => {
+                    window.location.href = "/admin/suppliers";
+                }, 1500);
+            })
+            .catch(err => {
+                console.log(err);
+                toastr.error(err.response.data.message);
+            });
+    }
+});
+
 // add event listener to avatar input change
 const thumbnailInput = document.getElementById('avatar');
 const thumbnailPreview = document.getElementById('avatar-preview');

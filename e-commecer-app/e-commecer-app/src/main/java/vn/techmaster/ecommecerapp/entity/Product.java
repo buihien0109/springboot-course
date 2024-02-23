@@ -3,14 +3,12 @@ package vn.techmaster.ecommecerapp.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
-import vn.techmaster.ecommecerapp.model.ProductAdminDto;
+import vn.techmaster.ecommecerapp.model.dto.ProductAdminDto;
 import vn.techmaster.ecommecerapp.model.dto.ProductNormalAdminDto;
 import vn.techmaster.ecommecerapp.model.dto.ProductNormalDto;
 
@@ -73,16 +71,18 @@ import java.util.Set;
         resultSetMapping = "ProductNormalMapping",
         query = """
                 SELECT p.product_id as product_id, p.name, p.slug, p.price, p.status, p.main_image as main_image,
-                        CASE dc.discount_type\s
-                            WHEN 'PERCENT' THEN p.price - (p.price * dc.discount_value / 100)
-                            WHEN 'AMOUNT' THEN p.price - dc.discount_value\s
-                            ELSE dc.discount_value\s
-                        END as discount_price
+                CASE
+                    WHEN dc.discount_type = 'PERCENT' THEN p.price - (p.price * dc.discount_value / 100)
+                    WHEN dc.discount_type = 'AMOUNT' THEN IF(p.price - dc.discount_value <= 0, 0, p.price - dc.discount_value)
+                    WHEN dc.discount_type = 'SAME_PRICE' THEN dc.discount_value
+                    ELSE NULL
+                END AS discount_price
                 FROM product p
-                JOIN product_discount pd ON p.product_id = pd.product_id
-                JOIN discount_campaign dc ON pd.discount_id = dc.campaign_id
-                AND p.status IN ('AVAILABLE') and dc.end_date >= CURDATE()
-                ORDER BY p.product_id
+                    INNER JOIN product_discount pd ON p.product_id = pd.product_id
+                    INNER JOIN discount_campaign dc ON pd.discount_id = dc.campaign_id
+                WHERE p.status IN ('AVAILABLE')
+                    AND dc.end_date >= CURDATE() AND dc.start_date <= CURDATE()
+                ORDER BY p.product_id DESC
                 """
 )
 
@@ -91,20 +91,19 @@ import java.util.Set;
         resultSetMapping = "ProductNormalMapping",
         query = """
                 SELECT p.product_id as product_id, p.name, p.slug, p.price, p.status, p.main_image as main_image,
-                    CASE
-                        WHEN dc.discount_type = 'PERCENT' THEN p.price - (p.price * dc.discount_value / 100)
-                        WHEN dc.discount_type = 'AMOUNT' THEN p.price - dc.discount_value
-                        WHEN dc.discount_type = 'SAME_PRICE' THEN dc.discount_value
-                        ELSE NULL
-                    END AS discount_price
-                 FROM product p
-                 LEFT JOIN product_discount pd ON p.product_id = pd.product_id
-                 LEFT JOIN discount_campaign dc ON pd.discount_id = dc.campaign_id
-                 WHERE p.status IN ('AVAILABLE')
-                 AND p.category_id IN (SELECT category_id FROM category WHERE parent_category_id
+                IF((dc.end_date >= CURDATE() AND dc.start_date <= CURDATE()), CASE
+                    WHEN dc.discount_type = 'PERCENT' THEN p.price - (p.price * dc.discount_value / 100)
+                    WHEN dc.discount_type = 'AMOUNT' THEN IF(p.price - dc.discount_value <= 0, 0, p.price - dc.discount_value)
+                    WHEN dc.discount_type = 'SAME_PRICE' THEN dc.discount_value
+                    ELSE NULL
+                END, NULL) AS discount_price
+                FROM product p
+                    LEFT JOIN product_discount pd ON p.product_id = pd.product_id
+                    LEFT JOIN discount_campaign dc ON pd.discount_id = dc.campaign_id
+                WHERE p.status IN ('AVAILABLE')
+                    AND p.category_id IN (SELECT category_id FROM category WHERE parent_category_id
                              IN (SELECT category_id FROM category WHERE slug = ?1))
-                 AND (dc.end_date >= CURDATE() OR dc.end_date IS NULL)
-                 ORDER BY p.product_id
+                ORDER BY p.product_id DESC
                 """
 )
 
@@ -113,19 +112,18 @@ import java.util.Set;
         resultSetMapping = "ProductNormalMapping",
         query = """
                 SELECT p.product_id as product_id, p.name, p.slug, p.price, p.status, p.main_image as main_image,
-                    CASE
-                        WHEN dc.discount_type = 'PERCENT' THEN p.price - (p.price * dc.discount_value / 100)
-                        WHEN dc.discount_type = 'AMOUNT' THEN p.price - dc.discount_value
-                        WHEN dc.discount_type = 'SAME_PRICE' THEN dc.discount_value
-                        ELSE NULL
-                    END AS discount_price
-                 FROM product p
-                 LEFT JOIN product_discount pd ON p.product_id = pd.product_id
-                 LEFT JOIN discount_campaign dc ON pd.discount_id = dc.campaign_id
-                 WHERE p.status IN ('AVAILABLE')
-                 AND p.category_id IN (SELECT category_id FROM category WHERE slug = ?1)
-                 AND (dc.end_date >= CURDATE() OR dc.end_date IS NULL)
-                 ORDER BY p.product_id
+                IF((dc.end_date >= CURDATE() AND dc.start_date <= CURDATE()), CASE
+                    WHEN dc.discount_type = 'PERCENT' THEN p.price - (p.price * dc.discount_value / 100)
+                    WHEN dc.discount_type = 'AMOUNT' THEN IF(p.price - dc.discount_value <= 0, 0, p.price - dc.discount_value)
+                    WHEN dc.discount_type = 'SAME_PRICE' THEN dc.discount_value
+                    ELSE NULL
+                END, NULL) AS discount_price
+                FROM product p
+                    LEFT JOIN product_discount pd ON p.product_id = pd.product_id
+                    LEFT JOIN discount_campaign dc ON pd.discount_id = dc.campaign_id
+                WHERE p.status IN ('AVAILABLE')
+                    AND p.category_id IN (SELECT category_id FROM category WHERE slug = ?1)
+                ORDER BY p.product_id DESC
                 """
 )
 
@@ -134,20 +132,19 @@ import java.util.Set;
         resultSetMapping = "ProductNormalMapping",
         query = """
                 SELECT p.product_id as product_id, p.name, p.slug, p.price, p.status, p.main_image as main_image,
-                    CASE
-                        WHEN dc.discount_type = 'PERCENT' THEN p.price - (p.price * dc.discount_value / 100)
-                        WHEN dc.discount_type = 'AMOUNT' THEN p.price - dc.discount_value
-                        WHEN dc.discount_type = 'SAME_PRICE' THEN dc.discount_value
-                        ELSE NULL
-                    END AS discount_price
-                 FROM product p
-                 LEFT JOIN product_discount pd ON p.product_id = pd.product_id
-                 LEFT JOIN discount_campaign dc ON pd.discount_id = dc.campaign_id
-                 WHERE p.status IN ('AVAILABLE')
-                 AND p.category_id = :categoryId AND p.product_id != :productId
-                 AND (dc.end_date >= CURDATE() OR dc.end_date IS NULL)
-                 ORDER BY p.product_id
-                 LIMIT :limit
+                IF((dc.end_date >= CURDATE() AND dc.start_date <= CURDATE()), CASE
+                    WHEN dc.discount_type = 'PERCENT' THEN p.price - (p.price * dc.discount_value / 100)
+                    WHEN dc.discount_type = 'AMOUNT' THEN IF(p.price - dc.discount_value <= 0, 0, p.price - dc.discount_value)
+                    WHEN dc.discount_type = 'SAME_PRICE' THEN dc.discount_value
+                    ELSE NULL
+                END, NULL) AS discount_price
+                FROM product p
+                    LEFT JOIN product_discount pd ON p.product_id = pd.product_id
+                    LEFT JOIN discount_campaign dc ON pd.discount_id = dc.campaign_id
+                WHERE p.status IN ('AVAILABLE')
+                    AND p.category_id = :categoryId AND p.product_id != :productId
+                ORDER BY p.product_id DESC
+                LIMIT :limit
                 """
 )
 
@@ -159,8 +156,8 @@ import java.util.Set;
                     JSON_OBJECT('categoryId', c.category_id, 'name', c.name) as category,
                     JSON_OBJECT('supplierId', s.supplier_id, 'name', s.name) as supplier
                 FROM product p
-                LEFT JOIN category c ON p.category_id = c.category_id
-                LEFT JOIN supplier s ON p.supplier_id = s.supplier_id
+                    LEFT JOIN category c ON p.category_id = c.category_id
+                    LEFT JOIN supplier s ON p.supplier_id = s.supplier_id
                 ORDER BY p.product_id DESC
                 """
 )
@@ -173,8 +170,8 @@ import java.util.Set;
                     JSON_OBJECT('categoryId', c.category_id, 'name', c.name) as category,
                     JSON_OBJECT('supplierId', s.supplier_id, 'name', s.name) as supplier
                 FROM product p
-                LEFT JOIN category c ON p.category_id = c.category_id
-                LEFT JOIN supplier s ON p.supplier_id = s.supplier_id
+                    LEFT JOIN category c ON p.category_id = c.category_id
+                    LEFT JOIN supplier s ON p.supplier_id = s.supplier_id
                 WHERE p.status IN ('AVAILABLE')
                 ORDER BY p.product_id DESC
                 """
@@ -185,18 +182,17 @@ import java.util.Set;
         resultSetMapping = "ProductAdminDtoMapping",
         query = """
                 SELECT p.product_id as product_id, p.name, p.price, p.stock_quantity,
-                    CASE
-                        WHEN dc.discount_type = 'PERCENT' THEN p.price - (p.price * dc.discount_value / 100)
-                        WHEN dc.discount_type = 'AMOUNT' THEN p.price - dc.discount_value
-                        WHEN dc.discount_type = 'SAME_PRICE' THEN dc.discount_value
-                        ELSE NULL
-                    END AS discount_price
-                 FROM product p
-                 LEFT JOIN product_discount pd ON p.product_id = pd.product_id
-                 LEFT JOIN discount_campaign dc ON pd.discount_id = dc.campaign_id
-                 WHERE p.status IN ('AVAILABLE')
-                 AND (dc.end_date >= CURDATE() OR dc.end_date IS NULL)
-                 ORDER BY p.product_id
+                IF((dc.end_date >= CURDATE() AND dc.start_date <= CURDATE()), CASE
+                    WHEN dc.discount_type = 'PERCENT' THEN p.price - (p.price * dc.discount_value / 100)
+                    WHEN dc.discount_type = 'AMOUNT' THEN IF(p.price - dc.discount_value <= 0, 0, p.price - dc.discount_value)
+                    WHEN dc.discount_type = 'SAME_PRICE' THEN dc.discount_value
+                    ELSE NULL
+                END, NULL) AS discount_price
+                FROM product p
+                    LEFT JOIN product_discount pd ON p.product_id = pd.product_id
+                    LEFT JOIN discount_campaign dc ON pd.discount_id = dc.campaign_id
+                WHERE p.status IN ('AVAILABLE')
+                ORDER BY p.product_id DESC
                 """
 )
 
@@ -206,37 +202,39 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "product")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productId;
+    Long productId;
 
-    private String name;
-    private String slug;
+    String name;
+    String slug;
 
     @Column(columnDefinition = "TEXT")
-    private String description;
-    private Integer price;
-    private Integer stockQuantity;
+    String description;
+
+    Integer price;
+    Integer stockQuantity;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    Status status;
 
-    private String mainImage;
+    String mainImage;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "json")
-    private List<String> subImages = new ArrayList<>();
+    List<String> subImages = new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private Category category;
+    Category category;
 
     @JsonIgnore
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
-    private List<ProductAttribute> attributes = new ArrayList<>();
+    List<ProductAttribute> attributes = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
@@ -244,7 +242,7 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "discount_id"))
     @Fetch(FetchMode.SUBSELECT)
-    private Set<DiscountCampaign> discounts = new LinkedHashSet<>();
+    Set<DiscountCampaign> discounts = new LinkedHashSet<>();
 
     public void addDiscount(DiscountCampaign discountCampaign) {
         discounts.add(discountCampaign);
@@ -259,7 +257,7 @@ public class Product {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id")
-    private Supplier supplier;
+    Supplier supplier;
 
 
     @Getter

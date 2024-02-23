@@ -16,9 +16,6 @@ btnUpdate.addEventListener('click', function () {
     const items = Array.from(bannerContainer.children);
     const newOrder = items.map((item) => Number(item.dataset.id));
 
-    // In ra thứ tự mới của các banner
-    console.log('Thứ tự mới:', newOrder);
-
     // Gửi request lên server
     axios.post('/api/v1/admin/banners/sort', newOrder)
         .then(function (response) {

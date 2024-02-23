@@ -1,9 +1,7 @@
 package vn.techmaster.ecommecerapp.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
 import vn.techmaster.ecommecerapp.utils.DateUtils;
 
@@ -17,14 +15,15 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class DiscountCampaignNormalDto implements Serializable {
-    private Long campaignId;
-    private String name;
-    private DiscountCampaign.DiscountType discountType;
-    private Integer discountValue;
-    private Date startDate;
-    private Date endDate;
-    private Integer productCount;
+    Long campaignId;
+    String name;
+    DiscountCampaign.DiscountType discountType;
+    Integer discountValue;
+    Date startDate;
+    Date endDate;
+    Integer productCount;
 
     public DiscountCampaignNormalDto(Long campaignId, String name, String discountType, Integer discountValue, String startDate, String endDate, Integer productCount) {
         this.campaignId = campaignId;

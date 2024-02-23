@@ -22,6 +22,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(nativeQuery = true, name = "getAllAvailabelUsersNormalDtoByAdmin")
     List<UserNormalDto> getAllAvailabelUsersNormalDtoByAdmin();
 
+    @Query(nativeQuery = true, name = "getAllAvailabelByRole")
+    List<UserNormalDto> getAllAvailabelByRole(String role);
+
     @Query(nativeQuery = true, name = "getAllUsersNormalDtoInRangeTime")
     List<UserNormalDto> getAllUsersNormalDtoInRangeTime(Date start, Date end);
 }

@@ -90,12 +90,17 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Mô tả ngắn</label>
-                                                    <textarea id="description" class="form-control" rows="12"
+                                                    <textarea id="description" class="form-control" rows="16"
                                                               name="description"
                                                               th:text="${product.description}"></textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Số lượng</label>
+                                                    <input type="text" class="form-control" id="stock-quantity"
+                                                           name="stockQuantity" th:value="${product.stockQuantity}"/>
+                                                </div>
                                                 <div class="form-group">
                                                     <label>Giá sản phẩm</label>
                                                     <input type="text" class="form-control" id="price" name="price"
@@ -228,12 +233,12 @@
                                             <table class="table table-bordered table-hover" id="table-review">
                                                 <thead>
                                                 <tr>
-                                                    <th style="width: 17%">Username</th>
+                                                    <th style="width: 15%">Username</th>
                                                     <th style="width: 10%">Đánh giá</th>
                                                     <th style="width: 40%">Nội dung</th>
-                                                    <th style="width: 10%">Thời gian</th>
+                                                    <th style="width: 15%">Thời gian</th>
                                                     <th style="width: 10%">Trạng thái</th>
-                                                    <th style="width: 13%"></th>
+                                                    <th style="width: 10%"></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>

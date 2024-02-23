@@ -5,7 +5,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import vn.techmaster.ecommecerapp.constant.ConstantValue;
-import vn.techmaster.ecommecerapp.entity.FileServer;
 import vn.techmaster.ecommecerapp.entity.Role;
 import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.entity.UserAddress;
@@ -22,6 +21,7 @@ import vn.techmaster.ecommecerapp.model.response.ImageResponse;
 import vn.techmaster.ecommecerapp.repository.RoleRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
+import vn.techmaster.ecommecerapp.utils.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -45,6 +45,10 @@ public class UserService {
 
     public List<UserNormalDto> getAllAvailabelUsersNormalDtoByAdmin() {
         return userRepository.getAllAvailabelUsersNormalDtoByAdmin();
+    }
+
+    public List<UserNormalDto> getAllAvailabelByRole(String roleName) {
+        return userRepository.getAllAvailabelByRole(roleName);
     }
 
     // get user by id
@@ -120,6 +124,8 @@ public class UserService {
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .password(passwordEncoder.encode(ConstantValue.PASSWORD_DEFAULT))
+                .avatar(StringUtils.generateLinkImage(request.getUsername()))
+                .enabled(true)
                 .roles(roleList)
                 .build();
 
@@ -154,5 +160,17 @@ public class UserService {
     public List<UserAddressPublic> getAllAddress(Long id) {
         List<UserAddress> addressList = userAddressService.findAllAddressByUserId(id);
         return addressList.stream().map(UserAddressPublic::of).toList();
+    }
+
+    public void enableUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy user"));
+
+        if (user.getEnabled()) {
+            throw new BadRequestException("User đã được kích hoạt");
+        }
+
+        user.setEnabled(true);
+        userRepository.save(user);
     }
 }

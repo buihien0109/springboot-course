@@ -41,13 +41,13 @@
                                 <td>
                                     <ul>
                                         <li th:each="orderItem : ${order.orderItems}">
-                                            <a th:href="@{/san-pham/{id}(id=${orderItem.product.productId})}"
+                                            <a th:href="@{/san-pham/{id}/{slug}(id=${orderItem.product.productId}, slug=${orderItem.product.slug})}"
                                                th:text="${orderItem.product.name}"></a>
                                             <span th:text="|(x ${orderItem.quantity})|"></span>
                                         </li>
                                     </ul>
                                 </td>
-                                <td class="currency" th:text="${order.getTotalAmount()}"></td>
+                                <td th:text="|${#numbers.formatInteger(order.getTotalAmount(), 3, 'POINT')}đ|"></td>
                                 <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy')}"></td>
                                 <th:block>
                                     <td th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT}"

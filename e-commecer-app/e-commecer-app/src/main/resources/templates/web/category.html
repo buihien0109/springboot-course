@@ -36,7 +36,7 @@
                             <ul>
                                 <li th:each="subCategory : ${subCategories}">
                                     <a
-                                            th:href="@{/danh-muc/{categorySlug}?sub={subSlug} (categorySlug=${categorySlug}, subSlug=${subCategory.slug})}"
+                                            th:href="@{/danh-muc/{categorySlug} (categorySlug=${categorySlug}, sub=${subCategory.slug})}"
                                             th:classappend="${subCategory.slug == currentSub ? 'active' : ''}"
                                             th:text="${subCategory.name}">Fresh Meat</a>
                                 </li>
@@ -78,13 +78,13 @@
                                         </ul>
                                     </div>
                                     <div class="product__item__text">
-                                        <h6><a th:href="@{/san-pham/{id} (id=${product.productId})}"
+                                        <h6><a th:href="@{/san-pham/{id}/{slug} (id=${product.productId}, slug=${product.slug})}"
                                                th:text="${product.name}">Sản phẩm 1</a></h6>
                                         <div th:classappend="${product.discountPrice != null} ? 'product-item-price' : ''">
                                             <h5 th:if="${product.discountPrice != null}"
-                                                th:text="${product.discountPrice}" class="discount-price currency"></h5>
-                                            <h5 th:text="${product.price}"
-                                                th:classappend="${product.discountPrice != null ? 'original-price currency' : 'currency'}">
+                                                th:text="|${#numbers.formatInteger(product.discountPrice, 3, 'POINT')}đ|" class="discount-price"></h5>
+                                            <h5 th:text="|${#numbers.formatInteger(product.price, 3, 'POINT')}đ|"
+                                                th:classappend="${product.discountPrice != null ? 'original-price' : ''}">
                                                 $100</h5>
                                         </div>
                                     </div>

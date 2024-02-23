@@ -29,6 +29,8 @@ public class ReportController {
         model.addAttribute("totalPayment", reportService.calculateTotalPaymentVoucherAmount(paymentVouchers));
         model.addAttribute("orders", reportService.getAllOrders(start, end)); // done
         model.addAttribute("paymentVouchers", paymentVouchers); // done
+        model.addAttribute("startDate", reportService.getStartDate(start));
+        model.addAttribute("endDate", reportService.getEndDate(end));
         return "admin/report/index";
     }
 }

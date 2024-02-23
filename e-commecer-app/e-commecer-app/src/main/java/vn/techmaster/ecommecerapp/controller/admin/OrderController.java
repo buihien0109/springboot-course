@@ -45,6 +45,7 @@ public class OrderController {
         model.addAttribute("products", productService.getAllAvailabelProductsAdminDtoByAdmin());
         model.addAttribute("paymentMethodList", OrderTable.PaymentMethod.values());
         model.addAttribute("shippingMethodList", OrderTable.ShippingMethod.values());
+        model.addAttribute("orderStatusList", OrderTable.Status.values());
         model.addAttribute("users", userService.getAllAvailabelUsersNormalDtoByAdmin());
         model.addAttribute("coupons", couponService.getAllCouponValid());
         model.addAttribute("order", orderService.getOrderByOrderNumber(orderNumber));

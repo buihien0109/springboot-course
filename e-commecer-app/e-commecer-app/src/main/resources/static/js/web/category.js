@@ -2,18 +2,18 @@
 // and retain query params in url if it has
 document.querySelectorAll('.pagination-button').forEach(btn => {
     btn.addEventListener('click', function () {
-        let page = btn.dataset.page;
-        console.log(page)
+        let page = Number(btn.dataset.page);
 
         // if url has query params
         if (window.location.search) {
-            console.log(1, window.location.search)
             // get query params in url
             const urlParams = new URLSearchParams(window.location.search);
             // add page param to query params
             urlParams.set('page', page);
 
-            // TODO: if page = 1 => remove page param from query params
+            if (page === 1) {
+                urlParams.delete('page');
+            }
 
             // set query params to url
             window.location.search = urlParams.toString();

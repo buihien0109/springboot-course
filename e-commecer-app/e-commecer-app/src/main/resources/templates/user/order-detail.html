@@ -24,10 +24,14 @@
                         <div class="order-detail__title">
                             <h4>Thông tin giao hàng</h4>
                             <ul>
-                                <li><span class="font-weight-bold">Họ tên:</span> <span th:text="${order.username}">Bùi Hiên</span></li>
-                                <li><span class="font-weight-bold">SĐT:</span> <span th:text="${order.phone}">0344005816</span></li>
-                                <li><span class="font-weight-bold">Email:</span> <span th:text="${order.email}">hien@gmail.com</span></li>
-                                <th:block th:with="addressDetail=|${order.address} - ${order.ward} - ${order.district} - ${order.province}|">
+                                <li><span class="font-weight-bold">Họ tên:</span> <span th:text="${order.username}">Bùi Hiên</span>
+                                </li>
+                                <li><span class="font-weight-bold">SĐT:</span> <span
+                                        th:text="${order.phone}">0344005816</span></li>
+                                <li><span class="font-weight-bold">Email:</span> <span th:text="${order.email}">hien@gmail.com</span>
+                                </li>
+                                <th:block
+                                        th:with="addressDetail=|${order.address} - ${order.ward} - ${order.district} - ${order.province}|">
                                     <li><span class="font-weight-bold">Địa chỉ:</span> <span th:text="${addressDetail}">Xóm 9 Thôn Vân - Thụy Ninh - Thái Thụy - Thái Bình</span>
                                     </li>
                                 </th:block>
@@ -39,14 +43,18 @@
                         <div class="order-detail__title">
                             <h4>Phương thức vận chuyển</h4>
                             <ul>
-                                <li th:if="${order.shippingMethod == T(vn.techmaster.ecommecerapp.entity.OrderTable.ShippingMethod).STANDARD}">Giao hàng tận nơi</li>
+                                <li th:if="${order.shippingMethod == T(vn.techmaster.ecommecerapp.entity.OrderTable.ShippingMethod).STANDARD}">
+                                    Giao hàng tận nơi
+                                </li>
                             </ul>
                         </div>
 
                         <div class="order-detail__title">
                             <h4>Phương thức thanh toán</h4>
                             <ul>
-                                <li th:if="${order.paymentMethod == T(vn.techmaster.ecommecerapp.entity.OrderTable.PaymentMethod).COD}">Thanh toán khi giao hàng (COD)</li>
+                                <li th:if="${order.paymentMethod == T(vn.techmaster.ecommecerapp.entity.OrderTable.PaymentMethod).COD}">
+                                    Thanh toán khi giao hàng (COD)
+                                </li>
                             </ul>
                         </div>
 
@@ -57,6 +65,7 @@
                                 <tr>
                                     <th>STT</th>
                                     <th>Sản phẩm</th>
+                                    <th>Số lượng</th>
                                     <th>Giá tiền</th>
                                     <th>Thành tiền</th>
                                 </tr>
@@ -68,19 +77,38 @@
                                         <span th:text="${state.index + 1}"></span>
                                     </td>
                                     <td>
-                                        <ul>
-                                            <li>
-                                                <a th:href="@{/san-pham/{id}(id=${orderItem.product.productId})}" th:text="${orderItem.product.name}"></a>
-                                                <span th:text="|(x ${orderItem.quantity})|"></span>
-                                            </li>
-                                        </ul>
+                                        <a th:href="@{/san-pham/{id}/{slug} (id=${orderItem.product.productId}, slug=${orderItem.product.slug})}"
+                                           th:text="${orderItem.product.name}" style="color: #6f6f6f"></a>
                                     </td>
-                                    <td class="currency" th:text="${orderItem.price}"></td>
-                                    <td class="currency" th:text="${orderItem.price * orderItem.quantity}"></td>
+                                    <td>
+                                        <span th:text="${orderItem.quantity}"></span>
+                                    </td>
+                                    <td th:text="|${#numbers.formatInteger(orderItem.price, 3, 'POINT')}đ|"></td>
+                                    <td th:text="|${#numbers.formatInteger(orderItem.price * orderItem.quantity, 3, 'POINT')}đ|"></td>
+                                </tr>
+                                <tr style="border-top: 4px solid #eee">
+                                    <th colspan="3"></th>
+                                    <th>Thành tiền</th>
+                                    <th>
+                                        <span class="font-weight-bold"
+                                              th:text="|${#numbers.formatInteger(order.getTemporaryAmount(), 3, 'POINT')}đ|"></span>
+                                    </th>
                                 </tr>
                                 <tr>
-                                    <th colspan="2"></th>
-                                    <th colspan="2">Tổng tiền : <span class="font-weight-bold currency" th:text="${order.getTotalAmount()}"></span></th>
+                                    <th colspan="3"></th>
+                                    <th>Giảm giá</th>
+                                    <th colspan="2">
+                                        <span class="font-weight-bold"
+                                              th:text="|${#numbers.formatInteger(order.getDiscountAmount(), 3, 'POINT')}đ|"></span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="3"></th>
+                                    <th>Tổng tiền</th>
+                                    <th colspan="2">
+                                        <span class="font-weight-bold"
+                                              th:text="|${#numbers.formatInteger(order.getTotalAmount(), 3, 'POINT')}đ|"></span>
+                                    </th>
                                 </tr>
                                 </tbody>
                             </table>

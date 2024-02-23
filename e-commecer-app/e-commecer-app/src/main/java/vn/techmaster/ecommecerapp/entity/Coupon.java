@@ -1,10 +1,8 @@
 package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
@@ -14,22 +12,21 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "coupon")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long couponId;
+    Long couponId;
 
     @Column(nullable = false, unique = true)
-    private String code;
+    String code;
 
-    private Integer discount;
-
-    private Date validFrom;
-
-    private Date validTo;
+    Integer discount;
+    Date validFrom;
+    Date validTo;
 
     @Transient
-    private Status status;
+    Status status;
 
     // Generate status discount
     public Status getStatus() {

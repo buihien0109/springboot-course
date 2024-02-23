@@ -1,10 +1,8 @@
 package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import vn.techmaster.ecommecerapp.model.dto.TransactionNormalDto;
@@ -87,22 +85,23 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "transaction")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @Column(name = "transaction_date")
-    private Date transactionDate;
+    Date transactionDate;
 
     @Column(name = "sender_name")
-    private String senderName;
+    String senderName;
 
     @Column(name = "receiver_name")
-    private String receiverName;
+    String receiverName;
 
     @Transient
-    private Integer totalAmount;
+    Integer totalAmount;
 
     public Integer getTotalAmount() {
         // calculate total amount
@@ -115,9 +114,9 @@ public class Transaction {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id")
-    private Supplier supplier;
+    Supplier supplier;
 
     @Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<TransactionItem> transactionItems = new LinkedHashSet<>();
+    Set<TransactionItem> transactionItems = new LinkedHashSet<>();
 }

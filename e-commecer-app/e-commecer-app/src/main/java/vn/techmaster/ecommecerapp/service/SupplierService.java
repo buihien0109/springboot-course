@@ -8,7 +8,10 @@ import vn.techmaster.ecommecerapp.entity.Supplier;
 import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.SupplierPublic;
 import vn.techmaster.ecommecerapp.model.response.ImageResponse;
+import vn.techmaster.ecommecerapp.repository.ProductRepository;
 import vn.techmaster.ecommecerapp.repository.SupplierRepository;
+import vn.techmaster.ecommecerapp.repository.TransactionRepository;
+import vn.techmaster.ecommecerapp.utils.StringUtils;
 
 import java.util.List;
 
@@ -16,6 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SupplierService {
     private final SupplierRepository supplierRepository;
+    private final TransactionRepository transactionRepository;
+    private final ProductRepository productRepository;
     private final FileServerService fileServerService;
 
     public List<SupplierPublic> getAllSuppliers() {
@@ -30,6 +35,7 @@ public class SupplierService {
     }
 
     public SupplierPublic createSupplier(Supplier supplier) {
+        supplier.setThumbnail(StringUtils.generateLinkImage(supplier.getName()));
         Supplier newSupplier = supplierRepository.save(supplier);
         return SupplierPublic.of(newSupplier);
     }
@@ -50,6 +56,17 @@ public class SupplierService {
     public void deleteSupplierById(Long id) {
         Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy nhà cung cấp với id: " + id));
+
+        // Kiểm tra xem nhà cung cấp đã nhập hàng chưa?
+        if(transactionRepository.existsBySupplier_SupplierId(supplier.getSupplierId())) {
+            throw new ResouceNotFoundException("Nhà cung cấp đã nhập hàng, không thể xóa");
+        }
+
+        // Kiểm tra xem nhà cung cấp có sản phẩm nào không?
+        if(productRepository.existsBySupplier_SupplierId(supplier.getSupplierId())) {
+            throw new ResouceNotFoundException("Nhà cung cấp có sản phẩm, không thể xóa");
+        }
+
         supplierRepository.deleteById(id);
     }
 

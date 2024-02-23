@@ -1,6 +1,7 @@
 package vn.techmaster.ecommecerapp;
 
 import com.github.javafaker.Faker;
+import com.github.slugify.Slugify;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +10,7 @@ import vn.techmaster.ecommecerapp.entity.Role;
 import vn.techmaster.ecommecerapp.entity.User;
 import vn.techmaster.ecommecerapp.repository.RoleRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
+import vn.techmaster.ecommecerapp.utils.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -144,4 +146,58 @@ public class UserTests {
             userRepository.save(user);
         }
     }
+
+    @Test
+    void update_info_user() {
+        // Random ds họ người dùng theo tên gọi Việt Nam
+        Random random = new Random();
+
+        // Tạo slugify object không có dấu -
+        Slugify slugify = Slugify.builder().build();
+
+        List<String> listHo = List.of(
+                "Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Huỳnh", "Phan", "Vũ", "Võ", "Đặng",
+                "Bùi", "Đỗ", "Hồ", "Ngô", "Dương", "Lý", "Đào", "Đinh", "Lâm", "Phùng", "Mai",
+                "Tô", "Trịnh", "Đoàn", "Tăng", "Bành", "Hà", "Thái", "Tạ", "Tăng", "Thi"
+        );
+
+        // Random ds tên đệm người dùng theo tên gọi Việt Nam
+        List<String> listTenDem = List.of(
+                "Văn", "Thị", "Hồng", "Hải", "Hà", "Hưng", "Hùng", "Hạnh", "Hạ", "Thanh");
+
+        // Random ds tên người dùng theo tên gọi Việt Nam (30 tên phổ biến từ A -> Z) (ít vần H)
+        List<String> listTen = List.of(
+                "An", "Bình", "Cường", "Dũng", "Đức", "Giang", "Hải", "Hào", "Hùng", "Hưng", "Minh", "Nam", "Nghĩa", "Phong", "Phúc", "Quân", "Quang", "Quốc", "Sơn", "Thắng", "Thành", "Thiên", "Thịnh", "Thuận", "Tiến", "Trung", "Tuấn", "Vinh", "Vũ", "Xuân"
+        );
+
+        // Random ds số điện thoại Việt Nam bao gồm 10 số
+        List<String> phones = List.of(
+                "086", "096", "097", "098", "032", "033", "034", "035", "036", "037", "038", "039",
+                "090", "093", "070", "079", "077", "076", "078", "089", "088", "091", "094", "083",
+                "085", "081", "082", "092", "056", "058", "099"
+        );
+
+        List<User> userList = userRepository.findAll();
+        for (User user : userList) {
+            String ho = listHo.get(random.nextInt(listHo.size()));
+            String tenDem = listTenDem.get(random.nextInt(listTenDem.size()));
+            String ten = listTen.get(random.nextInt(listTen.size()));
+
+            String fullName = ho + " " + tenDem + " " + ten;
+            String email = slugify.slugify(fullName.toLowerCase()).replaceAll("-", "") + "@gmail.com";
+
+            user.setUsername(ho + " " + tenDem + " " + ten);
+            user.setAvatar(StringUtils.generateLinkImage(ten));
+            user.setEmail(email);
+
+            StringBuilder phone = new StringBuilder(phones.get(random.nextInt(phones.size())));
+            for (int i = 0; i < 7; i++) {
+                phone.append(random.nextInt(10));
+            }
+            user.setPhone(phone.toString());
+
+            userRepository.save(user);
+        }
+    }
+
 }

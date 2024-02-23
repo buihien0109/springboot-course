@@ -22,7 +22,9 @@ import vn.techmaster.ecommecerapp.security.SecurityUtils;
 import vn.techmaster.ecommecerapp.utils.CartUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +35,7 @@ public class OrderService {
     private final CartService cartService;
     private final ProductRepository productRepository;
     private final HttpServletResponse httpServletResponse;
+    private final MailService mailService;
 
     public List<OrderDto> getAllOrdersDtoAdmin() {
         return orderTableRepository.getAllOrdersDtoAdmin();
@@ -100,6 +103,10 @@ public class OrderService {
             CartUtils.setCartToCookie(httpServletResponse, new ArrayList<>());
         }
 
+        // Send mail confirm order
+        mailService.sendMailConfirmOrder(orderTable);
+        log.info("Email sent to: {}", orderTable.getEmail());
+
         return orderNumber;
     }
 
@@ -158,7 +165,7 @@ public class OrderService {
             throw new ResouceNotFoundException("Order status is not WAIT");
         }
 
-        // update order status to CANCELED
+        // update order status to CANCEL
         orderTable.setStatus(OrderTable.Status.CANCELED);
 
         // save order to database
@@ -249,12 +256,7 @@ public class OrderService {
         OrderTable orderTable = orderTableRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đơn hàng"));
 
-        // check order status
-        if (orderTable.getStatus() != OrderTable.Status.WAIT && orderTable.getStatus() != OrderTable.Status.WAIT_DELIVERY) {
-            throw new ResouceNotFoundException("Trạng thái đơn hàng không cho phép hủy");
-        }
-
-        // update order status to CANCELED
+        // update order status to CANCEL
         orderTable.setStatus(OrderTable.Status.CANCELED);
 
         // save order to database
@@ -280,12 +282,7 @@ public class OrderService {
         OrderTable orderTable = orderTableRepository.findById(id)
                 .orElseThrow(() -> new ResouceNotFoundException("Không tìm thấy đơn hàng"));
 
-        // check order status
-        if (orderTable.getStatus() != OrderTable.Status.WAIT && orderTable.getStatus() != OrderTable.Status.WAIT_DELIVERY) {
-            throw new ResouceNotFoundException("Trạng thái đơn hàng không cho phép cập nhật");
-        }
-
-        // check user id is exist
+        // check user id is existed
         User user = null;
         if (orderRequest.getUserId() != null) {
             user = userRepository.findById(orderRequest.getUserId())
@@ -307,6 +304,8 @@ public class OrderService {
         orderTable.setCouponDiscount(orderRequest.getCouponDiscount());
         orderTable.setUseType(user == null ? OrderTable.UseType.ANONYMOUS : OrderTable.UseType.USER);
         orderTable.setUser(user);
+        orderTable.setStatus(orderRequest.getStatus());
+        orderTable.setAdminNote(orderRequest.getAdminNote());
 
         // save order to database
         orderTableRepository.save(orderTable);

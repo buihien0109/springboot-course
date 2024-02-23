@@ -1,10 +1,8 @@
 package vn.techmaster.ecommecerapp.model.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import vn.techmaster.ecommecerapp.utils.DateUtils;
 
 import java.io.IOException;
@@ -18,14 +16,15 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PaymentVoucherDto implements Serializable {
-    private Long id;
-    private String purpose;
-    private String note;
-    private Integer amount;
-    private UserDto user;
-    private Date createdAt;
-    private Date updatedAt;
+    Long id;
+    String purpose;
+    String note;
+    Integer amount;
+    UserDto user;
+    Date createdAt;
+    Date updatedAt;
 
     /**
      * DTO for {@link vn.techmaster.ecommecerapp.entity.User}
@@ -34,9 +33,10 @@ public class PaymentVoucherDto implements Serializable {
     @NoArgsConstructor
     @Getter
     @Setter
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class UserDto implements Serializable {
-        private Long userId;
-        private String username;
+        Long userId;
+        String username;
     }
 
     public PaymentVoucherDto(Long id, String purpose, String note, Integer amount, String user, String createdAt, String updatedAt) {

@@ -1,16 +1,13 @@
 package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import vn.techmaster.ecommecerapp.model.dto.OrderDto;
 import vn.techmaster.ecommecerapp.model.dto.OrderUserDetailDto;
 import vn.techmaster.ecommecerapp.model.dto.OrderUserDto;
-import vn.techmaster.ecommecerapp.model.dto.ReviewDto;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -196,47 +193,53 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "order_table")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
+    Long orderId;
 
-    private String orderNumber;
-    private Date orderDate;
+    String orderNumber;
+    Date orderDate;
 
-    private String username;
-    private String phone;
-    private String email;
+    String username;
+    String phone;
+    String email;
 
-    private String province;
-    private String district;
-    private String ward;
-    private String address;
-    private String note;
+    String province;
+    String district;
+    String ward;
+    String address;
 
-    @Enumerated(EnumType.STRING)
-    private ShippingMethod shippingMethod;
+    @Column(columnDefinition = "TEXT")
+    String note;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
-
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @Column(columnDefinition = "TEXT")
+    String adminNote;
 
     @Enumerated(EnumType.STRING)
-    private UseType useType;
+    ShippingMethod shippingMethod;
 
-    private String couponCode;
-    private Integer couponDiscount;
+    @Enumerated(EnumType.STRING)
+    PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    Status status;
+
+    @Enumerated(EnumType.STRING)
+    UseType useType;
+
+    String couponCode;
+    Integer couponDiscount;
 
     @Transient
-    private Integer totalAmount;
+    Integer totalAmount;
 
     @Transient
-    private Integer temporaryAmount;
+    Integer temporaryAmount;
 
     @Transient
-    private Integer discountAmount;
+    Integer discountAmount;
 
     public Integer getTotalAmount() {
         return this.getTemporaryAmount() - this.getDiscountAmount();
@@ -258,11 +261,11 @@ public class OrderTable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
-    private List<OrderItem> orderItems = new ArrayList<>();
+    List<OrderItem> orderItems = new ArrayList<>();
 
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);

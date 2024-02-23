@@ -1,8 +1,10 @@
 package vn.techmaster.ecommecerapp.model.dto;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import vn.techmaster.ecommecerapp.utils.DateUtils;
 
 import java.io.Serializable;
@@ -14,13 +16,14 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserNormalDto implements Serializable {
-    private Long userId;
-    private String username;
-    private String email;
-    private String phone;
-    private String avatar;
-    private Date createdAt;
+    Long userId;
+    String username;
+    String email;
+    String phone;
+    String avatar;
+    Date createdAt;
 
     public UserNormalDto(Long userId, String username, String email, String phone, String avatar, String createdAt) {
         this.userId = userId;

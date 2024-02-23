@@ -1,22 +1,27 @@
 package vn.techmaster.ecommecerapp.model.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PageResponseImpl<T> implements PageResponse<T> {
     @JsonIgnore
-    private List<T> data;
+    List<T> data;
+
     @JsonIgnore
-    private Integer currentPage;
+    Integer currentPage;
+
     @JsonIgnore
-    private Integer limit;
+    Integer limit;
 
     @Override
     public Integer getCurrentPage() {

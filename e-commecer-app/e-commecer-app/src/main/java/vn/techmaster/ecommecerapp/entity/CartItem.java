@@ -3,7 +3,7 @@ package vn.techmaster.ecommecerapp.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
+import lombok.experimental.FieldDefaults;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,18 +11,20 @@ import org.hibernate.annotations.Fetch;
 @Setter
 @Entity
 @Table(name = "cart_item")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cartItemId;
+    Long cartItemId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
-    private Cart cart;
+    Cart cart;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    private Product product;
+    Product product;
 
-    private Integer quantity;
+    Integer quantity;
 }

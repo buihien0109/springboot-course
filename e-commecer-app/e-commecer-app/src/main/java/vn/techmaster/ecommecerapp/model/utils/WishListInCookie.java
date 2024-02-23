@@ -1,8 +1,7 @@
 package vn.techmaster.ecommecerapp.model.utils;
 
 import lombok.*;
-
-import java.util.Date;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -10,7 +9,8 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class WishListInCookie {
-    private Long wishlistId;
-    private Long productId;
+    Long wishlistId;
+    Long productId;
 }

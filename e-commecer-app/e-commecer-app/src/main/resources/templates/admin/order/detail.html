@@ -29,7 +29,8 @@
                             <a href="/admin/orders">Đơn hàng</a>
                         </li>
                         <li class="breadcrumb-item active">
-                            Chi tiết đơn hàng <th:block th:text="'#' + ${order.orderNumber}"></th:block>
+                            Chi tiết đơn hàng
+                            <th:block th:text="'#' + ${order.orderNumber}"></th:block>
                         </li>
                     </ol>
                 </div>
@@ -50,22 +51,13 @@
                             <button type="button" class="btn btn-info px-4 btn-action" id="btn-update">
                                 Cập nhật
                             </button>
-                            <button type="button" class="btn btn-secondary px-4 btn-action" data-toggle="modal"
+                            <button type="button" class="btn btn-warning px-4 btn-action" data-toggle="modal"
                                     data-target="#modal-user">
                                 Chọn user
                             </button>
                         </div>
                         <div>
-                            <button th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT}"
-                                    type="button" class="btn btn-warning">
-                                Xác nhận đơn hàng
-                            </button>
-                            <button th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT_DELIVERY}"
-                                    type="button" class="btn btn-warning">
-                                Vận chuyển
-                            </button>
-                            <button th:if="${order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT || order.status == T(vn.techmaster.ecommecerapp.entity.OrderTable.Status).WAIT_DELIVERY}"
-                                    type="button" class="btn btn-default" onclick="cancelOrder()">
+                            <button type="button" class="btn btn-secondary px-4 btn-action" id="btn-cancel-order" onclick="cancelOrder()">
                                 Hủy đơn hàng
                             </button>
                         </div>
@@ -106,8 +98,29 @@
             </div>
 
             <div class="row">
-                <div class="col-12" id="user-info">
+                <div class="col-6 mb-3" id="user-info">
 
+                </div>
+
+                <div class="col-6 mb-3">
+                    <div class="card mb-0">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Trạng thái đơn hàng</label>
+                                <select name="status" class="form-control mb-3" id="status">
+                                    <option th:each="status: ${orderStatusList}"
+                                            th:value="${status}"
+                                            th:text="${status.getDisplayValue()}"
+                                            th:selected="${status == order.status}"></option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <textarea name="note" id="admin-note" rows="5" placeholder="Admin ghi chú"
+                                          class="form-control" th:text="${order.adminNote}"></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-12">
                     <div class="card">
@@ -225,7 +238,8 @@
                                         </tbody>
                                     </table>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <button class="btn btn-primary btn-action" onclick="openModalCreateProduct()">Thêm sản phẩm
+                                        <button class="btn btn-primary btn-action" onclick="openModalCreateProduct()">
+                                            Thêm sản phẩm
                                         </button>
                                         <div id="coupon-info">
 

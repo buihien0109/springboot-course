@@ -67,7 +67,12 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Người tạo</label>
-                                            <input type="text" class="form-control" id="user" name="user" th:value="${user.username}" disabled/>
+                                            <select class="form-control" id="user" name="user">
+                                                <option th:each="user : ${users}" th:value="${user.userId}"
+                                                        th:selected="${currentUser.userId == user.userId}"
+                                                        th:text="${user.username}">Chọn người tạo
+                                                </option>
+                                            </select>
                                         </div>
                                     </form>
                                 </div>

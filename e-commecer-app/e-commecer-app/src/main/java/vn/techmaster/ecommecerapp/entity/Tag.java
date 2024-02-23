@@ -3,9 +3,9 @@ package vn.techmaster.ecommecerapp.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import vn.techmaster.ecommecerapp.model.dto.PaymentVoucherDto;
 import vn.techmaster.ecommecerapp.model.dto.TagUsedDto;
 
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ import java.util.List;
                 FROM tag t
                 LEFT JOIN blog_tag bt ON t.id = bt.tag_id
                 GROUP BY t.id
+                ORDER BY t.id DESC
                 """
 )
 
@@ -42,22 +43,23 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "tag")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    Integer id;
 
     @Column(name = "name")
-    private String name;
+    String name;
 
     @Column(name = "slug")
-    private String slug;
+    String slug;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     @Fetch(FetchMode.SUBSELECT)
-    private List<Blog> blogs = new ArrayList<>();
+    List<Blog> blogs = new ArrayList<>();
 
     public Tag(Integer id, String name) {
         this.id = id;

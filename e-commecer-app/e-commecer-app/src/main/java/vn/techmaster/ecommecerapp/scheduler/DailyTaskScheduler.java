@@ -10,8 +10,6 @@ import vn.techmaster.ecommecerapp.repository.DiscountCampaignRepository;
 @Component
 @RequiredArgsConstructor
 public class DailyTaskScheduler {
-    private final DiscountCampaignRepository discountCampaignRepository;
-
     // Phương thức này sẽ chạy vào lúc 0 giờ 0 phút của mỗi ngày
     @Scheduled(cron = "0 0 0 * * *")
     public void runAtStartOfNewDay() {

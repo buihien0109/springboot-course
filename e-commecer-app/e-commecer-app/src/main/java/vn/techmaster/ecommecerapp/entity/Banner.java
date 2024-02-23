@@ -2,6 +2,7 @@ package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
@@ -12,20 +13,21 @@ import java.util.Date;
 @Builder
 @Entity
 @Table(name = "banner")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Banner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    Integer id;
 
-    private String name;
-    private String slug;
-    private String linkRedirect;
-    private String url;
-    private Integer displayOrder;
-    private Boolean status;
+    String name;
+    String slug;
+    String linkRedirect;
+    String url;
+    Integer displayOrder;
+    Boolean status;
 
-    private Date createdAt;
-    private Date updatedAt;
+    Date createdAt;
+    Date updatedAt;
 
     @PrePersist
     public void prePersist() {

@@ -19,18 +19,18 @@ import java.util.List;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BlogDto {
-    private Integer id;
-    private String title;
-    private String slug;
-    private String description;
-    private String content;
-    private String thumbnail;
-    private Date createdAt;
-    private Date updatedAt;
-    private Date publishedAt;
-    private Boolean status;
-    private UserDto user;
-    private List<TagDto> tags = new ArrayList<>();
+    Integer id;
+    String title;
+    String slug;
+    String description;
+    String content;
+    String thumbnail;
+    Date createdAt;
+    Date updatedAt;
+    Date publishedAt;
+    Boolean status;
+    UserDto user;
+    List<TagDto> tags = new ArrayList<>();
 
     /**
      * DTO for {@link vn.techmaster.ecommecerapp.entity.User}
@@ -39,10 +39,11 @@ public class BlogDto {
     @NoArgsConstructor
     @Getter
     @Setter
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class UserDto {
-        private Long userId;
-        private String username;
-        private String avatar;
+        Long userId;
+        String username;
+        String avatar;
     }
 
     /**
@@ -52,10 +53,11 @@ public class BlogDto {
     @NoArgsConstructor
     @Getter
     @Setter
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class TagDto {
-        private Integer id;
-        private String name;
-        private String slug;
+        Integer id;
+        String name;
+        String slug;
     }
 
     public BlogDto(Integer id, String title, String slug, String description, String content, String thumbnail, Date createdAt, Date updatedAt, Date publishedAt, Boolean status, String user, String tags) {
@@ -77,7 +79,8 @@ public class BlogDto {
         }
 
         try {
-            this.tags = objectMapper.readValue((String) tags, new TypeReference<List<TagDto>>() {});
+            this.tags = objectMapper.readValue((String) tags, new TypeReference<List<TagDto>>() {
+            });
         } catch (IOException e) {
             this.tags = new ArrayList<>();
         }

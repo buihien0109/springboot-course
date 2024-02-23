@@ -2,10 +2,8 @@ package vn.techmaster.ecommecerapp.model.dto;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
 import vn.techmaster.ecommecerapp.utils.DateUtils;
 
@@ -22,16 +20,17 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class DiscountCampaignDto implements Serializable {
-    private Long campaignId;
-    private String name;
-    private String slug;
-    private String description;
-    private DiscountCampaign.DiscountType discountType;
-    private Integer discountValue;
-    private Date startDate;
-    private Date endDate;
-    private List<ProductNormalAdminDto> products;
+    Long campaignId;
+    String name;
+    String slug;
+    String description;
+    DiscountCampaign.DiscountType discountType;
+    Integer discountValue;
+    Date startDate;
+    Date endDate;
+    List<ProductNormalAdminDto> products;
 
     public DiscountCampaignDto(Long campaignId, String name, String slug, String description, String discountType, Integer discountValue, String startDate, String endDate, String products) {
         this.campaignId = campaignId;
@@ -44,14 +43,17 @@ public class DiscountCampaignDto implements Serializable {
         this.endDate = DateUtils.parseDate(endDate);
 
         if (products != null) {
+            System.out.println("products 1: " + products);
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 this.products = objectMapper.readValue(products, new TypeReference<List<ProductNormalAdminDto>>() {
                 });
             } catch (IOException e) {
+                e.printStackTrace();
                 this.products = new ArrayList<>();
             }
         } else {
+            System.out.println("products 2: " + products);
             this.products = new ArrayList<>();
         }
     }

@@ -2,6 +2,7 @@ package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
@@ -12,23 +13,24 @@ import java.util.Date;
 @Builder
 @Entity
 @Table(name = "token_confirm")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class TokenConfirm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
-    private String token;
+    String token;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    User user;
 
     @Enumerated(EnumType.STRING)
-    private TokenType tokenType;
+    TokenType tokenType;
 
-    private Date createdDate;
-    private Date confirmedDate;
-    private Date expiryDate;
+    Date createdDate;
+    Date confirmedDate;
+    Date expiryDate;
 
     public enum TokenType {
         EMAIL_VERIFICATION,

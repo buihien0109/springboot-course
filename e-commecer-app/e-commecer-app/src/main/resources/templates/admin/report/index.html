@@ -56,7 +56,7 @@
                                             </div>
                                         </div>
                                         <div class="col-4">
-                                            <button class="btn btn-success">Xuất excel</button>
+                                            <button class="btn btn-success" id="btn-export-report">Xuất excel</button>
                                         </div>
                                     </div>
 
@@ -71,7 +71,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-4 col-4">
-                                    <div class="small-box bg-lightblue">
+                                    <div class="small-box bg-warning">
                                         <div class="inner">
                                             <h3 class="currency" th:text="${totalRevenue}">1,047,050</h3>
                                             <p>Doanh thu</p>
@@ -80,7 +80,7 @@
                                 </div>
 
                                 <div class="col-lg-4 col-4">
-                                    <div class="small-box bg-lightblue">
+                                    <div class="small-box bg-danger">
                                         <div class="inner">
                                             <h3 class="currency" th:text="${totalPayment}">10,361,000</h3>
                                             <p>Chi phí</p>
@@ -89,7 +89,7 @@
                                 </div>
 
                                 <div class="col-lg-4 col-4">
-                                    <div class="small-box bg-lightblue">
+                                    <div class="small-box bg-info">
                                         <div class="inner">
                                             <h3 class="currency" th:text="${totalRevenue - totalPayment}">
                                                 -9,313,950</h3>
@@ -117,7 +117,7 @@
                                      aria-labelledby="custom-content-below-home-tab">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <table class="mt-4 table table-bordered table-hover">
+                                            <table class="mt-4 table table-bordered table-hover datatables-table">
                                                 <thead>
                                                 <tr>
                                                     <th>Mã đơn</th>
@@ -165,7 +165,7 @@
                                      aria-labelledby="custom-content-below-profile-tab">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <table class="mt-4 table table-bordered table-hover">
+                                            <table class="mt-4 table table-bordered table-hover datatables-table">
                                                 <thead>
                                                 <tr>
                                                     <th style="width: 10%">Mã phiếu</th>
@@ -222,10 +222,14 @@
         const totalPayment = [[${totalPayment}]];
         const orders = [[${orders}]];
         const paymentVouchers = [[${paymentVouchers}]];
-        console.log({totalPayment, totalRevenue, orders, paymentVouchers})
+        const startDate = [[${startDate}]];
+        const endDate = [[${endDate}]];
 
         //Date picker
-        $('#date').daterangepicker()
+        $('#date').daterangepicker({
+            startDate: moment(startDate, "YYYY-MM-DD"), // Set your desired start date
+            endDate: moment(endDate, "YYYY-MM-DD"),   // Set your desired end date
+        })
 
         // Listen for changes in the date range picker
         $('#date').on('apply.daterangepicker', function (ev, picker) {
@@ -246,6 +250,28 @@
 
             window.location.href = newURL
         }
+
+        const btnExportReport = document.getElementById('btn-export-report');
+        btnExportReport.addEventListener('click', function () {
+            const startDate = $('#date').data('daterangepicker').startDate.format('DD-MM-YYYY');
+            const endDate = $('#date').data('daterangepicker').endDate.format('DD-MM-YYYY');
+
+            axios.get(`/api/v1/admin/reports/export-report?start=${startDate}&end=${endDate}`, {
+                responseType: 'blob'
+            })
+                .then(function (response) {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', `reports_${startDate}_${endDate}.xlsx`);
+                    document.body.appendChild(link);
+                    link.click();
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    console.log(error.response.data.message);
+                });
+        });
     </script>
 </th:block>
 

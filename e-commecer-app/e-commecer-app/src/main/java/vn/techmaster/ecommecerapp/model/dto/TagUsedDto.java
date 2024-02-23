@@ -1,9 +1,7 @@
 package vn.techmaster.ecommecerapp.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
 
@@ -14,9 +12,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class TagUsedDto implements Serializable {
-    private Integer id;
-    private String name;
-    private String slug;
-    private Integer used;
+    Integer id;
+    String name;
+    String slug;
+    Integer used;
 }

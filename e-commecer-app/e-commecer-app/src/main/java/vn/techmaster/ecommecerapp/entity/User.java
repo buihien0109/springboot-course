@@ -2,9 +2,9 @@ package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import vn.techmaster.ecommecerapp.model.dto.ReviewDto;
 import vn.techmaster.ecommecerapp.model.dto.UserNormalDto;
 
 import java.util.Date;
@@ -52,6 +52,19 @@ import java.util.Set;
                 """
 )
 
+@NamedNativeQuery(
+        name = "getAllAvailabelByRole",
+        resultSetMapping = "UserNormalDtoResult",
+        query = """
+                SELECT u.user_id as user_id, u.username as username, u.email as email, u.phone as phone, u.avatar as avatar, u.created_at as created_at
+                FROM user u
+                JOIN user_role ur ON u.user_id = ur.user_id
+                JOIN role r ON ur.role_id = r.role_id
+                WHERE r.name = ?1 AND u.enabled = true
+                ORDER BY u.created_at DESC
+                """
+)
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -59,31 +72,32 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "user")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    Long userId;
 
-    private String username;
+    String username;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    String email;
 
-    private String phone;
+    String phone;
 
     @Column(nullable = false)
-    private String password;
+    String password;
 
-    private String avatar;
-    private Boolean enabled;
-    private Date createdAt;
+    String avatar;
+    Boolean enabled;
+    Date createdAt;
 
     @ManyToMany(fetch = FetchType.EAGER) //EAGER: load hết dữ liệu của user và role
     @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new LinkedHashSet<>();
+    Set<Role> roles = new LinkedHashSet<>();
 
     public User(String username, String email, String password, Set<Role> roles) {
         this.username = username;

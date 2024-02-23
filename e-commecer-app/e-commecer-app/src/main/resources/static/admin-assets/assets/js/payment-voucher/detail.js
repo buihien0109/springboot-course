@@ -32,6 +32,9 @@ $('#form-update-payment-voucher').validate({
             validateInteger: true,
             validateMinValue: true,
         },
+        user: {
+            required: true
+        }
     },
     messages: {
         purpose: {
@@ -42,6 +45,9 @@ $('#form-update-payment-voucher').validate({
             validateInteger: "Số tiền phải là số nguyên",
             validateMinValue: "Số tiền phải lớn hơn 0",
         },
+        user: {
+            required: "Người tạo không được để trống"
+        }
     },
     errorElement: 'span',
     errorPlacement: function (error, element) {
@@ -60,6 +66,7 @@ $('#form-update-payment-voucher').validate({
 const purposeEl = document.getElementById("purpose");
 const amountEl = document.getElementById("amount");
 const noteEl = document.getElementById("note");
+const userEl = document.getElementById("user");
 const btnUpdate = document.getElementById("btn-update")
 
 // format amount when user input
@@ -79,6 +86,7 @@ btnUpdate.addEventListener("click", async () => {
         purpose: purposeEl.value,
         amount: formatPrice(amountEl.value),
         note: noteEl.value,
+        userId: Number(userEl.value)
     }
 
     try {
@@ -94,3 +102,20 @@ btnUpdate.addEventListener("click", async () => {
         toastr.error(e.response.data.message);
     }
 })
+
+const btnDelete = document.getElementById("btn-delete");
+btnDelete.addEventListener("click", () => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa phiếu chi này?")) {
+        axios.delete(`/api/v1/admin/payment_vouchers/${paymentVoucher.id}`)
+            .then(res => {
+                toastr.success("Xóa thành công");
+                setTimeout(() => {
+                    window.location.href = "/admin/payment_vouchers";
+                }, 1500);
+            })
+            .catch(err => {
+                console.log(err);
+                toastr.error(err.response.data.message);
+            });
+    }
+});

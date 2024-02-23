@@ -2,10 +2,8 @@ package vn.techmaster.ecommecerapp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import vn.techmaster.ecommecerapp.model.dto.ReviewDto;
 
 import java.util.Date;
@@ -64,35 +62,36 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "review")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewId;
+    Long reviewId;
 
-    private String authorName;
-    private String authorAvatar;
-    private String authorEmail;
-    private String authorPhone;
+    String authorName;
+    String authorAvatar;
+    String authorEmail;
+    String authorPhone;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    User user;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    private Product product;
+    Product product;
 
-    private Integer rating;
+    Integer rating;
 
     @Column(columnDefinition = "TEXT")
-    private String comment;
+    String comment;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    Status status;
 
-    private Date createdAt;
-    private Date updatedAt;
+    Date createdAt;
+    Date updatedAt;
 
     @PrePersist
     public void prePersist() {

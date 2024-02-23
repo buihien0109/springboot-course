@@ -4,12 +4,13 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import vn.techmaster.ecommecerapp.entity.OrderTable;
 
 import java.util.Map;
 
@@ -18,10 +19,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MailService {
     private final JavaMailSender javaMailSender;
-    private final ResourceLoader resourceLoader;
     private final TemplateEngine templateEngine;
 
     // Send mail confirm registration
+    @Async
     public void sendMailConfirmRegistration(Map<String, String> data) {
         log.info("sendMailConfirmRegistration");
         log.info("Sending email request : {}", data);
@@ -48,6 +49,8 @@ public class MailService {
         }
     }
 
+    // Send mail reset password
+    @Async
     public void sendMailResetPassword(Map<String, String> data) {
         log.info("sendMailResetPassword");
         log.info("Sending email request : {}", data);
@@ -65,6 +68,33 @@ public class MailService {
 
             // Use the template engine to process the template
             String htmlContent = templateEngine.process("web/mail-template/reset-password", context);
+            helper.setText(htmlContent, true); // Enable HTML content
+
+            javaMailSender.send(message);
+        } catch (MessagingException e) {
+            log.error("Error when sending email: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    // Send mail confirm order
+    @Async
+    public void sendMailConfirmOrder(OrderTable order) {
+        log.info("sendMailConfirmOrder");
+
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(order.getEmail());
+            helper.setSubject("Xác nhận đặt hàng");
+
+            // Create the Thymeleaf context
+            Context context = new Context();
+            context.setVariable("order", order);
+
+            // Use the template engine to process the template
+            String htmlContent = templateEngine.process("web/mail-template/confirmation-order", context);
             helper.setText(htmlContent, true); // Enable HTML content
 
             javaMailSender.send(message);

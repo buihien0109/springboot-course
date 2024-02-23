@@ -31,6 +31,8 @@ public interface OrderTablePublic {
 
     String getNote();
 
+    String getAdminNote();
+
     OrderTable.ShippingMethod getShippingMethod();
 
     OrderTable.PaymentMethod getPaymentMethod();
@@ -111,6 +113,11 @@ public interface OrderTablePublic {
         @Override
         public String getNote() {
             return orderTable.getNote();
+        }
+
+        @Override
+        public String getAdminNote() {
+            return orderTable.getAdminNote();
         }
 
         @Override

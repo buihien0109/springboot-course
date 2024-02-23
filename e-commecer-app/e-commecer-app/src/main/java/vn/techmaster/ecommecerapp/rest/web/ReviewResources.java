@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +16,17 @@ public class ReviewResources {
     private final ReviewService reviewService;
 
     @PostMapping("/public/reviews")
-    public ResponseEntity<?> createReview(@RequestBody UpsertReviewRequest request) {
+    public ResponseEntity<?> createReview(@Valid @RequestBody UpsertReviewRequest request) {
         return ResponseEntity.ok(reviewService.createReview(request));
     }
 
     @PostMapping("/public/reviews/anonymous")
-    public ResponseEntity<?> createReviewAnonymous(@RequestBody CreateReviewAnonymousRequest request) {
+    public ResponseEntity<?> createReviewAnonymous(@Valid @RequestBody CreateReviewAnonymousRequest request) {
         return ResponseEntity.ok(reviewService.createReviewAnonymous(request));
     }
 
     @PutMapping("/public/reviews/{id}")
-    public ResponseEntity<?> updateReview(@RequestBody UpsertReviewRequest request, @PathVariable Long id) {
+    public ResponseEntity<?> updateReview(@Valid @RequestBody UpsertReviewRequest request, @PathVariable Long id) {
         return ResponseEntity.ok(reviewService.updateReview(request, id));
     }
 
@@ -36,7 +37,7 @@ public class ReviewResources {
     }
 
     @PutMapping("/admin/reviews/{id}")
-    public ResponseEntity<?> adminUpdateReview(@RequestBody UpsertReviewRequest request, @PathVariable Long id) {
+    public ResponseEntity<?> adminUpdateReview(@Valid @RequestBody UpsertReviewRequest request, @PathVariable Long id) {
         return ResponseEntity.ok(reviewService.adminUpdateReview(request, id));
     }
 

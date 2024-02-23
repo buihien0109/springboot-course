@@ -7,13 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.techmaster.ecommecerapp.entity.DiscountCampaign;
 import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.model.ProductAdminDto;
+import vn.techmaster.ecommecerapp.model.dto.ProductAdminDto;
 import vn.techmaster.ecommecerapp.model.dto.ProductNormalAdminDto;
 import vn.techmaster.ecommecerapp.model.dto.ProductNormalDto;
-import vn.techmaster.ecommecerapp.model.projection.product.ProductPublic;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -68,4 +68,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(nativeQuery = true, name = "getAllAvailabelProductsNormalAdminDtoByAdmin")
     List<ProductNormalAdminDto> getAllAvailabelProductsNormalAdminDtoByAdmin();
+
+    boolean existsBySupplier_SupplierId(Long supplierId);
+
+    Optional<Product> findByProductIdAndSlug(Long id, String slug);
 }

@@ -1,8 +1,10 @@
 package vn.techmaster.ecommecerapp.model.dto;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import vn.techmaster.ecommecerapp.entity.OrderTable;
 import vn.techmaster.ecommecerapp.utils.DateUtils;
 
@@ -15,15 +17,16 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderDto implements Serializable {
-    private Long orderId;
-    private String orderNumber;
-    private Date orderDate;
-    private String username;
-    private String phone;
-    private String email;
-    private OrderTable.Status status;
-    private Long userId;
+    Long orderId;
+    String orderNumber;
+    Date orderDate;
+    String username;
+    String phone;
+    String email;
+    OrderTable.Status status;
+    Long userId;
 
     public OrderDto(Long orderId, String orderNumber, String orderDate, String username, String phone, String email, String status, Long userId) {
         this.orderId = orderId;

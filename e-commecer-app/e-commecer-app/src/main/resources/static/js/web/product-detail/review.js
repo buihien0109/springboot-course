@@ -89,6 +89,11 @@ const createReview = () => {
         return;
     }
 
+    if (currentRating === 0) {
+        toastr.warning("Vui lòng chọn số sao");
+        return;
+    }
+
     const review = {
         productId: product.productId, rating: currentRating, comment: reviewContent.value
     }
@@ -151,6 +156,11 @@ const deleteReview = id => {
 --------------------- */
 const updateReview = id => {
     if (!$("#form-review").valid()) {
+        return;
+    }
+
+    if (currentRating === 0) {
+        toastr.warning("Vui lòng chọn số sao");
         return;
     }
 

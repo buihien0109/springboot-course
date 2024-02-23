@@ -19,4 +19,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query(nativeQuery = true, name = "getTransactionById")
     Optional<TransactionNormalDto> getTransactionById(Long id);
+
+    boolean existsBySupplier_SupplierId(Long supplierId);
 }

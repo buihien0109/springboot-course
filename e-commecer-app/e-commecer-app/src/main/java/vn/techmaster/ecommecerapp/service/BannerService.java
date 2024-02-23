@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.service;
 
+import com.github.slugify.Slugify;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -9,6 +10,7 @@ import vn.techmaster.ecommecerapp.exception.ResouceNotFoundException;
 import vn.techmaster.ecommecerapp.model.projection.BannerPublic;
 import vn.techmaster.ecommecerapp.model.request.UpsertBannerRequest;
 import vn.techmaster.ecommecerapp.repository.BannerRepository;
+import vn.techmaster.ecommecerapp.utils.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BannerService {
     private final BannerRepository bannerRepository;
+    private final Slugify slugify;
 
     public List<BannerPublic> getAllBanners() {
         List<Banner> banners = bannerRepository.findAll(Sort.by("createdAt").descending());
@@ -38,7 +41,8 @@ public class BannerService {
         // create banner
         Banner banner = Banner.builder()
                 .name(request.getName())
-                .url(request.getUrl())
+                .slug(slugify.slugify(request.getName()))
+                .url(request.getUrl() != null ? request.getUrl() : StringUtils.generateLinkImage(request.getName()))
                 .linkRedirect(request.getLinkRedirect())
                 .status(request.getStatus())
                 .build();
@@ -75,6 +79,7 @@ public class BannerService {
 
         // update banner
         bannerToUpdate.setName(request.getName());
+        bannerToUpdate.setSlug(slugify.slugify(request.getName()));
         bannerToUpdate.setUrl(request.getUrl());
         bannerToUpdate.setLinkRedirect(request.getLinkRedirect());
         bannerToUpdate.setStatus(request.getStatus());

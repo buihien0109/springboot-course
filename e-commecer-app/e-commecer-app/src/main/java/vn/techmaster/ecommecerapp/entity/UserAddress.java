@@ -2,10 +2,8 @@ package vn.techmaster.ecommecerapp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -13,19 +11,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "user_address")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    User user;
 
-    private String province;
-    private String district;
-    private String ward;
-    private String detail;
-    private Boolean isDefault;
+    String province;
+    String district;
+    String ward;
+    String detail;
+    Boolean isDefault;
 }

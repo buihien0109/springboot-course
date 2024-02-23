@@ -1,10 +1,8 @@
 package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import vn.techmaster.ecommecerapp.model.dto.PaymentVoucherDto;
 
 import java.util.Date;
@@ -66,23 +64,26 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "payment_voucher")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PaymentVoucher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
-    private String purpose;
+    @Column(columnDefinition = "TEXT")
+    String purpose;
 
-    private String note;
+    @Column(columnDefinition = "TEXT")
+    String note;
 
-    private Integer amount;
+    Integer amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    User user;
 
-    private Date createdAt;
-    private Date updatedAt;
+    Date createdAt;
+    Date updatedAt;
 
     @PrePersist
     public void prePersist() {

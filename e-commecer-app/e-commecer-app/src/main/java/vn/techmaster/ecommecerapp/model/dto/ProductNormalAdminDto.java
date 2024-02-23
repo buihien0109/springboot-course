@@ -1,10 +1,8 @@
 package vn.techmaster.ecommecerapp.model.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import vn.techmaster.ecommecerapp.entity.Product;
 
 import java.io.IOException;
@@ -16,14 +14,15 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductNormalAdminDto implements Serializable {
-    private Long productId;
-    private String name;
-    private Integer price;
-    private Integer stockQuantity;
-    private Product.Status status;
-    private CategoryDto category;
-    private SupplierDto supplier;
+    Long productId;
+    String name;
+    Integer price;
+    Integer stockQuantity;
+    Product.Status status;
+    CategoryDto category;
+    SupplierDto supplier;
 
     /**
      * DTO for {@link vn.techmaster.ecommecerapp.entity.Category}
@@ -32,9 +31,10 @@ public class ProductNormalAdminDto implements Serializable {
     @NoArgsConstructor
     @Getter
     @Setter
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class CategoryDto implements Serializable {
-        private Long categoryId;
-        private String name;
+        Long categoryId;
+        String name;
     }
 
     /**

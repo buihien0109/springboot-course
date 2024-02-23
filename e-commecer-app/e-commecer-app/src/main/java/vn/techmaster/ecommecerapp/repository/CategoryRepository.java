@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.repository;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import vn.techmaster.ecommecerapp.entity.Category;
@@ -34,4 +35,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @Query(nativeQuery = true, name = "getAllCategoryIsParent")
     List<CategoryDto> getAllCategoryIsParent();
+
+    Optional<Category> findByName(String name);
 }

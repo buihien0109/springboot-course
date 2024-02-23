@@ -46,4 +46,10 @@ public class UserResources {
     public ResponseEntity<?> getAllAddress(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getAllAddress(id));
     }
+
+    @PostMapping("/{id}/enable")
+    public ResponseEntity<?> enableUser(@PathVariable Long id) {
+        userService.enableUser(id);
+        return ResponseEntity.noContent().build();
+    }
 }

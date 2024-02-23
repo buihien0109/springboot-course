@@ -125,15 +125,15 @@
                                     <th:block th:text="|${cartItem.product.name} x ${cartItem.quantity}|">Vegetable’s
                                         Package
                                     </th:block>
-                                    <span class="currency"
-                                          th:text="${cartItem.product.discountPrice != null ? cartItem.product.discountPrice * cartItem.quantity : cartItem.product.price * cartItem.quantity}">$75.99</span>
+                                    <span th:with="total=${cartItem.product.discountPrice != null ? cartItem.product.discountPrice * cartItem.quantity : cartItem.product.price * cartItem.quantity}"
+                                          th:text="|${#numbers.formatInteger(total, 3, 'POINT')}đ|">$75.99</span>
                                 </li>
                             </ul>
                             <div class="checkout__order__subtotal">Thành tiền <span
-                                    class="temporary-amount">$750.99</span></div>
-                            <div class="checkout__order__discount">Giảm giá <span class="discount-amount">$750.99</span>
+                                    class="temporary-amount"></span></div>
+                            <div class="checkout__order__discount">Giảm giá <span class="discount-amount"></span>
                             </div>
-                            <div class="checkout__order__total">Tổng tiền <span class="total-amount">$750.99</span>
+                            <div class="checkout__order__total">Tổng tiền <span class="total-amount"></span>
                             </div>
                             <button class="site-btn" id="btn-submit-order">XÁC NHẬN</button>
                         </div>

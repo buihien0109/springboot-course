@@ -50,9 +50,9 @@ public class WebController {
         return "web/category";
     }
 
-    @GetMapping("/san-pham/{id}")
-    public String getProduct(@PathVariable Long id, Model model) {
-        ProductPublic product = productService.findById(id);
+    @GetMapping("/san-pham/{id}/{slug}")
+    public String getProduct(Model model, @PathVariable Long id, @PathVariable String slug) {
+        ProductPublic product = productService.findByIdAndSlug(id, slug);
         model.addAttribute("product", product);
         model.addAttribute("relatedProducts", productService.getRelatedProducts(product.getCategory().getCategoryId(), id, 4)); // done
         model.addAttribute("reviews", reviewService.getAllReviewsAvailableByProductId(id)); // done

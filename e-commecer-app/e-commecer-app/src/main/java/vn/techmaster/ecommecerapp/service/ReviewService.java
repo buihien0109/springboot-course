@@ -14,6 +14,7 @@ import vn.techmaster.ecommecerapp.model.request.UpsertReviewRequest;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 import vn.techmaster.ecommecerapp.repository.ReviewRepository;
 import vn.techmaster.ecommecerapp.security.SecurityUtils;
+import vn.techmaster.ecommecerapp.utils.StringUtils;
 
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class ReviewService {
         review.setAuthorName(request.getAuthorName());
         review.setAuthorEmail(request.getAuthorEmail());
         review.setAuthorPhone(request.getAuthorPhone());
-        review.setAuthorAvatar(generateLinkAuthorAvatar(request.getAuthorName()));
+        review.setAuthorAvatar(StringUtils.generateLinkImage(request.getAuthorName()));
         review.setProduct(product);
         review.setRating(request.getRating());
         review.setComment(request.getComment());
@@ -88,21 +89,6 @@ public class ReviewService {
 
         // return review
         return ReviewPublic.of(review);
-    }
-
-    // get character first each of word from string, and to uppercase
-    public String getCharacter(String str) {
-        String[] words = str.split(" ");
-        StringBuilder result = new StringBuilder();
-        for (String word : words) {
-            result.append(word.charAt(0));
-        }
-        return result.toString().toUpperCase();
-    }
-
-    // generate link author avatar follow struct : https://placehold.co/200x200?text=[...]
-    public String generateLinkAuthorAvatar(String authorName) {
-        return "https://placehold.co/200x200?text=" + getCharacter(authorName);
     }
 
     public ReviewPublic updateReview(UpsertReviewRequest request, Long id) {

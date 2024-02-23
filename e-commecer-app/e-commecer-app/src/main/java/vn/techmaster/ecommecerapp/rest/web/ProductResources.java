@@ -1,5 +1,6 @@
 package vn.techmaster.ecommecerapp.rest.web;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class ProductResources {
     }
 
     @PostMapping("/admin/products")
-    public ResponseEntity<?> createProduct(@RequestBody CreateProductRequest request) {
+    public ResponseEntity<?> createProduct(@Valid @RequestBody CreateProductRequest request) {
         return ResponseEntity.ok(productService.createProduct(request));
     }
 

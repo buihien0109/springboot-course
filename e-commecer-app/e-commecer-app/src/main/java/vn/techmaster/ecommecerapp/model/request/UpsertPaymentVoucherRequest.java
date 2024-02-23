@@ -11,4 +11,5 @@ public class UpsertPaymentVoucherRequest {
     private String purpose;
     private String note;
     private Integer amount;
+    private Long userId;
 }

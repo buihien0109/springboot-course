@@ -96,7 +96,7 @@ btnUpdate.addEventListener("click", () => {
         })
         .catch(err => {
             console.log(err);
-            toastr.error("Cập nhật thất bại");
+            toastr.error(err.response.data.message);
         });
 });
 
@@ -113,7 +113,7 @@ btnDelete.addEventListener("click", () => {
             })
             .catch(err => {
                 console.log(err);
-                toastr.error("Xóa thất bại");
+                toastr.error(err.response.data.message);
             });
     }
 });

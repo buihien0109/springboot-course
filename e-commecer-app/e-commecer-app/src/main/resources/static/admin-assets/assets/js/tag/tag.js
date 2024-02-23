@@ -96,7 +96,7 @@ const createTag = () => {
 
     axios.post("/api/v1/admin/tags", {name})
         .then(res => {
-            tags.push(res.data)
+            tags.unshift(res.data)
             renderPagination(tags)
             inputNameEl.value = "";
 

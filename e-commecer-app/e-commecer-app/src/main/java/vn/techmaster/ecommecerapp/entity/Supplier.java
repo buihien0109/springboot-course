@@ -1,10 +1,8 @@
 package vn.techmaster.ecommecerapp.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,14 +10,15 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "supplier")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long supplierId;
+    Long supplierId;
 
-    private String name;
-    private String address;
-    private String email;
-    private String phone;
-    private String thumbnail;
+    String name;
+    String address;
+    String email;
+    String phone;
+    String thumbnail;
 }

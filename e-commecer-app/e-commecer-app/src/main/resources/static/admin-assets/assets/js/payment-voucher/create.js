@@ -32,6 +32,9 @@ $('#form-create-payment-voucher').validate({
             validateInteger: true,
             validateMinValue: true,
         },
+        user: {
+            required: true
+        }
     },
     messages: {
         purpose: {
@@ -42,6 +45,9 @@ $('#form-create-payment-voucher').validate({
             validateInteger: "Số tiền phải là số nguyên",
             validateMinValue: "Số tiền phải lớn hơn 0",
         },
+        user: {
+            required: "Người tạo không được để trống"
+        }
     },
     errorElement: 'span',
     errorPlacement: function (error, element) {
@@ -60,6 +66,7 @@ $('#form-create-payment-voucher').validate({
 const purposeEl = document.getElementById("purpose");
 const amountEl = document.getElementById("amount");
 const noteEl = document.getElementById("note");
+const userEl = document.getElementById("user");
 const btnCreate = document.getElementById("btn-create")
 
 // format amount when user input
@@ -75,6 +82,7 @@ btnCreate.addEventListener("click", async () => {
         purpose: purposeEl.value,
         amount: formatPrice(amountEl.value),
         note: noteEl.value,
+        userId: Number(userEl.value)
     }
 
     try {
