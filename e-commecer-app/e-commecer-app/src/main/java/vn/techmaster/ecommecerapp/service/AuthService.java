@@ -23,6 +23,7 @@ import vn.techmaster.ecommecerapp.model.request.ResetPasswordRequest;
 import vn.techmaster.ecommecerapp.repository.RoleRepository;
 import vn.techmaster.ecommecerapp.repository.TokenConfirmRepository;
 import vn.techmaster.ecommecerapp.repository.UserRepository;
+import vn.techmaster.ecommecerapp.utils.StringUtils;
 
 import java.util.*;
 
@@ -110,6 +111,7 @@ public class AuthService {
         newUser.setUsername(request.getUsername());
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        newUser.setAvatar(StringUtils.generateLinkImage(request.getUsername()));
         newUser.setEnabled(false);
         newUser.setRoles(Set.of(role));
         userRepository.save(newUser);

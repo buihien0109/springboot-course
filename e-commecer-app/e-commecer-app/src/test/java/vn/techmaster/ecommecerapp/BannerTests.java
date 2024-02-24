@@ -6,9 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import vn.techmaster.ecommecerapp.entity.Banner;
+import vn.techmaster.ecommecerapp.entity.PaymentVoucher;
 import vn.techmaster.ecommecerapp.repository.BannerRepository;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootTest
@@ -43,6 +46,17 @@ public class BannerTests {
     @Test
     void delete_all_banner() {
         bannerRepository.deleteAll();
+    }
+
+    @Test
+    void update_created_at_banner() {
+        List<Banner> bannerList = bannerRepository.findAll();
+        Date start = new Calendar.Builder().setDate(2023, 11, 20).build().getTime();
+        Date end = new Date();
+        for (Banner banner : bannerList) {
+            banner.setCreatedAt(randomDateBetweenTwoDates(start, end));
+            bannerRepository.save(banner);
+        }
     }
 
     // write method to random date between 2 date

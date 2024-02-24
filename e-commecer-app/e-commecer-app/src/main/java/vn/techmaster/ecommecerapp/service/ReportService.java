@@ -12,6 +12,7 @@ import vn.techmaster.ecommecerapp.model.dto.OrderUserDetailDto;
 import vn.techmaster.ecommecerapp.model.dto.PaymentVoucherDto;
 import vn.techmaster.ecommecerapp.repository.OrderTableRepository;
 import vn.techmaster.ecommecerapp.repository.PaymentVoucherRepository;
+import vn.techmaster.ecommecerapp.utils.DateUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -230,7 +231,7 @@ public class ReportService {
         for (OrderUserDetailDto order : orderList) {
             Row row = sheet.createRow(rowNum++);
             row.createCell(0).setCellValue(order.getOrderNumber());
-            row.createCell(1).setCellValue(order.getOrderDate());
+            row.createCell(1).setCellValue(DateUtils.formatDate(order.getOrderDate()));
             row.createCell(2).setCellValue(order.getUsername());
             row.createCell(3).setCellValue(order.getPhone());
             row.createCell(4).setCellValue(order.getEmail());
@@ -244,7 +245,7 @@ public class ReportService {
         for (PaymentVoucherDto paymentVoucher : paymentVoucherList) {
             Row row = sheet.createRow(rowNum++);
             row.createCell(0).setCellValue(paymentVoucher.getId());
-            row.createCell(1).setCellValue(paymentVoucher.getCreatedAt());
+            row.createCell(1).setCellValue(DateUtils.formatDate(paymentVoucher.getCreatedAt()));
             row.createCell(2).setCellValue(paymentVoucher.getPurpose());
             row.createCell(3).setCellValue(paymentVoucher.getAmount());
             row.createCell(4).setCellValue(paymentVoucher.getUser().getUsername());

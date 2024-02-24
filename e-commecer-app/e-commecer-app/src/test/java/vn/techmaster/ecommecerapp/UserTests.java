@@ -116,7 +116,7 @@ public class UserTests {
     void update_created_at_for_user() {
         List<User> users = userRepository.findAll();
         // start date 2023-01-01 not using new Date
-        Date start = new Calendar.Builder().setDate(2023, 8, 1).build().getTime();
+        Date start = new Calendar.Builder().setDate(2023, 11, 20).build().getTime();
         Date end = new Date();
 
         for (User user : users) {

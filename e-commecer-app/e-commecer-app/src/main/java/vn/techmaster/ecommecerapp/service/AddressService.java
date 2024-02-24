@@ -23,7 +23,6 @@ public class AddressService {
     @Value("${spring.api.ghtk.token}")
     private String tokenApi;
 
-    @Cacheable(value = "posts")
     public Map<String, Object> getAllProvince() throws JsonProcessingException {
         log.info("Get all province");
 
@@ -52,7 +51,6 @@ public class AddressService {
         return objectMapper.readValue(responseBody, typeReference);
     }
 
-    @Cacheable("districts")
     public Map<String, Object> getAllDistrictByProvince(Integer provinceId) throws JsonProcessingException {
         log.info("Get all district by province id: " + provinceId);
 
@@ -81,7 +79,6 @@ public class AddressService {
         return objectMapper.readValue(responseBody, typeReference);
     }
 
-    @Cacheable("wards")
     public Map<String, Object> getAllWardByDistrict(Integer districtId) throws JsonProcessingException {
         log.info("Get all ward by district id: " + districtId);
 

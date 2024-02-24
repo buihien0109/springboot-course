@@ -4,14 +4,16 @@ import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.entity.Supplier;
-import vn.techmaster.ecommecerapp.entity.Transaction;
-import vn.techmaster.ecommecerapp.entity.TransactionItem;
+import vn.techmaster.ecommecerapp.entity.*;
 import vn.techmaster.ecommecerapp.repository.ProductRepository;
 import vn.techmaster.ecommecerapp.repository.SupplierRepository;
 import vn.techmaster.ecommecerapp.repository.TransactionItemRepository;
 import vn.techmaster.ecommecerapp.repository.TransactionRepository;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootTest
 public class TransactionTests {
@@ -109,5 +111,27 @@ public class TransactionTests {
             }
             transactionItemRepository.save(transactionItem);
         }
+    }
+
+    @Test
+    void update_created_at_transaction() {
+        List<Transaction> transactionList = transactionRepository.findAll();
+        Date start = new Calendar.Builder().setDate(2023, 11, 20).build().getTime();
+        Date end = new Date();
+        for (Transaction transaction : transactionList) {
+            transaction.setTransactionDate(randomDateBetweenTwoDates(start, end));
+            transactionRepository.save(transaction);
+        }
+    }
+
+
+    // write method to random date between 2 date
+    private Date randomDateBetweenTwoDates(Date startInclusive, Date endExclusive) {
+        long startMillis = startInclusive.getTime();
+        long endMillis = endExclusive.getTime();
+        long randomMillisSinceEpoch = ThreadLocalRandom
+                .current()
+                .nextLong(startMillis, endMillis);
+        return new Date(randomMillisSinceEpoch);
     }
 }

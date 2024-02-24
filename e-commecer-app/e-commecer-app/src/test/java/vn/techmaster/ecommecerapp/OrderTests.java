@@ -1,21 +1,17 @@
 package vn.techmaster.ecommecerapp;
 
 import com.github.javafaker.Faker;
+import com.github.slugify.Slugify;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Order;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import vn.techmaster.ecommecerapp.entity.OrderTable;
-import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.entity.User;
-import vn.techmaster.ecommecerapp.model.request.OrderItemRequest;
-import vn.techmaster.ecommecerapp.model.request.OrderRequest;
-import vn.techmaster.ecommecerapp.repository.OrderTableRepository;
-import vn.techmaster.ecommecerapp.repository.ProductRepository;
-import vn.techmaster.ecommecerapp.repository.UserRepository;
-import vn.techmaster.ecommecerapp.service.AddressService;
-import vn.techmaster.ecommecerapp.service.OrderService;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
+import vn.techmaster.ecommecerapp.entity.*;
+import vn.techmaster.ecommecerapp.model.projection.product.ProductPublic;
+import vn.techmaster.ecommecerapp.repository.*;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -27,124 +23,162 @@ public class OrderTests {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private AddressService addressService;
-    @Autowired
     private UserRepository userRepository;
     @Autowired
     private ProductRepository productRepository;
     @Autowired
-    private OrderService orderService;
+    private Slugify slugify;
+    @Autowired
+    private ProvinceRepository provinceRepository;
+    @Autowired
+    private DistrictRepository districtRepository;
+    @Autowired
+    private WardRepository wardRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+
 
     @Test
     void delete_all_order() {
-        // Delete all order
         orderTableRepository.deleteAll();
     }
 
+    @Transactional
+    @Rollback(false)
     @Test
     void save_orders() {
         Faker faker = new Faker();
         Random rd = new Random();
-        List<User> userList = userRepository.findAll();
-        List<Product> productList = productRepository.findByStatusIn(List.of(Product.Status.AVAILABLE));
+        List<User> userList = userRepository.findByRoles_NameIn(List.of("USER"));
+        List<Province> provinceList = provinceRepository.findAll();
 
-        for (int i = 0; i < 100; i++) {
+        Date start = new Calendar.Builder().setDate(2023, 11, 1).build().getTime();
+        Date end = new Date();
+
+        for (int i = 0; i < 20; i++) {
             // Random user
-            User rdUser = userList.get(rd.nextInt(userList.size()));
-
-            // Random 2-3 product
-            List<Product> rdProductList = new ArrayList<>();
-            List<OrderItemRequest> orderItemRequests = new ArrayList<>();
-            for (int j = 0; j < 2; j++) {
-                Product rdProduct = productList.get(rd.nextInt(productList.size()));
-                if (!rdProductList.contains(rdProduct)) {
-                    rdProductList.add(rdProduct);
-
-                    // Create OrderItemRequest
-                    OrderItemRequest orderItemRequest = new OrderItemRequest();
-                    orderItemRequest.setProductId(rdProduct.getProductId());
-                    orderItemRequest.setQuantity(1);
-                    orderItemRequest.setPrice(rdProduct.getPrice());
-                    orderItemRequests.add(orderItemRequest);
-                }
+            User rdUser = null;
+            String name = generateName();
+            String phone = generatePhone();
+            String email = generateEmail(name);
+            boolean isUser = rd.nextInt(2) == 1;
+            if (isUser) {
+                rdUser = userList.get(rd.nextInt(userList.size()));
+                name = rdUser.getUsername();
+                phone = rdUser.getPhone();
+                email = rdUser.getEmail();
             }
+            OrderTable.UseType useType = isUser ? OrderTable.UseType.USER : OrderTable.UseType.ANONYMOUS;
 
-            // Create OrderRequest
-            OrderRequest orderRequest = new OrderRequest();
-            orderRequest.setUsername(rdUser.getUsername());
-            orderRequest.setPhone(rdUser.getPhone());
-            orderRequest.setEmail(rdUser.getEmail());
-            orderRequest.setProvince("Hà Nội");
-            orderRequest.setDistrict("Quận Nam Từ Liêm");
-            orderRequest.setWard("Phường Trung Văn");
-            orderRequest.setAddress(faker.address().streetAddress());
-            orderRequest.setNote(faker.lorem().sentence());
-            orderRequest.setShippingMethod(OrderTable.ShippingMethod.STANDARD);
-            orderRequest.setPaymentMethod(OrderTable.PaymentMethod.COD);
-            orderRequest.setItems(orderItemRequests);
+            // Random address
+            Province rdProvince = provinceList.get(rd.nextInt(provinceList.size()));
 
+            List<District> districtList = districtRepository.findByProvince_Code(rdProvince.getCode());
+            District rdDistrict = districtList.get(rd.nextInt(districtList.size()));
 
-            String orderNumber = orderService.createOrder(orderRequest);
-            log.info("orderNumber : {}", orderNumber);
+            List<Ward> wardList = wardRepository.findByDistrict_Code(rdDistrict.getCode());
+            Ward rdWard = wardList.get(rd.nextInt(wardList.size()));
+
+            // Create Order
+            OrderTable orderTable = new OrderTable();
+            String orderNumber = RandomStringUtils.randomAlphanumeric(8);
+            orderTable.setOrderNumber(orderNumber);
+            orderTable.setOrderDate(randomDateBetweenTwoDates(start, end));
+            orderTable.setUsername(name);
+            orderTable.setPhone(phone);
+            orderTable.setEmail(email);
+            orderTable.setProvince(rdProvince.getName());
+            orderTable.setDistrict(rdDistrict.getName());
+            orderTable.setWard(rdWard.getName());
+            orderTable.setAddress("Số " + (rd.nextInt(100) + 1) + " " + faker.address().streetName());
+            orderTable.setShippingMethod(OrderTable.ShippingMethod.values()[rd.nextInt(OrderTable.ShippingMethod.values().length)]);
+            orderTable.setPaymentMethod(OrderTable.PaymentMethod.values()[rd.nextInt(OrderTable.PaymentMethod.values().length)]);
+            orderTable.setStatus(OrderTable.Status.COMPLETE);
+            orderTable.setUseType(useType);
+            orderTable.setUser(rdUser);
+            orderTableRepository.save(orderTable);
         }
     }
 
+    @Transactional
+    @Rollback(false)
     @Test
-    void update_order() {
+    void save_order_item_to_order() {
+        Random rd = new Random();
         List<OrderTable> orderList = orderTableRepository.findAll();
+        List<Product> productList = productRepository.findByStatusIn(List.of(Product.Status.AVAILABLE));
+
+        // Random 2-3 OrderItem
         for (OrderTable order : orderList) {
-            String email = order.getEmail();
-            User user = userRepository.findByEmail(email).get();
-            order.setUser(user);
-            order.setUseType(OrderTable.UseType.USER);
-            orderTableRepository.save(order);
+            for (int j = 0; j < rd.nextInt(2) + 2; j++) {
+                Product rdProduct = productList.get(rd.nextInt(productList.size()));
+                // Create OrderItem
+                OrderItem orderItem = new OrderItem();
+                orderItem.setProduct(rdProduct);
+                orderItem.setQuantity(rd.nextInt(2) + 1);
+
+                ProductPublic productPublic = ProductPublic.of(rdProduct);
+                orderItem.setPrice(productPublic.getDiscountPrice() == null ? productPublic.getPrice() : productPublic.getDiscountPrice());
+                orderItem.setOrder(order);
+                orderItemRepository.save(orderItem);
+            }
         }
+
+    }
+
+    public String generateName() {
+        List<String> listHo = List.of(
+                "Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Huỳnh", "Phan", "Vũ", "Võ", "Đặng",
+                "Bùi", "Đỗ", "Hồ", "Ngô", "Dương", "Lý", "Đào", "Đinh", "Lâm", "Phùng", "Mai",
+                "Tô", "Trịnh", "Đoàn", "Tăng", "Bành", "Hà", "Thái", "Tạ", "Tăng", "Thi"
+        );
+
+        // Random ds tên đệm người dùng theo tên gọi Việt Nam
+        List<String> listTenDem = List.of(
+                "Văn", "Thị", "Hồng", "Hải", "Hà", "Hưng", "Hùng", "Hạnh", "Hạ", "Thanh");
+
+        // Random ds tên người dùng theo tên gọi Việt Nam (30 tên phổ biến từ A -> Z) (ít vần H)
+        List<String> listTen = List.of(
+                "An", "Bình", "Cường", "Dũng", "Đức", "Giang", "Hải", "Hào", "Hùng", "Hưng", "Minh", "Nam", "Nghĩa", "Phong", "Phúc", "Quân", "Quang", "Quốc", "Sơn", "Thắng", "Thành", "Thiên", "Thịnh", "Thuận", "Tiến", "Trung", "Tuấn", "Vinh", "Vũ", "Xuân"
+        );
+
+        Random random = new Random();
+        String ho = listHo.get(random.nextInt(listHo.size()));
+        String tenDem = listTenDem.get(random.nextInt(listTenDem.size()));
+        String ten = listTen.get(random.nextInt(listTen.size()));
+
+        return ho + " " + tenDem + " " + ten;
+    }
+
+    public String generatePhone() {
+        // Random ds số điện thoại Việt Nam bao gồm 10 số
+        List<String> phones = List.of(
+                "086", "096", "097", "098", "032", "033", "034", "035", "036", "037", "038", "039",
+                "090", "093", "070", "079", "077", "076", "078", "089", "088", "091", "094", "083",
+                "085", "081", "082", "092", "056", "058", "099"
+        );
+
+        Random random = new Random();
+        StringBuilder phone = new StringBuilder(phones.get(random.nextInt(phones.size())));
+        for (int i = 0; i < 7; i++) {
+            phone.append(random.nextInt(10));
+        }
+        return phone.toString();
+    }
+
+    public String generateEmail(String name) {
+        return slugify.slugify(name.toLowerCase()).replaceAll("-", "") + "@gmail.com";
     }
 
     @Test
     void update_order_date() {
         List<OrderTable> orderList = orderTableRepository.findAll();
-        Date start = new Calendar.Builder().setDate(2023, 8, 1).build().getTime();
+        Date start = new Calendar.Builder().setDate(2023, 11, 1).build().getTime();
         Date end = new Date();
         for (OrderTable order : orderList) {
             order.setOrderDate(randomDateBetweenTwoDates(start, end));
             orderTableRepository.save(order);
         }
-    }
-
-    @Test
-    void update_order_status() {
-        for (int i = 102; i < 152; i++) {
-            OrderTable orderTable = orderTableRepository.findById(Long.valueOf(i)).get();
-            orderTable.setStatus(OrderTable.Status.COMPLETE);
-            orderTableRepository.save(orderTable);
-        }
-        for (int i = 152; i < 172; i++) {
-            OrderTable orderTable = orderTableRepository.findById(Long.valueOf(i)).get();
-            orderTable.setStatus(OrderTable.Status.WAIT);
-            orderTableRepository.save(orderTable);
-        }
-        for (int i = 172; i < 182; i++) {
-            OrderTable orderTable = orderTableRepository.findById(Long.valueOf(i)).get();
-            orderTable.setStatus(OrderTable.Status.WAIT_DELIVERY);
-            orderTableRepository.save(orderTable);
-        }
-        for (int i = 182; i < 192; i++) {
-            OrderTable orderTable = orderTableRepository.findById(Long.valueOf(i)).get();
-            orderTable.setStatus(OrderTable.Status.DELIVERY);
-            orderTableRepository.save(orderTable);
-        }
-        for (int i = 192; i < 197; i++) {
-            OrderTable orderTable = orderTableRepository.findById(Long.valueOf(i)).get();
-            orderTable.setStatus(OrderTable.Status.CANCELED);
-            orderTableRepository.save(orderTable);
-        }
-        for (int i = 197; i < 202; i++) {
-            OrderTable orderTable = orderTableRepository.findById(Long.valueOf(i)).get();
-            orderTable.setStatus(OrderTable.Status.RETURNED);
-            orderTableRepository.save(orderTable);
-        }
-
     }
 
     // write method to random date between 2 date

@@ -13,7 +13,7 @@ import vn.techmaster.ecommecerapp.entity.User;
 @EntityScan("vn.techmaster.ecommecerapp.entity")
 @EnableJpaRepositories("vn.techmaster.ecommecerapp.repository")
 @EnableTransactionManagement
-@EnableJpaAuditing(auditorAwareRef="auditorProvider")
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 public class PersistenceConfig {
     @Bean
     AuditorAware<User> auditorProvider() {

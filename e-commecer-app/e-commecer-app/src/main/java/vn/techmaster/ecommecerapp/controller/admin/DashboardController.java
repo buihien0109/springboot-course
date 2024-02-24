@@ -23,6 +23,7 @@ public class DashboardController {
         model.addAttribute("latestOrders", dashboardService.getOrderLatestByCurrentMonth(5));
         model.addAttribute("latestUsers", dashboardService.getUserLatestByCurrentMonth(8));
         model.addAttribute("bestSellingProducts", dashboardService.getBestSellingProductByCurrentMonth(5));
+        model.addAttribute("revenueAndExpenseList", dashboardService.getRevenueExpenseByMonth(5));
         return "admin/dashboard/index";
     }
 }

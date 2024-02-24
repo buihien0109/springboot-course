@@ -19,4 +19,12 @@ public class DateUtils {
             return null;
         }
     }
+
+    public static String formatDate(Date date) {
+        if (date == null) return null;
+
+        String pattern = "dd/MM/yyyy";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        return dateFormat.format(date);
+    }
 }

@@ -8,6 +8,7 @@ import org.hibernate.annotations.FetchMode;
 import vn.techmaster.ecommecerapp.model.dto.OrderDto;
 import vn.techmaster.ecommecerapp.model.dto.OrderUserDetailDto;
 import vn.techmaster.ecommecerapp.model.dto.OrderUserDto;
+import vn.techmaster.ecommecerapp.model.dto.RevenueDto;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +63,17 @@ import java.util.List;
                                 }
                         )
                 ),
+                @SqlResultSetMapping(
+                        name = "RevenueDtoResultMapping",
+                        classes = @ConstructorResult(
+                                targetClass = RevenueDto.class,
+                                columns = {
+                                        @ColumnResult(name = "month", type = Integer.class),
+                                        @ColumnResult(name = "year", type = Integer.class),
+                                        @ColumnResult(name = "revenue", type = Long.class)
+                                }
+                        )
+                ),
 
         }
 
@@ -98,6 +110,38 @@ import java.util.List;
                     o.order_date DESC
                 """
 )
+
+@NamedNativeQuery(
+        name = "getRevenueByMonth",
+        resultSetMapping = "RevenueDtoResultMapping",
+        query = """
+                    SELECT
+                        MONTH(sub.order_date) AS month,
+                        YEAR(sub.order_date) AS year,
+                        SUM(sub.total) AS revenue
+                    FROM (
+                        SELECT
+                            o.order_date,
+                            CASE
+                                WHEN o.coupon_code IS NOT NULL and o.coupon_discount  > 0 THEN SUM(oi.quantity * oi.price * (1 - o.coupon_discount / 100))
+                                ELSE SUM(oi.quantity * oi.price)
+                            END AS total
+                        FROM
+                            order_table o
+                        JOIN
+                            order_item oi ON o.order_id = oi.order_id
+                        WHERE
+                            o.status = 'COMPLETE'
+                        GROUP BY
+                            o.order_id, o.order_date, o.coupon_code, o.coupon_discount
+                        ) AS sub
+                    GROUP BY
+                        MONTH(sub.order_date), YEAR(sub.order_date)
+                    ORDER BY
+                        YEAR(sub.order_date), MONTH(sub.order_date)
+                """
+)
+
 
 @NamedNativeQuery(
         name = "getAllOrdersInRangeTime",

@@ -7,10 +7,7 @@ import vn.techmaster.ecommecerapp.entity.OrderItem;
 import vn.techmaster.ecommecerapp.entity.OrderTable;
 import vn.techmaster.ecommecerapp.entity.PaymentVoucher;
 import vn.techmaster.ecommecerapp.entity.Product;
-import vn.techmaster.ecommecerapp.model.dto.OrderUserDto;
-import vn.techmaster.ecommecerapp.model.dto.UserNormalDto;
-import vn.techmaster.ecommecerapp.model.projection.OrderTablePublic;
-import vn.techmaster.ecommecerapp.model.projection.UserPublic;
+import vn.techmaster.ecommecerapp.model.dto.*;
 import vn.techmaster.ecommecerapp.repository.BlogRepository;
 import vn.techmaster.ecommecerapp.repository.OrderTableRepository;
 import vn.techmaster.ecommecerapp.repository.PaymentVoucherRepository;
@@ -19,6 +16,7 @@ import vn.techmaster.ecommecerapp.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -183,5 +181,59 @@ public class DashboardService {
         Map<String, Date> timeRange = getTimeRangeInCurrentMonth();
         return getBestSellingProductInRangeTime(timeRange.get("start"), timeRange.get("end"))
                 .stream().limit(limit).toList();
+    }
+
+    // Tính doanh 5 tháng gần nhất List<RevenueDto>
+    public List<RevenueDto> getRevenueByMonth(Integer limit) {
+        List<RevenueDto> renvenueDtoList = orderTableRepository.findRevenueByMonth();
+        if (renvenueDtoList.size() > limit) {
+            int start = renvenueDtoList.size() - limit;
+            int end = renvenueDtoList.size();
+            return renvenueDtoList.subList(start, end);
+        }
+        return renvenueDtoList;
+    }
+
+    // Tính chi phí của 5 tháng gần nhất List<RevenueDto>
+    public List<ExpenseDto> getExpenseByMonth(Integer limit) {
+        List<ExpenseDto> expenseDtoList = paymentVoucherRepository.findExpenseByMonth();
+        if (expenseDtoList.size() > limit) {
+            int start = expenseDtoList.size() - limit;
+            int end = expenseDtoList.size();
+            return expenseDtoList.subList(start, end);
+        }
+        return expenseDtoList;
+    }
+
+    public List<RevenueExpenseDto> getRevenueExpenseByMonth(int limit) {
+        List<RevenueDto> renvenueDtoList = orderTableRepository.findRevenueByMonth();
+        List<ExpenseDto> expenseDtoList = paymentVoucherRepository.findExpenseByMonth();
+
+        // Merge 2 list -> List<RevenueExpenseDto>
+        List<RevenueExpenseDto> result = new ArrayList<>(renvenueDtoList.stream()
+                .map(revenueDto -> {
+                    ExpenseDto expenseDto = expenseDtoList.stream()
+                            .filter(expenseDto1 -> expenseDto1.getMonth() == revenueDto.getMonth() && expenseDto1.getYear() == revenueDto.getYear())
+                            .findFirst()
+                            .orElse(new ExpenseDto(revenueDto.getMonth(), revenueDto.getYear(), 0));
+                    return new RevenueExpenseDto(revenueDto.getMonth(), revenueDto.getYear(), revenueDto.getRevenue(), expenseDto.getExpense());
+                })
+                .toList());
+
+        // Sort by year and month
+        result.sort((o1, o2) -> {
+            if (o1.getYear() == o2.getYear()) {
+                return o1.getMonth() - o2.getMonth();
+            }
+            return o1.getYear() - o2.getYear();
+        });
+
+        // Get the last n elements
+        if (result.size() > limit) {
+            int start = result.size() - limit;
+            int end = result.size();
+            return result.subList(start, end);
+        }
+        return result;
     }
 }

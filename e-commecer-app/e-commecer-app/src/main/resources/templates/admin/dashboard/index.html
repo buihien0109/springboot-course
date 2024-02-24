@@ -89,6 +89,20 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="card">
+                        <canvas id="topProduct"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <canvas id="revenue"></canvas>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
                         <div class="card-header border-transparent">
                             <h3 class="card-title">Đơn hàng gần đây</h3>
                         </div>
@@ -145,46 +159,6 @@
                 </div>
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header border-transparent">
-                            <h3 class="card-title">Sản phẩm bán chạy</h3>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table m-0">
-                                    <thead>
-                                    <tr>
-                                        <th>Tên sản phẩm</th>
-                                        <th>Giá</th>
-                                        <th>Số lượng đã bán</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr th:each="product : ${bestSellingProducts}">
-                                        <td>
-                                            <a th:href="@{/admin/products/{id}/detail (id=${product.id})}"
-                                               th:text="${product.name}">Trà sữa</a>
-                                        </td>
-                                        <td>
-                                            <span th:text="${product.price}" class="currency">1,000,000</span>
-                                        </td>
-                                        <td>
-                                            <span th:text="|${product.quantity} sản phẩm|">10</span>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="card-footer clearfix">
-                            <a href="/admin/products" class="btn btn-sm btn-secondary float-right">Xem tất cả</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">User mới nhất</h3>
                         </div>
@@ -213,6 +187,7 @@
 </div>
 
 <th:block id="js">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
         const newOrders = [[${newOrders}]];
         const newUsers = [[${newUsers}]];
@@ -222,6 +197,7 @@
         const latestOrders = [[${latestOrders}]];
         const latestUsers = [[${latestUsers}]];
         const bestSellingProducts = [[${bestSellingProducts}]];
+        const revenueAndExpenseList = [[${revenueAndExpenseList}]];
 
         console.log({
             newOrders,
@@ -231,8 +207,64 @@
             totalPayment,
             latestOrders,
             latestUsers,
-            bestSellingProducts
+            bestSellingProducts,
+            revenueAndExpenseList
         })
+
+        // Chart top product
+        const ctxTopSellingProduct = document.getElementById('topProduct').getContext('2d');
+        const topSellingProductBarChart = new Chart(ctxTopSellingProduct, {
+            type: 'bar',
+            data: {
+                labels: bestSellingProducts.map(product => product.name),
+                datasets: [{
+                    label: 'Lượt bán',
+                    data: bestSellingProducts.map(product => product.quantity),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Chart revenue + payment
+        const ctxRevenue = document.getElementById('revenue').getContext('2d');
+        const revenueLineChart = new Chart(ctxRevenue, {
+            type: 'line',
+            data: {
+                labels: revenueAndExpenseList.map(item => `Tháng ${item.month}/${item.year}`),
+                datasets: [
+                    {
+                        label: 'Doanh thu',
+                        data: revenueAndExpenseList.map(item => item.revenue),
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Chi phí',
+                        data: revenueAndExpenseList.map(item => item.expense),
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     </script>
 </th:block>
 </body>

@@ -13,4 +13,6 @@ public interface DistrictRepository extends JpaRepository<District, String> {
     Optional<DistrictPublic> findByCode(String provinceCode);
 
     Optional<District> getByCode(String code);
+
+    List<District> findByProvince_Code(String provinceCode);
 }

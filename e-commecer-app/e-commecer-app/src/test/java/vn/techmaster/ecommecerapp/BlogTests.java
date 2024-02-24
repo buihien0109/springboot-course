@@ -113,7 +113,7 @@ public class BlogTests {
     void update_blog_date() {
         List<Blog> blogList = blogRepository.findAll();
 
-        Date start = new Calendar.Builder().setDate(2023, 8, 1).build().getTime();
+        Date start = new Calendar.Builder().setDate(2023, 11, 20).build().getTime();
         Date end = new Date();
 
         for (Blog blog : blogList) {

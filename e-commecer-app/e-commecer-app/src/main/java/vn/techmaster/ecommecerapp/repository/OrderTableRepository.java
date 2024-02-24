@@ -6,6 +6,7 @@ import vn.techmaster.ecommecerapp.entity.OrderTable;
 import vn.techmaster.ecommecerapp.model.dto.OrderDto;
 import vn.techmaster.ecommecerapp.model.dto.OrderUserDetailDto;
 import vn.techmaster.ecommecerapp.model.dto.OrderUserDto;
+import vn.techmaster.ecommecerapp.model.dto.RevenueDto;
 
 import java.util.Collection;
 import java.util.Date;
@@ -35,4 +36,7 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
     @Query(nativeQuery = true, name = "getAllOrdersInRangeTimeByStatus")
     List<OrderUserDetailDto> getAllOrdersInRangeTimeByStatus(Date start, Date end, String status);
+
+    @Query(nativeQuery = true, name = "getRevenueByMonth")
+    List<RevenueDto> findRevenueByMonth();
 }
