@@ -34,11 +34,12 @@ resetForm.addEventListener('submit', function (e) {
         return;
     }
 
-    const email = document.getElementById('email').value;
-    axios.post(`/api/v1/public/auth/reset-password?email=${email}`)
+    const emailEl = document.getElementById('email');
+    axios.post(`/api/v1/public/auth/reset-password?email=${emailEl.value}`)
         .then((response) => {
             if (response.status === 200) {
                 toastr.success('Một email đã được gửi đến email của bạn. Vui lòng kiểm tra email để đặt lại mật khẩu');
+                emailEl.value = '';
             } else {
                 toastr.error('Đã có lỗi xảy ra. Vui lòng thử lại sau');
             }

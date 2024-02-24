@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -21,6 +22,12 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
 
+    @Value("${app.origin}")
+    private String origin;
+
+    @Value("${app.port}")
+    private Integer port;
+
     // Send mail confirm registration
     @Async
     public void sendMailConfirmRegistration(Map<String, String> data) {
@@ -37,6 +44,8 @@ public class MailService {
             Context context = new Context();
             context.setVariable("username", data.get("username"));
             context.setVariable("token", data.get("token"));
+            context.setVariable("origin", origin);
+            context.setVariable("port", port);
 
             // Use the template engine to process the template
             String htmlContent = templateEngine.process("web/mail-template/confirmation-account", context);
@@ -65,6 +74,8 @@ public class MailService {
             Context context = new Context();
             context.setVariable("username", data.get("username"));
             context.setVariable("token", data.get("token"));
+            context.setVariable("origin", origin);
+            context.setVariable("port", port);
 
             // Use the template engine to process the template
             String htmlContent = templateEngine.process("web/mail-template/reset-password", context);
