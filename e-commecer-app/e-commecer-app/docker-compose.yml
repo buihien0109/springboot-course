@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:latest
+    restart: always
+    volumes:
+      - ./data.sql:/docker-entrypoint-initdb.d/init.sql
+      - data_ogani:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - mysql
+    ports:
+      - "87:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: 123
+
+  spring-app:
+    image: buihien0109/ogani-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+    restart: always
+    ports:
+      - "8887:8887"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/db-ecommecer?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123
+      - SPRING_APP_ORIGIN=http://103.237.147.34
+      - SPRING_APP_PORT=8887
+      - SPRING_MAIL_USERNAME=thuhangvnua@gmail.com
+      - SPRING_MAIL_PASSWORD=pavm rwzs bzjg kkrr
+      - SPRING_GHTK_TOKEN=88b43259-5b52-11ee-a6e6-e60958111f48
+
+volumes:
+    data_ogani:
